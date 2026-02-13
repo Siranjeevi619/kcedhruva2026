@@ -9,8 +9,32 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5000',
+    'https://kcedhruva2026.vercel.app',
+    'https://kcedhruva2026.vercel.app/'
+];
+
+if (process.env.CLIENT_URL) {
+    allowedOrigins.push(process.env.CLIENT_URL);
+    // Add version without trailing slash if it exists
+    if (process.env.CLIENT_URL.endsWith('/')) {
+        allowedOrigins.push(process.env.CLIENT_URL.slice(0, -1));
+    }
+}
+
 app.use(cors({
-    origin: [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:5000'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            console.log('Blocked by CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(helmet({

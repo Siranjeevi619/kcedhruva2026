@@ -145,7 +145,7 @@ const Navbar = () => {
                     </div>
 
                     {/* Mobile Menu Button - Align right */}
-                    <div className="md:hidden flex items-center">
+                    <div className="flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="p-2 text-white/70 hover:text-white"
@@ -157,10 +157,25 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Overlay */}
-            <div className={`md:hidden fixed inset-0 top-16 bg-black/95 backdrop-blur-2xl transition-all duration-300 ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'}`}>
+            {/* Mobile Menu Overlay */}
+            <div
+                className={`md:hidden fixed top-16 right-0 z-50
+  w-[70%] max-w-sm
+  h-[calc(100dvh-4rem)]
+  bg-black/95 backdrop-blur-2xl
+  transition-all duration-300 ease-in-out
+  ${isOpen
+                        ? 'opacity-100 translate-x-0'
+                        : 'opacity-0 translate-x-full pointer-events-none'
+                    }`}
+            >
+
                 <div className="flex flex-col p-6 space-y-4 overflow-y-auto h-full">
                     {navLinks.map((link) => (
-                        <div key={link.name} className="border-b border-white/5 last:border-0 pb-2">
+                        <div
+                            key={link.name}
+                            className="border-b border-white/5 last:border-0 pb-2"
+                        >
                             {(link.columns || link.dropdown) ? (
                                 <div className="space-y-2">
                                     <button
@@ -168,19 +183,36 @@ const Navbar = () => {
                                         className="w-full flex items-center justify-between py-2 text-lg font-medium text-white/80"
                                     >
                                         <span>{link.name}</span>
-                                        <ChevronDown size={18} className={`transition-transform duration-300 ${activeMobileDropdown === link.name ? 'rotate-180' : ''}`} />
+                                        <ChevronDown
+                                            size={18}
+                                            className={`transition-transform duration-300 ${activeMobileDropdown === link.name
+                                                ? 'rotate-180'
+                                                : ''
+                                                }`}
+                                        />
                                     </button>
-                                    <div className={`grid transition-all duration-300 ${activeMobileDropdown === link.name ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'} overflow-hidden`}>
+
+                                    {/* Dropdown */}
+                                    <div
+                                        className={`grid transition-all duration-300 overflow-hidden ${activeMobileDropdown === link.name
+                                            ? 'grid-rows-[1fr] opacity-100'
+                                            : 'grid-rows-[0fr] opacity-0'
+                                            }`}
+                                    >
                                         <div className="min-h-0 pl-4 flex flex-col space-y-4 pt-2 pb-4">
                                             {link.columns ? (
                                                 link.columns.map((col, cIdx) => (
                                                     <div key={cIdx} className="space-y-2">
-                                                        {col.title && <div className="text-[12px] uppercase tracking-widest text-white/30 font-bold">{col.title}</div>}
+                                                        {col.title && (
+                                                            <div className="text-[12px] uppercase tracking-widest text-white/30 font-bold">
+                                                                {col.title}
+                                                            </div>
+                                                        )}
                                                         {col.links.map((subLink, sIdx) => (
                                                             <Link
                                                                 key={sIdx}
                                                                 to={subLink.path}
-                                                                className="block text-[16px] text-white/50 hover:text-white"
+                                                                className="block text-[16px] text-white/50 hover:text-white transition-colors"
                                                                 onClick={() => setIsOpen(false)}
                                                             >
                                                                 {subLink.name}
@@ -193,7 +225,7 @@ const Navbar = () => {
                                                     <Link
                                                         key={idx}
                                                         to={subItem.path}
-                                                        className="block text-[16px] text-white/50 hover:text-white"
+                                                        className="block text-[16px] text-white/50 hover:text-white transition-colors"
                                                         onClick={() => setIsOpen(false)}
                                                     >
                                                         {subItem.name}
@@ -214,6 +246,7 @@ const Navbar = () => {
                             )}
                         </div>
                     ))}
+
                     <Link
                         to="/passes"
                         className="mt-4 bg-white text-black py-3 rounded-full font-bold text-center text-sm"
@@ -223,6 +256,7 @@ const Navbar = () => {
                     </Link>
                 </div>
             </div>
+
         </nav>
     );
 };

@@ -86,7 +86,7 @@ const Passes = ({ embed = false }) => {
                                         </div>
                                         <div className={`text-4xl font-bold ${styles.text}`}>
                                             ₹{pass.price}/-
-                                            <span className={`text-sm font-normal ml-1 ${styles.subText}`}>/person</span>
+                                            {/* <span className={`text-sm font-normal ml-1 ${styles.subText}`}>/person</span> */}
                                         </div>
                                     </div>
 

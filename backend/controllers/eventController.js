@@ -33,7 +33,7 @@ const getEventById = async (req, res) => {
 // @access  Private/Admin
 const createEvent = async (req, res) => {
     try {
-        const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules } = req.body;
+        const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime } = req.body;
 
         const event = new Event({
             title,
@@ -54,6 +54,11 @@ const createEvent = async (req, res) => {
             timings,
             prize,
             rules,
+            rounds,
+            winnerPrize,
+            runnerPrize,
+            fromTime,
+            toTime,
             createdBy: req.admin._id
         });
 
@@ -73,7 +78,7 @@ const updateEvent = async (req, res) => {
 
         if (event) {
             // Check if updating generic fields
-            const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules } = req.body;
+            const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime } = req.body;
 
             event.title = title || event.title;
             event.description = description || event.description;
@@ -93,6 +98,11 @@ const updateEvent = async (req, res) => {
             event.timings = timings || event.timings;
             event.prize = prize || event.prize;
             event.rules = rules || event.rules;
+            event.rounds = rounds || event.rounds;
+            event.winnerPrize = winnerPrize || event.winnerPrize;
+            event.runnerPrize = runnerPrize || event.runnerPrize;
+            event.fromTime = fromTime || event.fromTime;
+            event.toTime = toTime || event.toTime;
 
             const updatedEvent = await event.save();
             res.json(updatedEvent);

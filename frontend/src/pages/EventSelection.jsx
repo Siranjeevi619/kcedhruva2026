@@ -116,18 +116,50 @@ const EventSelection = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <select name="department" value={formData.department} onChange={handleFormChange} required className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none text-gray-400 [&>option]:bg-black">
+                            <select
+                                name="department"
+                                value={formData.department}
+                                onChange={handleFormChange}
+                                required
+                                className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none text-gray-400 [&>option]:bg-black"
+                            >
                                 <option value="">Select Dept</option>
-                                <option value="CSE">CSE</option>
-                                <option value="ECE">ECE</option>
-                                <option value="EEE">EEE</option>
-                                <option value="IT">IT</option>
-                                <option value="MECH">MECH</option>
-                                <option value="CIVIL">CIVIL</option>
-                                <option value="AIDS">AIDS</option>
-                                <option value="MBA">MBA</option>
-                                <option value="MCA">MCA</option>
+
+                                {/* Core Engineering */}
+                                <option value="CSE">CSE - Computer Science & Engineering</option>
+                                <option value="ECE">ECE - Electronics & Communication Engineering</option>
+                                <option value="EEE">EEE - Electrical & Electronics Engineering</option>
+                                <option value="MECH">MECH - Mechanical Engineering</option>
+                                <option value="CIVIL">CIVIL - Civil Engineering</option>
+                                <option value="IT">IT - Information Technology</option>
+                                <option value="CHEM">CHEM - Chemical Engineering</option>
+                                <option value="BIOTECH">BIOTECH - Biotechnology</option>
+
+                                {/* Core Sciences */}
+                                <option value="PHYSICS">Physics</option>
+                                <option value="CHEMISTRY">Chemistry</option>
+                                <option value="MATHEMATICS">Mathematics</option>
+                                <option value="BIOLOGY">Biology</option>
+
+                                {/* Commerce & Management */}
+                                <option value="BCom">B.Com - Commerce</option>
+                                <option value="BBA">BBA - Business Administration</option>
+                                <option value="MBA">MBA - Master of Business Administration</option>
+
+                                {/* Arts & Humanities */}
+                                <option value="ENGLISH">English</option>
+                                <option value="ECONOMICS">Economics</option>
+                                <option value="HISTORY">History</option>
+                                <option value="POLITICAL_SCIENCE">Political Science</option>
+                                <option value="PSYCHOLOGY">Psychology</option>
+
+                                {/* Law & Medical */}
+                                <option value="LLB">LLB - Law</option>
+                                <option value="MBBS">MBBS - Medicine</option>
+                                <option value="NURSING">Nursing</option>
+
                             </select>
+
                             <select name="year" value={formData.year} onChange={handleFormChange} required className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none text-gray-400 [&>option]:bg-black">
                                 <option value="">Select Year</option>
                                 <option value="1">1</option>

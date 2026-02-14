@@ -10,10 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5000',
-    'https://kcedhruva2026.vercel.app',
-    'https://kcedhruva2026.vercel.app/'
+    'https://kcedhruva-orpin.vercel.app',
 ];
 
 if (process.env.CLIENT_URL) {

@@ -149,11 +149,11 @@ const ManagePasses = () => {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input name="name" value={formData.name} onChange={handleChange} placeholder="Pass Name" className="w-full bg-white/5 border border-white/10 rounded-xl p-3" required />
                             <input name="price" type="text" value={formData.price} onChange={handleChange} placeholder="Price (e.g. 500 or 500/1000)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3" required />
-                            {/* <select name="type" value={formData.type} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 [&>option]:bg-[#1a1a1a]">
+                            <select name="type" value={formData.type} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 [&>option]:bg-[#1a1a1a]">
                                 <option value="Individual">Individual</option>
-                                <option value="Group">Group</option>
+                                <option value="Team">Team</option>
                                 <option value="All-Access">All-Access</option>
-                            </select> */}
+                            </select>
                             <select name="color" value={formData.color} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 [&>option]:bg-[#1a1a1a]">
                                 <option value="orange">Orange</option>
                                 <option value="yellow">Yellow</option>

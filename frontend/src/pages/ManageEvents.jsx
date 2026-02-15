@@ -336,7 +336,7 @@ const ManageEvents = () => {
                                 {/* Basic Info */}
                                 <div className="space-y-4">
                                     <input name="title" value={formData.title} onChange={handleChange} placeholder="Event Title" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
-                                    <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white">
+                                    <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
                                         <option value="Technical">Technical</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
@@ -405,8 +405,8 @@ const ManageEvents = () => {
                                     <input type="datetime-local" name="date" value={formData.date} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors text-white" required />
                                     <input name="venue" value={formData.venue} onChange={handleChange} placeholder="Venue" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     <div className="grid grid-cols-2 gap-4">
-                                        <input name="fromTime" value={formData.fromTime} onChange={handleChange} placeholder="From Time (e.g. 10:00 AM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
-                                        <input name="toTime" value={formData.toTime} onChange={handleChange} placeholder="To Time (e.g. 04:00 PM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                        <input name="fromTime" value={formData.fromTime} onChange={handleChange} placeholder="From Time (e.g. 10:00 AM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
+                                        <input name="toTime" value={formData.toTime} onChange={handleChange} placeholder="To Time (e.g. 04:00 PM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <input name="winnerPrize" value={formData.winnerPrize} onChange={handleChange} placeholder="Winner Prize (₹)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
@@ -427,6 +427,7 @@ const ManageEvents = () => {
                                                 onChange={handleChange}
                                                 placeholder="Image URL (Drive link supported)"
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-3 focus:border-blue-500 outline-none transition-colors"
+                                                required
                                             />
                                         </div>
 
@@ -460,6 +461,7 @@ const ManageEvents = () => {
                                                     placeholder="Round Description"
                                                     rows="2"
                                                     className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm"
+
                                                 />
                                                 <button type="button" onClick={() => removeRound(index)} className="absolute top-2 right-2 p-1.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20"><Trash2 size={16} /></button>
                                             </div>
@@ -495,8 +497,8 @@ const ManageEvents = () => {
                                     <h3 className="text-lg font-semibold mb-3 text-purple-400">Faculty Coordinators</h3>
                                     {formData.facultyCoordinators.map((coordinator, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr,1fr,auto] gap-3 mb-4 p-3 bg-white/5 rounded-xl border border-white/5">
-                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'faculty')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
-                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'faculty')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
+                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'faculty')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
+                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'faculty')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
                                             <button type="button" onClick={() => removeCoordinator(index, 'faculty')} className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 flex items-center justify-center"><Trash2 size={18} /></button>
                                         </div>
                                     ))}
@@ -508,8 +510,8 @@ const ManageEvents = () => {
                                     <h3 className="text-lg font-semibold mb-4 text-blue-400">Student Coordinators</h3>
                                     {formData.studentCoordinators.map((coordinator, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr,1fr,auto] gap-3 mb-4 p-3 bg-white/5 rounded-xl border border-white/5">
-                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'student')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
-                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'student')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
+                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'student')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
+                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'student')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
                                             <button type="button" onClick={() => removeCoordinator(index, 'student')} className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 flex items-center justify-center"><Trash2 size={18} /></button>
                                         </div>
                                     ))}

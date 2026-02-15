@@ -170,7 +170,7 @@ const Navbar = () => {
                     }`}
             >
 
-                <div className="flex flex-col p-6 overflow-y-auto h-full">
+                <div className="flex flex-col p-6 space-y-2 overflow-y-auto h-full">
                     {navLinks.map((link) => (
                         <div
                             key={link.name}
@@ -199,7 +199,7 @@ const Navbar = () => {
                                             : 'grid-rows-[0fr] opacity-0'
                                             }`}
                                     >
-                                        <div className="min-h-0 pl-4 flex flex-col space-y-4 pt-2 pb-4">
+                                        <div className="min-h-0 pl-4 flex flex-col space-y-2 pt-2 pb-4">
                                             {link.columns ? (
                                                 link.columns.map((col, cIdx) => (
                                                     <div key={cIdx} className="space-y-2">

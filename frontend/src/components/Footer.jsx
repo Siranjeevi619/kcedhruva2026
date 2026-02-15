@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Mail, Phone, MapPin, Facebook, Youtube, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Youtube as YoutubeIcon, Instagram, Linkedin } from 'lucide-react';
 import MarqueePkg from 'react-fast-marquee';
 import { useLocation } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
@@ -121,7 +121,7 @@ const Footer = () => {
                         <div className="flex flex-col gap-4">
                             {[
                                 { Icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/share/1ERFLsRYj7/' },
-                                { Icon: Youtube, label: 'Youtube', href: 'https://youtube.com/@wekceians?si=2UClrWxuRShi8Xoy' },
+                                { Icon: YoutubeIcon, label: 'Youtube', href: 'https://youtube.com/@wekceians?si=2UClrWxuRShi8Xoy' },
                                 { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/wekceians?igsh=dWc3MWE4bzVtcWF2' },
                                 { Icon: Linkedin, label: 'LinkedIn', href: 'ttps://www.linkedin.com/school/wekceians/' }
                             ].map((social, i) => (

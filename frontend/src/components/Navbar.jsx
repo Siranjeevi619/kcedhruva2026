@@ -145,12 +145,12 @@ const Navbar = () => {
                     </div>
 
                     {/* Mobile Menu Button - Align right */}
-                    <div className="flex items-center">
+                    <div className="flex items-center md:hidden">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="p-2 text-white/70 hover:text-white"
                         >
-                            {isOpen ? <X size={22} /> : <Menu size={22} />}
+                            {isOpen ? <div className="flex items-center gap-30"><h2 className="text-2xl text-white montserrat-bold">Menu</h2> <X size={22} /></div> : <Menu size={22} />}
                         </button>
                     </div>
                 </div>
@@ -170,14 +170,14 @@ const Navbar = () => {
                     }`}
             >
 
-                <div className="flex flex-col p-6 space-y-4 overflow-y-auto h-full">
+                <div className="flex flex-col p-6 overflow-y-auto h-full">
                     {navLinks.map((link) => (
                         <div
                             key={link.name}
                             className="border-b border-white/5 last:border-0 pb-2"
                         >
                             {(link.columns || link.dropdown) ? (
-                                <div className="space-y-2">
+                                <div className="">
                                     <button
                                         onClick={() => toggleMobileDropdown(link.name)}
                                         className="w-full flex items-center justify-between py-2 text-lg font-medium text-white/80"

@@ -87,6 +87,29 @@ const EventDetail = () => {
 
     const isWorkshop = event.category === 'Workshop' || event.eventType === 'Workshop';
 
+    // Validation Helpers
+    const isNotEmpty = (str) => {
+        if (!str || typeof str !== 'string') return false;
+        const s = str.trim().toLowerCase();
+        // Check for empty, tba, undefined, null, or "no specific..." phrases
+        return s !== '' &&
+            !['tba', 'undefined', 'null'].includes(s) &&
+            !s.startsWith('no specific');
+    };
+
+    const hasRounds = event.rounds && Array.isArray(event.rounds) && event.rounds.some(r => isNotEmpty(r.name) || isNotEmpty(r.description));
+
+    // Check for rules array or string, ensuring it's not just a placeholder
+    const hasRules = event.rules && (
+        Array.isArray(event.rules)
+            ? event.rules.some(r => isNotEmpty(r))
+            : isNotEmpty(event.rules)
+    );
+
+    // Prize Validation
+    const isValidPrize = (p) => isNotEmpty(p);
+    const showPrizes = isValidPrize(event.winnerPrize) || isValidPrize(event.runnerPrize) || isValidPrize(event.prize);
+
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
             <Doodles />
@@ -111,6 +134,14 @@ const EventDetail = () => {
                             className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = 'https://via.placeholder.com/800x600?text=Event+Poster'; }}
                         />
+                        {event.theme && (
+                            <div className="absolute top-4 left-4 z-10">
+                                <div className="bg-black/60 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-xl">
+                                    <p className="text-blue-300 text-xs font-bold uppercase tracking-widest mb-0.5">Theme</p>
+                                    <p className="text-white font-bold">{event.theme}</p>
+                                </div>
+                            </div>
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c2e] via-transparent to-transparent" />
                         <div className="absolute bottom-10 left-10 right-10">
                             <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 uppercase tracking-[0.2em]
@@ -156,7 +187,7 @@ const EventDetail = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Date</p>
-                                        <p className="font-semibold text-lg">{event.date ? new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'TBA'}</p>
+                                        <p className="font-semibold text-lg">{event.date ? new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'long' }) : ''}</p>
                                     </div>
                                 </div>
                                 <div className="bg-white/5 p-6 rounded-2xl border border-white/10 flex items-center gap-5">
@@ -168,7 +199,7 @@ const EventDetail = () => {
                                         <p className="font-semibold text-lg">
                                             {(event.fromTime && event.toTime)
                                                 ? `${event.fromTime} - ${event.toTime}`
-                                                : (event.timings || event.time || 'TBA')}
+                                                : (event.timings || event.time)}
                                         </p>
                                     </div>
                                 </div>
@@ -178,34 +209,36 @@ const EventDetail = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Venue</p>
-                                        <p className="font-semibold text-lg">{event.venue || 'TBA'}</p>
+                                        <p className="font-semibold text-lg">{event.venue}</p>
                                     </div>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 flex items-center gap-5">
-                                    <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-400">
-                                        <Tag size={24} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Prize Details</p>
-                                        <div className="space-y-1">
-                                            {event.winnerPrize ? (
-                                                <p className="font-bold text-lg text-yellow-400 flex items-center justify-between">
-                                                    <span>Winner:</span>
-                                                    <span>{event.winnerPrize}</span>
-                                                </p>
-                                            ) : null}
-                                            {event.runnerPrize ? (
-                                                <p className="font-semibold text-gray-300 flex items-center justify-between text-sm">
-                                                    <span>Runner:</span>
-                                                    <span>{event.runnerPrize}</span>
-                                                </p>
-                                            ) : null}
-                                            {!event.winnerPrize && !event.runnerPrize && (
-                                                <p className="font-bold text-lg text-yellow-400">{event.prize || 'Exciting Prizes!'}</p>
-                                            )}
+                                {showPrizes && (
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 flex items-center gap-5">
+                                        <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-400">
+                                            <Tag size={24} />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Prize Details</p>
+                                            <div className="space-y-1">
+                                                {isValidPrize(event.winnerPrize) && (
+                                                    <p className="font-bold text-lg text-yellow-400 flex items-center justify-between">
+                                                        <span>Winner:</span>
+                                                        <span>{event.winnerPrize}</span>
+                                                    </p>
+                                                )}
+                                                {isValidPrize(event.runnerPrize) && (
+                                                    <p className="font-semibold text-gray-300 flex items-center justify-between text-sm">
+                                                        <span>Runner:</span>
+                                                        <span>{event.runnerPrize}</span>
+                                                    </p>
+                                                )}
+                                                {!isValidPrize(event.winnerPrize) && !isValidPrize(event.runnerPrize) && isValidPrize(event.prize) && (
+                                                    <p className="font-bold text-lg text-yellow-400">{event.prize}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             {/* Info Sections */}
@@ -220,46 +253,49 @@ const EventDetail = () => {
                                     </div>
                                 </section>
 
-                                {event.rounds && event.rounds.length > 0 && (
-                                    <section>
-                                        <h3 className="text-xl font-bold mb-4 flex items-center gap-3 text-purple-400">
-                                            <Calendar size={22} />
-                                            Rounds & Structure
-                                        </h3>
-                                        <div className="space-y-4">
-                                            {Array.isArray(event.rounds) ? event.rounds.map((round, index) => (
-                                                <div key={index} className="bg-purple-500/5 p-6 rounded-2xl border border-purple-500/10">
-                                                    <h4 className="text-lg font-bold text-white mb-2">{round.name}</h4>
-                                                    <p className="text-gray-300 font-mono text-sm whitespace-pre-wrap">{round.description}</p>
-                                                </div>
-                                            )) : (
-                                                <div className="text-gray-300 leading-relaxed bg-purple-500/5 p-6 rounded-2xl border border-purple-500/10 whitespace-pre-wrap font-mono text-sm theme-rounds">
-                                                    {event.rounds}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </section>
-                                )}
+                                {/* Rounds and Rules Grid */}
+                                <div className={`grid grid-cols-1 ${hasRounds && hasRules ? 'xl:grid-cols-2' : ''} gap-10`}>
+                                    {hasRounds && (
+                                        <section className="h-full">
+                                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3 text-purple-400">
+                                                <Calendar size={22} />
+                                                Rounds & Structure
+                                            </h3>
+                                            <div className="space-y-4 h-full">
+                                                {Array.isArray(event.rounds) ? event.rounds.filter(r => r.name && r.name.trim() !== '').map((round, index) => (
+                                                    <div key={index} className="bg-purple-500/5 p-6 rounded-2xl border border-purple-500/10 h-full">
+                                                        <h4 className="text-lg font-bold text-white mb-2">{round.name}</h4>
+                                                        <p className="text-gray-300 font-mono text-sm whitespace-pre-wrap">{round.description}</p>
+                                                    </div>
+                                                )) : (
+                                                    <div className="text-gray-300 leading-relaxed bg-purple-500/5 p-6 rounded-2xl border border-purple-500/10 whitespace-pre-wrap font-mono text-sm theme-rounds h-full">
+                                                        {event.rounds}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </section>
+                                    )}
 
-                                {event.rules && event.rules.length > 0 && (
-                                    <section>
-                                        <h3 className="text-xl font-bold mb-4 flex items-center gap-3 text-orange-400">
-                                            <Tag size={22} />
-                                            Rules & Guidelines
-                                        </h3>
-                                        <div className="text-gray-300 leading-relaxed bg-orange-500/5 p-6 rounded-2xl border border-orange-500/10 text-[1.05rem]">
-                                            {Array.isArray(event.rules) ? (
-                                                <ul className="list-disc list-inside space-y-2">
-                                                    {event.rules.map((rule, index) => (
-                                                        <li key={index}>{rule}</li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <div className="whitespace-pre-wrap">{event.rules}</div>
-                                            )}
-                                        </div>
-                                    </section>
-                                )}
+                                    {hasRules && (
+                                        <section className="h-full">
+                                            <h3 className="text-xl font-bold mb-4 flex items-center gap-3 text-orange-400">
+                                                <Tag size={22} />
+                                                Rules & Guidelines
+                                            </h3>
+                                            <div className="text-gray-300 leading-relaxed bg-orange-500/5 p-6 rounded-2xl border border-orange-500/10 text-[1.05rem] h-full">
+                                                {Array.isArray(event.rules) ? (
+                                                    <ul className="list-disc leading-relaxed pl-4 space-y-2">
+                                                        {event.rules.map((rule, index) => (
+                                                            <li key={index}>{rule}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <div className="whitespace-pre-wrap">{event.rules}</div>
+                                                )}
+                                            </div>
+                                        </section>
+                                    )}
+                                </div>
 
                                 {event.pptTemplateUrl && (
                                     <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">

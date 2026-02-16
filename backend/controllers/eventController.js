@@ -33,7 +33,7 @@ const getEventById = async (req, res) => {
 // @access  Private/Admin
 const createEvent = async (req, res) => {
     try {
-        const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime } = req.body;
+        const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime, theme } = req.body;
 
         const event = new Event({
             title,
@@ -41,6 +41,7 @@ const createEvent = async (req, res) => {
             category,
             eventType: eventType || 'Normal',
             club,
+            theme,
             department,
             date,
             venue,
@@ -86,6 +87,7 @@ const updateEvent = async (req, res) => {
             event.category = category || event.category;
             if (eventType) event.eventType = eventType;
             event.club = club || event.club;
+            event.theme = theme || event.theme;
             event.department = department || event.department;
             event.date = date || event.date;
             event.venue = venue || event.venue;

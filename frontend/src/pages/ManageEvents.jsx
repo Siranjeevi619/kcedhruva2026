@@ -35,10 +35,10 @@ const ManageEvents = () => {
         rules: [''],
         fromTime: '', // Added fromTime
         toTime: '',   // Added toTime
-        winnerPrize: '', // Added winner prize
         runnerPrize: '', // Added runner prize
         artistName: '', // Added artistName
-        theme: '', // Added theme
+        theme: [''], // Changed to array for multiple topics
+        generalPrize: [''], // Added general prize array
         facultyCoordinators: [{ name: '', phone: '' }],
         studentCoordinators: [{ name: '', phone: '' }]
     });
@@ -64,12 +64,17 @@ const ManageEvents = () => {
     // Filter events based on URL params and search
     const filteredEvents = events.filter(e => {
         // Category Filter
-        if (category && e.category !== category) return false;
+        if (category) {
+            if (category === 'Technical') {
+                // For Technical view, include explicitly 'Technical' events AND specialized types
+                const techTypes = ['Technical', 'Workshop', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'];
+                if (!techTypes.includes(e.category)) return false;
+            } else if (e.category !== category) {
+                return false;
+            }
+        }
 
         // Subcategory Filter (Department or Club depending on context)
-        // For Technical, subcategory is usually department
-        // For Cultural, it could be 'OnStage' / 'OffStage' which might be stored in department or category?
-        // Let's assume subcategory maps to 'department' field for now as per Sidebar links
         if (subcategory && subcategory !== 'All') {
             const decodedSub = decodeURIComponent(subcategory);
             if (e.department !== subcategory &&
@@ -139,18 +144,63 @@ const ManageEvents = () => {
         setFormData({ ...formData, rules: newRules });
     };
 
+    // Theme Handling (Multiple Topics)
+    const handleThemeChange = (index, value) => {
+        const newThemes = [...formData.theme];
+        newThemes[index] = value;
+        setFormData({ ...formData, theme: newThemes });
+    };
+
+    const addTheme = () => {
+        setFormData({ ...formData, theme: [...formData.theme, ''] });
+    };
+
+    const removeTheme = (index) => {
+        const newThemes = formData.theme.filter((_, i) => i !== index);
+        setFormData({ ...formData, theme: newThemes });
+    };
+
+    // General Prize Handling
+    const handleGeneralPrizeChange = (index, value) => {
+        const newPrizes = [...formData.generalPrize];
+        newPrizes[index] = value;
+        setFormData({ ...formData, generalPrize: newPrizes });
+    };
+
+    const addGeneralPrize = () => {
+        setFormData({ ...formData, generalPrize: [...formData.generalPrize, ''] });
+    };
+
+    const removeGeneralPrize = (index) => {
+        const newPrizes = formData.generalPrize.filter((_, i) => i !== index);
+        setFormData({ ...formData, generalPrize: newPrizes });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             // Construct a fallback timings string if needed, or backend can handle it.
             // But let's keep data consistent if we want to support both.
             // Ensure Description is passed correctly
+            // Clean up the payload before sending
             const payload = {
                 ...formData,
                 description: formData.eventDescription || formData.description,
                 timings: `${formData.fromTime} - ${formData.toTime}`,
-                rounds: formData.rounds.filter(r => r.name && r.name.trim() !== '')
+                rounds: formData.rounds.filter(r => isNotEmpty(r.name)),
+                rules: formData.rules.filter(r => isNotEmpty(r)),
+                theme: formData.theme.filter(t => isNotEmpty(t)),
+                generalPrize: formData.generalPrize.filter(p => isNotEmpty(p))
             };
+
+            console.log('Final Payload:', payload);
+
+            // Helper to check for meaningful content
+            function isNotEmpty(str) {
+                if (str === null || str === undefined) return false;
+                if (typeof str !== 'string') return true; // Non-string objects are not "empty"
+                return str.trim() !== '';
+            }
 
             if (currentEvent) {
                 await axios.put(`${API_URL}/events/${currentEvent._id}`, payload, config);
@@ -161,8 +211,9 @@ const ManageEvents = () => {
             resetForm();
             fetchEvents();
         } catch (error) {
-            console.error(error);
-            alert('Error saving event');
+            console.error('Save Error:', error);
+            const errorMsg = error.response?.data?.message || error.message || 'Error saving event';
+            alert(`Error: ${errorMsg}`);
         }
     };
 
@@ -192,31 +243,61 @@ const ManageEvents = () => {
             }
         }
 
+        // Safely extract date string YYYY-MM-DD for the date input
+        let dateVal = '';
+        try {
+            if (event.date) {
+                const d = new Date(event.date);
+                if (!isNaN(d.getTime())) {
+                    dateVal = d.toISOString().split('T')[0];
+                }
+            }
+        } catch (e) {
+            console.error("Date parsing error:", e);
+        }
+
         setFormData({
-            title: event.title,
-            eventDescription: event.eventDescription || event.description,
-            date: event.date.split('T')[0],
-            venue: event.venue,
-            category: event.category,
+            title: event.title || '',
+            eventDescription: event.eventDescription || event.description || '',
+            date: dateVal,
+            venue: event.venue || '',
+            category: event.category || 'Technical',
             eventType: event.eventType || 'Normal',
             department: event.department || '',
             club: event.club || '',
-            image: event.image,
+            image: event.image || '',
             pptTemplateUrl: event.pptTemplateUrl || '',
-            rounds: Array.isArray(event.rounds) && event.rounds.length > 0 ? event.rounds : [{ name: '', description: '' }],
-            rules: Array.isArray(event.rules) && event.rules.length > 0 ? event.rules : [''],
+            rounds: Array.isArray(event.rounds) && event.rounds.length > 0
+                ? event.rounds
+                : (event.rounds && typeof event.rounds === 'string')
+                    ? [{ name: 'Round Details', description: event.rounds }]
+                    : [{ name: '', description: '' }],
+            rules: Array.isArray(event.rules) && event.rules.length > 0
+                ? event.rules
+                : (event.rules && typeof event.rules === 'string')
+                    ? event.rules.split('\n').filter(r => r.trim() !== '')
+                    : [''],
             fromTime: fromTime,
             toTime: toTime,
             winnerPrize: event.winnerPrize || '',
             runnerPrize: event.runnerPrize || '',
+            generalPrize: Array.isArray(event.generalPrize) && event.generalPrize.length > 0
+                ? event.generalPrize
+                : (event.prize && typeof event.prize === 'string' && !event.winnerPrize)
+                    ? [event.prize]
+                    : [''],
             artistName: event.artistName || '',
-            theme: event.theme || '',
+            theme: Array.isArray(event.theme) && event.theme.length > 0
+                ? event.theme
+                : (event.theme && typeof event.theme === 'string')
+                    ? [event.theme]
+                    : [''],
             facultyCoordinators: event.facultyCoordinators && event.facultyCoordinators.length > 0
                 ? event.facultyCoordinators
                 : [{ name: '', phone: '' }],
             studentCoordinators: event.studentCoordinators && event.studentCoordinators.length > 0
                 ? event.studentCoordinators
-                : event.coordinators && event.coordinators.length > 0 // Fallback for legacy data
+                : event.coordinators && event.coordinators.length > 0
                     ? event.coordinators
                     : [{ name: '', phone: '' }]
         });
@@ -231,7 +312,10 @@ const ManageEvents = () => {
             date: '',
             venue: '',
             category: category || 'Technical',
-            eventType: category === 'Technical' ? 'Normal' : (category === 'Cultural' ? 'Cultural' : 'Sports'),
+            eventType: category === 'Technical' ? 'Normal' :
+                category === 'Workshop' ? 'Workshop' :
+                    category === 'Cultural' ? 'Cultural' :
+                        category === 'Sports' ? 'Sports' : 'Normal',
             department: subcategory && subcategory !== 'All' ? subcategory : '',
             club: '',
             image: '',
@@ -242,10 +326,9 @@ const ManageEvents = () => {
             toTime: '',
             winnerPrize: '',
             runnerPrize: '',
-            winnerPrize: '',
-            runnerPrize: '',
+            generalPrize: [''],
             artistName: '',
-            theme: '',
+            theme: [''],
             facultyCoordinators: [{ name: '', phone: '' }],
             studentCoordinators: [{ name: '', phone: '' }]
         });
@@ -353,14 +436,21 @@ const ManageEvents = () => {
                                     <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
                                         <option value="Technical">Technical</option>
                                         <option value="Workshop">Workshop</option>
-                                        <option value="Hackathon">Hackathon</option>
-                                        <option value="Ideathon">Ideathon</option>
-                                        <option value="Paper Presentation">Paper Presentation</option>
-                                        <option value="Project Presentation">Project Presentation</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
                                         <option value="Live-In Concert">Live-In Concert</option>
                                     </select>
+
+                                    {/* Event Type for Technical Category */}
+                                    {formData.category === 'Technical' && (
+                                        <select name="eventType" value={formData.eventType} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
+                                            <option value="Normal">General Technical</option>
+                                            <option value="Hackathon">Hackathon</option>
+                                            <option value="Ideathon">Ideathon</option>
+                                            <option value="Paper Presentation">Paper Presentation</option>
+                                            <option value="Project Presentation">Project Presentation</option>
+                                        </select>
+                                    )}
 
 
 
@@ -412,23 +502,37 @@ const ManageEvents = () => {
                                     )}
 
                                     {/* Theme Field - Show for specific Technical Event Types */}
-                                    {['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(formData.eventType) && (
-                                        <input
-                                            name="theme"
-                                            value={formData.theme}
-                                            onChange={handleChange}
-                                            placeholder="Event Theme (e.g. AI for Good)"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
-                                            required
-                                        />
-                                    )}
+                                    {(['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation', 'Workshop'].includes(formData.eventType) ||
+                                        ['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation', 'Workshop'].includes(formData.category)) && (
+                                            <div className="space-y-3">
+                                                <h3 className="text-lg font-semibold text-blue-400">Themes / Topics</h3>
+                                                {formData.theme.map((topic, index) => (
+                                                    <div key={index} className="flex gap-2">
+                                                        <input
+                                                            value={topic}
+                                                            onChange={(e) => handleThemeChange(index, e.target.value)}
+                                                            placeholder={`Topic ${index + 1} (e.g. AI, Cyber Security)`}
+                                                            className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
+                                                        />
+                                                        {formData.theme.length > 1 && (
+                                                            <button type="button" onClick={() => removeTheme(index)} className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20">
+                                                                <Trash2 size={20} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                <button type="button" onClick={addTheme} className="w-full px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 font-medium text-sm transition-colors border border-blue-500/20">
+                                                    + Add Another Topic
+                                                </button>
+                                            </div>
+                                        )}
 
                                     {/* Artist Name - Show for Live-In Concert */}
                                     {formData.category === 'Live-In Concert' && (
                                         <input name="artistName" value={formData.artistName} onChange={handleChange} placeholder="Artist / Band Name" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     )}
 
-                                    <input type="datetime-local" name="date" value={formData.date} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors text-white" required />
+                                    <input type="date" name="date" value={formData.date} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors text-white" required />
                                     <input name="venue" value={formData.venue} onChange={handleChange} placeholder="Venue" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     <div className="grid grid-cols-2 gap-4">
                                         <input name="fromTime" value={formData.fromTime} onChange={handleChange} placeholder="From Time (e.g. 10:00 AM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
@@ -437,6 +541,29 @@ const ManageEvents = () => {
                                     <div className="grid grid-cols-2 gap-4">
                                         <input name="winnerPrize" value={formData.winnerPrize} onChange={handleChange} placeholder="Winner Prize (₹)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
                                         <input name="runnerPrize" value={formData.runnerPrize} onChange={handleChange} placeholder="Runner Prize (₹)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                    </div>
+
+                                    {/* General Prize - Dynamic Array */}
+                                    <div className="space-y-3">
+                                        <h3 className="text-lg font-semibold text-yellow-400">Other Prizes / Perks</h3>
+                                        {formData.generalPrize.map((prize, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <input
+                                                    value={prize}
+                                                    onChange={(e) => handleGeneralPrizeChange(index, e.target.value)}
+                                                    placeholder={`Prize ${index + 1} (e.g. Merit Certificate, Goodies)`}
+                                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
+                                                />
+                                                {formData.generalPrize.length > 1 && (
+                                                    <button type="button" onClick={() => removeGeneralPrize(index)} className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20">
+                                                        <Trash2 size={20} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button type="button" onClick={addGeneralPrize} className="w-full px-4 py-2 bg-yellow-500/10 text-yellow-400 rounded-lg hover:bg-yellow-500/20 font-medium text-sm transition-colors border border-yellow-500/20">
+                                            + Add Another Prize
+                                        </button>
                                     </div>
                                 </div>
 

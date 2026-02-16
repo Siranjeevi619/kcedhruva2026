@@ -36,11 +36,10 @@ const RegisterEvent = () => {
 
     // Validation Helpers
     const isNotEmpty = (str) => {
-        if (!str || typeof str !== 'string') return false;
-        const s = str.trim().toLowerCase();
-        return s !== '' &&
-            !['tba', 'undefined', 'null'].includes(s) &&
-            !s.startsWith('no specific');
+        if (str === null || str === undefined) return false;
+        if (typeof str !== 'string') return true;
+        const s = str.trim();
+        return s !== '' && s.toLowerCase() !== 'undefined' && s.toLowerCase() !== 'null';
     };
 
     const hasRounds = event.rounds && Array.isArray(event.rounds) && event.rounds.some(r => isNotEmpty(r.name) || isNotEmpty(r.description));
@@ -51,6 +50,7 @@ const RegisterEvent = () => {
     );
 
     const isValidPrize = (p) => isNotEmpty(p);
+    const hasGeneralPrize = event.generalPrize && Array.isArray(event.generalPrize) && event.generalPrize.some(p => isNotEmpty(p));
 
     return (
         <div className="min-h-screen bg-violet-950 text-white font-inter flex flex-col relative overflow-x-hidden">
@@ -81,6 +81,22 @@ const RegisterEvent = () => {
                             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-2 tracking-tight leading-tight drop-shadow-lg">
                                 {event.title}
                             </h1>
+                            {/* {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
+                                <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest rounded-md border border-blue-500/30">
+                                        Themes / Topics
+                                    </span>
+                                    {Array.isArray(event.theme) ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {event.theme.filter(t => isNotEmpty(t)).map((topic, i) => (
+                                                <span key={i} className="text-white font-medium bg-white/10 px-3 py-1 rounded-lg border border-white/5">{topic}</span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className="text-white font-medium">{event.theme}</span>
+                                    )}
+                                </div>
+                            )} */}
                         </div>
                     </motion.div>
 
@@ -90,7 +106,7 @@ const RegisterEvent = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-center h-full relative overflow-hidden group hover:border-white/20 transition-colors"
+                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-center h-[50%] relative overflow-hidden group hover:border-white/20 transition-colors"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
@@ -202,24 +218,24 @@ const RegisterEvent = () => {
                         >
                             {/* Venue */}
                             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-green-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <MapPin size={16} /> Venue
+                                <span className="text-green-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <MapPin size={24} /> Venue
                                 </span>
                                 <span className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">{event.venue}</span>
                             </div>
 
                             {/* Date */}
                             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <Calendar size={16} /> Date
+                                <span className="text-blue-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <Calendar size={24} /> Date
                                 </span>
                                 <span className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{new Date(event.date).toLocaleDateString()}</span>
                             </div>
 
                             {/* Time */}
                             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-purple-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <Clock size={16} /> Time
+                                <span className="text-purple-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <Clock size={24} /> Time
                                 </span>
                                 <span className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
                                     {(event.fromTime && event.toTime) ? `${event.fromTime} - ${event.toTime}` : (event.timings || 'TBA')}
@@ -228,33 +244,11 @@ const RegisterEvent = () => {
 
                             {/* Dept */}
                             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <BookOpen size={16} /> Dept
+                                <span className="text-yellow-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <BookOpen size={24} /> Department
                                 </span>
                                 <span className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">{event.department || 'General'}</span>
                             </div>
-
-                            {/* Winner Prize */}
-                            {isValidPrize(event.winnerPrize) && (
-                                <div className="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl -mr-10 -mt-10" />
-                                    <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
-                                        <IndianRupee size={16} /> Winner Prize
-                                    </span>
-                                    <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.winnerPrize}</span>
-                                </div>
-                            )}
-
-                            {/* Runner Prize */}
-                            {isValidPrize(event.runnerPrize) && (
-                                <div className="bg-gradient-to-br from-gray-500/10 to-transparent border border-gray-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-20 h-20 bg-gray-500/10 rounded-full blur-xl -mr-10 -mt-10" />
-                                    <span className="text-gray-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
-                                        <IndianRupee size={16} /> Runner Prize
-                                    </span>
-                                    <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.runnerPrize}</span>
-                                </div>
-                            )}
 
                             {event.pptTemplateUrl && (
                                 <div className="col-span-1 sm:col-span-2">
@@ -265,6 +259,85 @@ const RegisterEvent = () => {
                             )}
                         </motion.div>
                     </div>
+
+                    {/* Prize Section (Prominent) */}
+                    {(isValidPrize(event.prize) || isValidPrize(event.winnerPrize) || isValidPrize(event.runnerPrize) || hasGeneralPrize) && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            className="bg-gradient-to-br from-yellow-500/10 via-white/5 to-purple-500/10 border border-yellow-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl -mr-32 -mt-32" />
+                            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                                <div className="p-2 bg-yellow-500/20 rounded-lg text-yellow-400 shadow-inner">
+                                    <IndianRupee size={24} />
+                                </div>
+                                Prizes & Rewards
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {isValidPrize(event.winnerPrize) && (
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                                        <p className="text-yellow-400 text-sm font-bold uppercase tracking-widest mb-2">Winner</p>
+                                        <p className="text-3xl font-black text-white">{event.winnerPrize}</p>
+                                    </div>
+                                )}
+                                {isValidPrize(event.runnerPrize) && (
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                                        <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">Runner</p>
+                                        <p className="text-3xl font-black text-white">{event.runnerPrize}</p>
+                                    </div>
+                                )}
+                                {isValidPrize(event.prize) && (
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center lg:col-span-1">
+                                        <p className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-2">Prize Pool / Info</p>
+                                        <p className="text-xl font-bold text-white">{event.prize}</p>
+                                    </div>
+                                )}
+                                {hasGeneralPrize && (
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 md:col-span-2 lg:col-span-3">
+                                        <p className="text-purple-400 text-sm font-bold uppercase tracking-widest mb-4">Other General Prizes</p>
+                                        <div className="flex flex-wrap gap-3">
+                                            {event.generalPrize.filter(p => isNotEmpty(p)).map((p, i) => (
+                                                <span key={i} className="px-4 py-2 bg-white/5 text-white rounded-xl border border-white/10 font-bold text-lg shadow-sm">
+                                                    {p}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Theme / Topics */}
+                    {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-white/5 backdrop-blur-sm border border-blue-500/20 rounded-3xl p-8"
+                        >
+                            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
+                                    <BookOpen size={24} />
+                                </div>
+                                Themes / Topics
+                            </h3>
+                            <div className="flex flex-wrap gap-3">
+                                {Array.isArray(event.theme) ? (
+                                    event.theme.filter(t => isNotEmpty(t)).map((topic, i) => (
+                                        <span key={i} className="px-5 py-2.5 bg-blue-500/10 text-white rounded-2xl border border-blue-500/20 text-lg font-bold shadow-lg shadow-blue-500/5">
+                                            {topic}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span className="text-xl font-bold text-white">{event.theme}</span>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
 
                     {/* Row 3: Faculty Coordinators */}
                     {(event.facultyCoordinators?.length > 0) && (

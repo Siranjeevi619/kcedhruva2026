@@ -108,7 +108,8 @@ const EventDetail = () => {
 
     // Prize Validation
     const isValidPrize = (p) => isNotEmpty(p);
-    const showPrizes = isValidPrize(event.winnerPrize) || isValidPrize(event.runnerPrize) || isValidPrize(event.prize);
+    const hasGeneralPrize = event.generalPrize && Array.isArray(event.generalPrize) && event.generalPrize.some(p => isNotEmpty(p));
+    const showPrizes = isValidPrize(event.winnerPrize) || isValidPrize(event.runnerPrize) || isValidPrize(event.prize) || hasGeneralPrize;
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
@@ -134,11 +135,19 @@ const EventDetail = () => {
                             className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = 'https://via.placeholder.com/800x600?text=Event+Poster'; }}
                         />
-                        {event.theme && (
+                        {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
                             <div className="absolute top-4 left-4 z-10">
-                                <div className="bg-black/60 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-xl">
-                                    <p className="text-blue-300 text-xs font-bold uppercase tracking-widest mb-0.5">Theme</p>
-                                    <p className="text-white font-bold">{event.theme}</p>
+                                <div className="bg-black/60 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-xl flex flex-col gap-2">
+                                    <p className="text-blue-300 text-xs font-bold uppercase tracking-widest mb-0.5">Themes / Topics</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {Array.isArray(event.theme) ? (
+                                            event.theme.filter(t => isNotEmpty(t)).map((topic, i) => (
+                                                <span key={i} className="text-white text-sm font-bold bg-blue-500/20 px-2 py-0.5 rounded-lg border border-blue-500/20">{topic}</span>
+                                            ))
+                                        ) : (
+                                            <p className="text-white font-bold">{event.theme}</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -234,6 +243,13 @@ const EventDetail = () => {
                                                 )}
                                                 {!isValidPrize(event.winnerPrize) && !isValidPrize(event.runnerPrize) && isValidPrize(event.prize) && (
                                                     <p className="font-bold text-lg text-yellow-400">{event.prize}</p>
+                                                )}
+                                                {hasGeneralPrize && (
+                                                    <div className="pt-2 flex flex-wrap gap-2 mt-2 border-t border-white/5">
+                                                        {event.generalPrize.filter(p => isNotEmpty(p)).map((p, idx) => (
+                                                            <span key={idx} className="bg-yellow-500/10 text-yellow-200 text-[10px] px-2 py-0.5 rounded border border-yellow-500/20">{p}</span>
+                                                        ))}
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>

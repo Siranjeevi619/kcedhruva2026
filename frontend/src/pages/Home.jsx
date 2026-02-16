@@ -296,18 +296,17 @@ const Home = () => {
                                         const deptEvents = upcomingEvents.filter(e => e.department === dept.code);
                                         const stats = {
                                             workshops: deptEvents.filter(e =>
+                                                e.category === 'Workshop' ||
                                                 e.eventType === 'Workshop' ||
-                                                e.eventType === 'Hands-on' ||
-                                                e.category === 'Workshop'
+                                                e.eventType === 'Hands-on'
                                             ).length,
                                             technical: deptEvents.filter(e =>
-                                                e.category === 'Technical' &&
+                                                ['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) &&
                                                 e.eventType !== 'Workshop' &&
                                                 e.eventType !== 'Hands-on'
                                             ).length,
                                             nonTechnical: deptEvents.filter(e =>
-                                                e.category === 'Cultural' ||
-                                                e.category === 'Sports'
+                                                ['Non-Technical'].includes(e.category)
                                             ).length
                                         };
 

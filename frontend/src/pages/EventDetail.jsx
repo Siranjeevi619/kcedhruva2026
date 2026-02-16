@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import { API_URL, BASE_URL } from '../utils/config';
+import Doodles from '../components/Doodles';
 
 const EventDetail = () => {
     const { id } = useParams();
@@ -87,7 +88,8 @@ const EventDetail = () => {
     const isWorkshop = event.category === 'Workshop' || event.eventType === 'Workshop';
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
+            <Doodles />
             <Navbar />
 
             <main className="pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto">
@@ -114,11 +116,15 @@ const EventDetail = () => {
                             <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 uppercase tracking-[0.2em]
                                 ${event.category === 'Technical' ? 'bg-blue-600 text-white' :
                                     event.category === 'Cultural' ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
-                                {event.category}
+                                {event.category} {event.eventType && event.eventType !== 'Normal' && `• ${event.eventType}`}
                             </span>
                             <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-4">
-                                {event.title}
                             </h1>
+                            {event.artistName && (
+                                <p className="text-xl text-yellow-400 font-bold mb-2 flex items-center gap-2">
+                                    <User size={20} /> Featuring: {event.artistName}
+                                </p>
+                            )}
                             <p className="text-gray-300 text-lg flex items-center gap-3">
                                 <Building2 size={20} className="text-blue-400" />
                                 {event.department || event.club || 'General Event'}
@@ -210,7 +216,7 @@ const EventDetail = () => {
                                         About the {isWorkshop ? 'Workshop' : 'Event'}
                                     </h3>
                                     <div className="text-gray-300 leading-relaxed bg-white/5 p-6 rounded-2xl border border-white/5 text-[1.05rem]">
-                                        {event.description || 'Join us for an unforgettable experience! Details for this event are coming soon.'}
+                                        {event.eventDescription || event.description || 'Join us for an unforgettable experience! Details for this event are coming soon.'}
                                     </div>
                                 </section>
 

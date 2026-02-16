@@ -22,7 +22,7 @@ const ManageEvents = () => {
     // Form State
     const [formData, setFormData] = useState({
         title: '',
-        description: '',
+        eventDescription: '',
         date: '',
         venue: '',
         eventType: 'Normal', // Added eventType for specific classification
@@ -63,13 +63,24 @@ const ManageEvents = () => {
     // Filter events based on URL params and search
     const filteredEvents = events.filter(e => {
         // Category Filter
-        if (category && e.category !== category) return false;
+        // critical: allow 'Workshop' category events to appear under 'Technical' view
+        if (category === 'Technical') {
+            if (e.category !== 'Technical' && e.category !== 'Workshop') return false;
+        } else if (category && e.category !== category) {
+            return false;
+        }
 
         // Subcategory Filter (Department or Club depending on context)
         // For Technical, subcategory is usually department
         // For Cultural, it could be 'OnStage' / 'OffStage' which might be stored in department or category?
         // Let's assume subcategory maps to 'department' field for now as per Sidebar links
-        if (subcategory && subcategory !== 'All' && e.department !== subcategory && e.eventType !== subcategory) return false;
+        if (subcategory && subcategory !== 'All') {
+            const decodedSub = decodeURIComponent(subcategory);
+            if (e.department !== subcategory &&
+                e.department !== decodedSub &&
+                e.eventType !== subcategory &&
+                e.eventType !== decodedSub) return false;
+        }
 
         // Search Filter
         return e.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -137,9 +148,12 @@ const ManageEvents = () => {
         try {
             // Construct a fallback timings string if needed, or backend can handle it.
             // But let's keep data consistent if we want to support both.
+            // Ensure Description is passed correctly
             const payload = {
                 ...formData,
-                timings: `${formData.fromTime} - ${formData.toTime}`
+                description: formData.eventDescription || formData.description,
+                timings: `${formData.fromTime} - ${formData.toTime}`,
+                rounds: formData.rounds.filter(r => r.name && r.name.trim() !== '')
             };
 
             if (currentEvent) {
@@ -184,7 +198,7 @@ const ManageEvents = () => {
 
         setFormData({
             title: event.title,
-            description: event.description,
+            eventDescription: event.eventDescription || event.description,
             date: event.date.split('T')[0],
             venue: event.venue,
             category: event.category,
@@ -216,7 +230,7 @@ const ManageEvents = () => {
         setCurrentEvent(null);
         setFormData({
             title: '',
-            description: '',
+            eventDescription: '',
             date: '',
             venue: '',
             category: category || 'Technical',
@@ -300,7 +314,7 @@ const ManageEvents = () => {
                                     </div>
                                     <div className="p-6">
                                         <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{event.title}</h3>
-                                        <p className="text-gray-400 text-sm mb-4 line-clamp-2">{event.description}</p>
+                                        <p className="text-gray-400 text-sm mb-4 line-clamp-2">{event.eventDescription || event.description}</p>
                                         <div className="flex gap-3 mt-auto lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex-wrap">
                                             <button onClick={() => setSelectedDetailsEvent(event)} className="w-full flex items-center justify-center gap-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 py-2 rounded-lg transition-colors border border-blue-500/20 text-sm font-medium mb-1">
                                                 <ExternalLink size={16} /> View Participants
@@ -340,13 +354,25 @@ const ManageEvents = () => {
                                         <option value="Technical">Technical</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
-                                        <option value="Workshop">Workshop</option>
-                                        <option value="Hackathon">Hackathon</option>
-                                        <option value="Ideathon">Ideathon</option>
-                                        <option value="Paper Presentation">Paper Presentation</option>
-                                        <option value="Project Presentation">Project Presentation</option>
                                         <option value="Live-In Concert">Live-In Concert</option>
                                     </select>
+
+                                    {/* Event Type Selector for Technical */}
+                                    {formData.category === 'Technical' && (
+                                        <select
+                                            name="eventType"
+                                            value={formData.eventType}
+                                            onChange={handleChange}
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                                        >
+                                            <option value="Normal">Normal Event</option>
+                                            <option value="Workshop">Workshop</option>
+                                            <option value="Hackathon">Hackathon</option>
+                                            <option value="Ideathon">Ideathon</option>
+                                            <option value="Paper Presentation">Paper Presentation</option>
+                                            <option value="Project Presentation">Project Presentation</option>
+                                        </select>
+                                    )}
 
 
 
@@ -445,6 +471,7 @@ const ManageEvents = () => {
                                         />
                                     </div>
                                     {/* Rounds */}
+                                    <textarea name="eventDescription" value={formData.eventDescription} onChange={handleChange} placeholder="Description" rows="3" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     <div>
                                         <h3 className="text-lg font-semibold mb-3 text-purple-400">Rounds</h3>
                                         {formData.rounds.map((round, index) => (
@@ -486,7 +513,7 @@ const ManageEvents = () => {
                                         <button type="button" onClick={addRule} className="w-full px-4 py-2 bg-orange-500/10 text-orange-400 rounded-lg hover:bg-orange-500/20 font-medium text-sm transition-colors border border-orange-500/20">+ Add Rule</button>
                                     </div>
 
-                                    <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Description" rows="3" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
+
                                 </div>
                             </div>
 

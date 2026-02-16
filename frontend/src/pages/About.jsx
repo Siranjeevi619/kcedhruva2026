@@ -5,6 +5,7 @@ import { useGlobalConfig } from '../context/GlobalConfigContext';
 import { getImageUrl } from '../utils/imageUtils';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import Doodles from '../components/Doodles';
 
 const About = ({ embed = false }) => {
     const { config, loading } = useGlobalConfig();
@@ -17,15 +18,28 @@ const About = ({ embed = false }) => {
     const logoWidth = config.about_logo_width || '150px';
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-outfit font-serif overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-blue-950 to-blue-650 text-white font-outfit font-serif overflow-hidden relative">
+            <Doodles />
             {!embed && <Navbar />}
             {/* KCE Section (Top) */}
-            <section className="pt-24 pb-12 relative z-10 bg-[#0a0a0a] font-serif">
+            <section className="pt-24 pb-12 relative z-10 font-serif">
+
                 <div className="container mx-auto px-6 md:px-20 lg:px-40 flex flex-col md:flex-row items-center gap-8">
                     {/* KCE Visual (Left) */}
                     <div className="flex-1 flex justify-center md:justify-start">
-                        <div className="relative w-full max-w-md h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-transparent transition-colors z-10" />
+                        <motion.div
+                            animate={{
+                                y: [-10, 10, -10],
+                                rotate: [0, 2, -2, 2, 0],
+                            }}
+                            transition={{
+                                duration: 6,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="relative w-full max-w-md h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group"
+                        >
+                            <div className="absolute inset-0 group-hover:bg-transparent transition-colors z-10" />
                             {config.about_kce_image ? (
                                 <img src={getImageUrl(config.about_kce_image)} alt="KCE Logo" className="w-full h-full object-contain p-4 bg-white/5 transform group-hover:scale-105 transition-transform duration-700" />
                             ) : (
@@ -33,7 +47,7 @@ const About = ({ embed = false }) => {
                                     <span className="text-xl">KCE Logo</span>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* KCE Content (Right) */}
@@ -63,15 +77,15 @@ const About = ({ embed = false }) => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Dhruva Section (Bottom) */}
-            <section className="py-20 relative z-10 flex items-center justify-center">
+            < section className="py-20 relative z-10 flex items-center justify-center" >
                 {/* Background Elements */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                < div className="absolute inset-0 overflow-hidden pointer-events-none" >
                     <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-purple-600/20 rounded-full blur-[120px] animate-pulse-slow" />
                     <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-1000" />
-                </div>
+                </div >
 
                 <div className="container mx-auto px-6 md:px-20 lg:px-40 relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-4">
                     {/* Text Side (Left) */}
@@ -118,11 +132,20 @@ const About = ({ embed = false }) => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            animate={{
+                                y: [-10, 10, -10],
+                                rotate: [0, 2, -2, 2, 0],
+                            }}
+                            transition={{
+                                opacity: { duration: 0.8 },
+                                scale: { duration: 0.8 },
+                                y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+                                rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                            }}
                             className="relative w-full max-w-md"
                         >
                             <div className="relative w-full aspect-video bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center p-8 shadow-2xl overflow-hidden group">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                <div className="absolute inset-0  opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 <img
                                     src={getImageUrl(logoUrl)}
                                     alt="Dhruva Logo"
@@ -162,10 +185,10 @@ const About = ({ embed = false }) => {
                         </motion.div>
                     ))}
                 </div>
-            </section>
+            </section >
 
             {!embed && <Footer />}
-        </div>
+        </div >
     );
 };
 

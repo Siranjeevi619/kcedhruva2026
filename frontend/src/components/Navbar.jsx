@@ -21,7 +21,7 @@ const Navbar = () => {
                 { name: 'Off Stage', path: '/?cat=Cultural&type=OffStage' }
             ]
         },
-        { name: 'Sports Meet', path: '/?cat=Sports' },
+
         {
             name: 'Technical Fest',
             path: '/?cat=Technical',
@@ -32,31 +32,27 @@ const Navbar = () => {
                         { name: 'Civil Engineering', path: '/?dept=CIVIL' },
                         { name: 'Computer Science & Design', path: '/?dept=CSD' },
                         { name: 'Computer Science & Engineering', path: '/?dept=CSE' },
-                        { name: 'Computer Science & Engineering (Cyber Security)', path: '/?dept=CSE(CS)' },
-
-
                     ]
                 },
                 {
                     links: [
-                        { name: 'Computer Science & Technology', path: '/?dept=CST' },
+                        { name: 'Computer Science & Engineering (Cyber Security)', path: '/?dept=CSE(CS)' },
                         { name: 'Electronics & Communication Engineering', path: '/?dept=ECE' },
                         { name: 'Electrical & Electronics Engineering', path: '/?dept=EEE' },
-                        { name: 'Electrical & Electronics Engineering (VLSI)', path: '/?dept=EEE-VLSI' },
-                        { name: 'Electronics & Telecommunication Engineering', path: '/?dept=ETE' },
-                        { name: 'Information Technology', path: '/?dept=IT' },
+                        { name: 'Electrical & Electronics Engineering (VLSI) & Electronics & Telecommunication Engineering', path: '/?dept=ETE%26VLSI' },
                     ]
                 },
                 {
                     links: [
-
-                        { name: 'Mechanical Engineering', path: '/?dept=MECH' },
+                        { name: 'Information Technology', path: '/?dept=IT' },
+                        { name: 'Department of Mechanical Engineering', path: '/?dept=MECH' },
                         { name: 'Management Studies', path: '/?dept=MBA' },
                         { name: 'Computer Applications', path: '/?dept=MCA' },
                     ]
                 }
             ]
         },
+        { name: 'Sports Meet', path: '/?cat=Sports' },
         { name: 'Live-in Concert', path: '/live-concert' },
         { name: 'Pass', path: '/passes' }
     ];
@@ -68,7 +64,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="fixed top-0 w-full z-50 bg-black/60 montserrat-light backdrop-blur-xl border-b border-white/10 h-16 transition-all duration-300">
+        <nav className="fixed top-0 w-full z-50 bg-black/40 montserrat-light backdrop-blur-xl border-b border-white/10 h-16 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-6 h-full">
                 <div className="flex items-center justify-between h-full">
                     {/* Logo Area */}
@@ -97,7 +93,7 @@ const Navbar = () => {
 
                                     {/* Mega Menu Dropdown (3-column) */}
                                     {link.columns && (
-                                        <div className="absolute top-16 left-1/2 -translate-x-1/2 min-w-[600px] md:min-w-[800px] rounded-2xl shadow-2xl bg-black/85 backdrop-blur-3xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform -translate-y-2 group-hover:translate-y-0 overflow-hidden">
+                                        <div className="absolute top-16 left-1/2 -translate-x-1/2 min-w-[800px] md:min-w-[1000px] rounded-2xl shadow-2xl bg-black/80 backdrop-blur-3xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform -translate-y-2 group-hover:translate-y-0 overflow-hidden">
                                             <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-10">
                                                 {link.columns.map((column, idx) => (
                                                     <div key={idx} className="space-y-5">
@@ -150,7 +146,7 @@ const Navbar = () => {
                             onClick={() => setIsOpen(!isOpen)}
                             className="p-2 text-white/70 hover:text-white"
                         >
-                            {isOpen ? <div className="flex items-center gap-30"><h2 className="text-2xl text-white montserrat-bold">Menu</h2> <X size={22} /></div> : <Menu size={22} />}
+                            {isOpen ? <div className="flex items-center gap-4"><h2 className="text-2xl text-white montserrat-bold">Menu</h2> <X size={22} /></div> : <Menu size={22} />}
                         </button>
                     </div>
                 </div>

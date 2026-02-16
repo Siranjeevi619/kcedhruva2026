@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import { getImageUrl } from '../utils/imageUtils';
 import { Calendar, MapPin, Clock } from 'lucide-react';
 import { API_URL } from '../utils/config';
+import Doodles from '../components/Doodles';
 
 const LiveConcert = () => {
     const [events, setEvents] = useState([]);
@@ -27,7 +28,8 @@ const LiveConcert = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-black text-white font-inter">
+        <div className="min-h-screen bg-black text-white font-inter relative overflow-hidden">
+            <Doodles />
             <Navbar />
 
             {/* Hero Section */}

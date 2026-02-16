@@ -40,7 +40,7 @@ export const DEPARTMENTS = [
         image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     },
     {
-        code: 'ETE & VLSI',
+        code: 'ETE%26VLSI',
         name: 'Department of Electronics and Telecommunication Engineering & VLSI',
         image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     },
@@ -54,6 +54,12 @@ export const DEPARTMENTS = [
         name: 'Department of Information Technology',
         image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
     },
+
+    {
+        code: 'MECH',
+        name: 'Department of Mechanical Engineering',
+        image: 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=800&q=80'
+    },
     {
         code: 'MBA',
         name: 'Department of Master of Business Administration',
@@ -63,11 +69,6 @@ export const DEPARTMENTS = [
         code: 'MCA',
         name: 'Department of Master of Computer Applications',
         image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
-    },
-    {
-        code: 'MECH',
-        name: 'Department of Mechanical Engineering',
-        image: 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=800&q=80'
     },
 ];
 

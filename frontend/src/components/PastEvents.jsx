@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../utils/config';
 import { motion } from 'framer-motion';
 import { useGlobalConfig } from '../context/GlobalConfigContext';
+import { CheckCircle } from 'lucide-react';
 
 const PastEvents = () => {
     const { config } = useGlobalConfig();
@@ -16,9 +17,7 @@ const PastEvents = () => {
     useEffect(() => {
         const fetchPastEvents = async () => {
             try {
-                const { data } = await axios.get(
-                    `${API_URL}/content/pastEvents`
-                );
+                const { data } = await axios.get(`${API_URL}/content/pastEvents`);
                 setEvents(data);
             } catch (error) {
                 console.error("Failed to fetch past events", error);
@@ -28,13 +27,13 @@ const PastEvents = () => {
         fetchPastEvents();
     }, []);
 
-    // Rotate every 1 second
+    // Rotate every 4 seconds
     useEffect(() => {
         if (!events.length) return;
 
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % events.length);
-        }, 1000); // 1 second
+        }, 4000);
 
         return () => clearInterval(interval);
     }, [events]);
@@ -49,17 +48,17 @@ const PastEvents = () => {
     ];
 
     return (
-        <section className="py-24 bg-[#0a0a0a] bg-gradient-to-br from-purple-400 via-black to-blue-600 text-white overflow-hidden relative border-t border-white/5">
+        <section className="relative overflow-hidden bg-[#0a0a0a] bg-gradient-to-br from-purple-400 via-black to-blue-600 text-white py-16 sm:py-20 md:py-24 border-t border-white/5">
 
             {/* Background glow */}
-            <div className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="hidden sm:block absolute top-1/4 left-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="hidden sm:block absolute bottom-1/4 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
 
                 {/* Heading */}
-                <div className="mb-16 text-center ">
-                    <h2 className="text-4xl md:text-7xl font-bold tracking-tight uppercase">
+                <div className="text-center mb-12 sm:mb-16">
+                    <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight uppercase leading-tight">
                         <span className="bg-gradient-to-r from-green-400 via-blue-400 to-red-500 bg-clip-text text-transparent">
                             KCE Dhruva
                         </span>{' '}
@@ -68,16 +67,16 @@ const PastEvents = () => {
                         </span>
                     </h2>
 
-                    <p className="text-lg md:text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed font-light mt-6">
+                    <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mt-4 sm:mt-6">
                         {config?.past_event_desc || "Join us as we bring together vivid minds"}
                     </p>
                 </div>
 
                 {/* Main Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/10 backdrop-blur-xl">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center bg-white/5 p-6 sm:p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] border border-white/10 backdrop-blur-xl">
 
                     {/* LEFT - Card Stack */}
-                    <div className="relative h-[500px] w-full flex items-center justify-center">
+                    <div className="relative w-full flex items-center justify-center h-[360px] sm:h-[420px] md:h-[500px]">
                         {events.map((event, index) => {
                             const isActive = index === currentIndex;
 
@@ -91,8 +90,14 @@ const PastEvents = () => {
                                         y: isActive ? 0 : -10,
                                         zIndex: isActive ? 10 : 0
                                     }}
-                                    transition={{ duration: 0.35 }}
-                                    className="absolute w-[280px] md:w-[500px] h-[600px] rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+                                    transition={{ duration: 0.4 }}
+                                    className="absolute 
+                                        w-[240px] sm:w-[300px] md:w-[480px] 
+                                        h-[320px] sm:h-[380px] md:h-[600px] 
+                                        rounded-2xl sm:rounded-3xl 
+                                        overflow-hidden 
+                                        shadow-2xl 
+                                        border border-white/10"
                                 >
                                     <img
                                         src={getImageUrl(event.image)}
@@ -105,42 +110,56 @@ const PastEvents = () => {
                     </div>
 
                     {/* RIGHT - Content */}
-                    <div className="space-y-8">
-                        <h3 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                    <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
+                        <h3 className="text-2xl sm:text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 leading-snug">
                             {config?.past_event_subheading || "Unleash Your Potential at Dhruva"}
                         </h3>
 
-                        <p className="text-gray-300 text-lg leading-relaxed">
+                        <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
                             Join us for an immersive experience designed to ignite your passion, expand your knowledge, and connect you with industry leaders.
                         </p>
-                        <div className="grid grid-cols-1 gap-6">
+
+                        <div className="grid grid-cols-1 gap-4 sm:gap-6">
                             {highlights.map((item, idx) => (
                                 <motion.div
                                     key={idx}
                                     initial={{ opacity: 0, x: 20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
                                     transition={{ delay: 0.1 * idx }}
-                                    className="flex items-center gap-5 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all group"
+                                    className="flex items-center gap-4 sm:gap-5 p-3 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all group"
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                                        ✓
+                                    <div className="flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                                        <CheckCircle
+                                            size={28}
+                                            className="sm:w-8 sm:h-8"
+                                            strokeWidth={2.2}
+                                        />
                                     </div>
-                                    <span className="text-gray-200 font-medium">{item}</span>
+                                    <span className="text-gray-200 text-sm sm:text-base font-medium">
+                                        {item}
+                                    </span>
                                 </motion.div>
                             ))}
                         </div>
                     </div>
 
                 </div>
-            </div>
-            <br />
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 animate-fadeInUp">
-                <button
-                    onClick={() => navigate('/passes')}
-                    className="px-10 py-4 bg-white/10 hover:bg-blue-900 font-serif text-white rounded-full font-bold text-lg transition-all hover:-translate-y-1"
-                >
-                    Register Now
-                </button>
+
+                {/* CTA */}
+                <div className="flex justify-center mt-10 sm:mt-14">
+                    <button
+                        onClick={() => navigate('/passes')}
+                        className="px-8 sm:px-10 py-3 sm:py-4 
+                            bg-white/10 hover:bg-blue-900 
+                            text-white rounded-full 
+                            font-bold text-base sm:text-lg 
+                            transition-all hover:-translate-y-1"
+                    >
+                        Register Now
+                    </button>
+                </div>
+
             </div>
         </section>
     );

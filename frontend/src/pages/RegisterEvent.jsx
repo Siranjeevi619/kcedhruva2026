@@ -81,6 +81,22 @@ const RegisterEvent = () => {
                             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-2 tracking-tight leading-tight drop-shadow-lg">
                                 {event.title}
                             </h1>
+                            {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
+                                <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest rounded-md border border-blue-500/30">
+                                        Themes / Topics
+                                    </span>
+                                    {Array.isArray(event.theme) ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {event.theme.filter(t => isNotEmpty(t)).map((topic, i) => (
+                                                <span key={i} className="text-white font-medium bg-white/10 px-3 py-1 rounded-lg border border-white/5">{topic}</span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className="text-white font-medium">{event.theme}</span>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </motion.div>
 
@@ -253,6 +269,24 @@ const RegisterEvent = () => {
                                         <IndianRupee size={16} /> Runner Prize
                                     </span>
                                     <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.runnerPrize}</span>
+                                </div>
+                            )}
+
+                            {/* Theme / Topics (Grid View) */}
+                            {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
+                                <div className="bg-white/5 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group col-span-1 sm:col-span-2">
+                                    <span className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <BookOpen size={16} /> Themes / Topics
+                                    </span>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {Array.isArray(event.theme) ? (
+                                            event.theme.filter(t => isNotEmpty(t)).map((topic, i) => (
+                                                <span key={i} className="px-3 py-1 bg-blue-500/10 text-white rounded-lg border border-blue-500/20 text-sm font-medium">{topic}</span>
+                                            ))
+                                        ) : (
+                                            <span className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{event.theme}</span>
+                                        )}
+                                    </div>
                                 </div>
                             )}
 

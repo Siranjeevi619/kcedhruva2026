@@ -35,10 +35,9 @@ const ManageEvents = () => {
         rules: [''],
         fromTime: '', // Added fromTime
         toTime: '',   // Added toTime
-        winnerPrize: '', // Added winner prize
         runnerPrize: '', // Added runner prize
         artistName: '', // Added artistName
-        theme: '', // Added theme
+        theme: [''], // Changed to array for multiple topics
         facultyCoordinators: [{ name: '', phone: '' }],
         studentCoordinators: [{ name: '', phone: '' }]
     });
@@ -64,12 +63,17 @@ const ManageEvents = () => {
     // Filter events based on URL params and search
     const filteredEvents = events.filter(e => {
         // Category Filter
-        if (category && e.category !== category) return false;
+        if (category) {
+            if (category === 'Technical') {
+                // For Technical view, include explicitly 'Technical' events AND specialized types
+                const techTypes = ['Technical', 'Workshop', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'];
+                if (!techTypes.includes(e.category)) return false;
+            } else if (e.category !== category) {
+                return false;
+            }
+        }
 
         // Subcategory Filter (Department or Club depending on context)
-        // For Technical, subcategory is usually department
-        // For Cultural, it could be 'OnStage' / 'OffStage' which might be stored in department or category?
-        // Let's assume subcategory maps to 'department' field for now as per Sidebar links
         if (subcategory && subcategory !== 'All') {
             const decodedSub = decodeURIComponent(subcategory);
             if (e.department !== subcategory &&
@@ -137,6 +141,22 @@ const ManageEvents = () => {
     const removeRule = (index) => {
         const newRules = formData.rules.filter((_, i) => i !== index);
         setFormData({ ...formData, rules: newRules });
+    };
+
+    // Theme Handling (Multiple Topics)
+    const handleThemeChange = (index, value) => {
+        const newThemes = [...formData.theme];
+        newThemes[index] = value;
+        setFormData({ ...formData, theme: newThemes });
+    };
+
+    const addTheme = () => {
+        setFormData({ ...formData, theme: [...formData.theme, ''] });
+    };
+
+    const removeTheme = (index) => {
+        const newThemes = formData.theme.filter((_, i) => i !== index);
+        setFormData({ ...formData, theme: newThemes });
     };
 
     const handleSubmit = async (e) => {
@@ -210,7 +230,7 @@ const ManageEvents = () => {
             winnerPrize: event.winnerPrize || '',
             runnerPrize: event.runnerPrize || '',
             artistName: event.artistName || '',
-            theme: event.theme || '',
+            theme: Array.isArray(event.theme) && event.theme.length > 0 ? event.theme : [''],
             facultyCoordinators: event.facultyCoordinators && event.facultyCoordinators.length > 0
                 ? event.facultyCoordinators
                 : [{ name: '', phone: '' }],
@@ -242,10 +262,8 @@ const ManageEvents = () => {
             toTime: '',
             winnerPrize: '',
             runnerPrize: '',
-            winnerPrize: '',
-            runnerPrize: '',
             artistName: '',
-            theme: '',
+            theme: [''],
             facultyCoordinators: [{ name: '', phone: '' }],
             studentCoordinators: [{ name: '', phone: '' }]
         });
@@ -353,14 +371,21 @@ const ManageEvents = () => {
                                     <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
                                         <option value="Technical">Technical</option>
                                         <option value="Workshop">Workshop</option>
-                                        <option value="Hackathon">Hackathon</option>
-                                        <option value="Ideathon">Ideathon</option>
-                                        <option value="Paper Presentation">Paper Presentation</option>
-                                        <option value="Project Presentation">Project Presentation</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
                                         <option value="Live-In Concert">Live-In Concert</option>
                                     </select>
+
+                                    {/* Event Type for Technical Category */}
+                                    {formData.category === 'Technical' && (
+                                        <select name="eventType" value={formData.eventType} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
+                                            <option value="Normal">General Technical</option>
+                                            <option value="Hackathon">Hackathon</option>
+                                            <option value="Ideathon">Ideathon</option>
+                                            <option value="Paper Presentation">Paper Presentation</option>
+                                            <option value="Project Presentation">Project Presentation</option>
+                                        </select>
+                                    )}
 
 
 
@@ -412,16 +437,30 @@ const ManageEvents = () => {
                                     )}
 
                                     {/* Theme Field - Show for specific Technical Event Types */}
-                                    {['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(formData.eventType) && (
-                                        <input
-                                            name="theme"
-                                            value={formData.theme}
-                                            onChange={handleChange}
-                                            placeholder="Event Theme (e.g. AI for Good)"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
-                                            required
-                                        />
-                                    )}
+                                    {(['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation', 'Workshop'].includes(formData.eventType) ||
+                                        ['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation', 'Workshop'].includes(formData.category)) && (
+                                            <div className="space-y-3">
+                                                <h3 className="text-lg font-semibold text-blue-400">Themes / Topics</h3>
+                                                {formData.theme.map((topic, index) => (
+                                                    <div key={index} className="flex gap-2">
+                                                        <input
+                                                            value={topic}
+                                                            onChange={(e) => handleThemeChange(index, e.target.value)}
+                                                            placeholder={`Topic ${index + 1} (e.g. AI, Cyber Security)`}
+                                                            className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
+                                                        />
+                                                        {formData.theme.length > 1 && (
+                                                            <button type="button" onClick={() => removeTheme(index)} className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20">
+                                                                <Trash2 size={20} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                <button type="button" onClick={addTheme} className="w-full px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 font-medium text-sm transition-colors border border-blue-500/20">
+                                                    + Add Another Topic
+                                                </button>
+                                            </div>
+                                        )}
 
                                     {/* Artist Name - Show for Live-In Concert */}
                                     {formData.category === 'Live-In Concert' && (

@@ -80,7 +80,7 @@ const updateEvent = async (req, res) => {
         if (event) {
             console.log('Update Event Body:', req.body);
             // Check if updating generic fields
-            const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime } = req.body;
+            const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime, theme } = req.body;
 
             event.title = title || event.title;
             event.description = description || event.description;

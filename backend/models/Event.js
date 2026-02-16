@@ -59,9 +59,9 @@ const eventSchema = new mongoose.Schema({
         type: String, // E.g., "CSEA", "Dance Club"
         required: false, // Not required for Technical events
     },
-    theme: {
-        type: String, // For Hackathons/Paper Presentations
-    },
+    theme: [{
+        type: String,
+    }],
     department: {
         type: String, // E.g., "CSE", "ECE"
     },

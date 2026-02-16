@@ -35,7 +35,7 @@ const Footer = () => {
 
             {/* Club Logos Marquee */}
             {clubs.length > 0 && (
-                <section className="py-10 bg-black/5 border-y border-white/10">
+                <section className="py-10 bg-black border-y border-white/10">
                     <h3 className="text-3xl font-bold text-center mb-16 shadow-lg">Our Clubs</h3>
                     <Marquee gradient={false} speed={40}>
                         {clubs.map(club => (

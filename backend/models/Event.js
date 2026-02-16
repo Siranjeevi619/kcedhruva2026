@@ -46,6 +46,9 @@ const eventSchema = new mongoose.Schema({
     runnerPrize: {
         type: String, // E.g., "₹3000"
     },
+    generalPrize: [{
+        type: String,
+    }],
     rules: [{
         type: String,
     }],

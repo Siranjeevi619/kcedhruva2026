@@ -33,7 +33,13 @@ const getEventById = async (req, res) => {
 // @access  Private/Admin
 const createEvent = async (req, res) => {
     try {
-        const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime, theme } = req.body;
+        const {
+            title, description, category, eventType, club, department,
+            date, venue, image, pptTemplateUrl, registrationFee,
+            coordinators, facultyCoordinators, studentCoordinators,
+            artistName, timings, prize, rules, rounds,
+            winnerPrize, runnerPrize, generalPrize, fromTime, toTime, theme
+        } = req.body;
 
         const event = new Event({
             title,
@@ -41,7 +47,7 @@ const createEvent = async (req, res) => {
             category,
             eventType: eventType || 'Normal',
             club,
-            theme,
+            theme: theme || [],
             department,
             date,
             venue,
@@ -58,6 +64,7 @@ const createEvent = async (req, res) => {
             rounds,
             winnerPrize,
             runnerPrize,
+            generalPrize: generalPrize || [],
             fromTime,
             toTime,
             createdBy: req.admin._id
@@ -66,6 +73,7 @@ const createEvent = async (req, res) => {
         const createdEvent = await event.save();
         res.status(201).json(createdEvent);
     } catch (error) {
+        console.error('Create Event Error:', error);
         res.status(400).json({ message: error.message });
     }
 };
@@ -79,15 +87,21 @@ const updateEvent = async (req, res) => {
 
         if (event) {
             console.log('Update Event Body:', req.body);
-            // Check if updating generic fields
-            const { title, description, category, eventType, club, department, date, venue, image, pptTemplateUrl, registrationFee, coordinators, facultyCoordinators, studentCoordinators, artistName, timings, prize, rules, rounds, winnerPrize, runnerPrize, fromTime, toTime, theme } = req.body;
+
+            const {
+                title, description, category, eventType, club, department,
+                date, venue, image, pptTemplateUrl, registrationFee,
+                coordinators, facultyCoordinators, studentCoordinators,
+                artistName, timings, prize, rules, rounds,
+                winnerPrize, runnerPrize, generalPrize, fromTime, toTime, theme
+            } = req.body;
 
             event.title = title || event.title;
             event.description = description || event.description;
             event.category = category || event.category;
             if (eventType) event.eventType = eventType;
             event.club = club || event.club;
-            event.theme = theme || event.theme;
+            event.theme = theme !== undefined ? theme : event.theme; // Safer check for array
             event.department = department || event.department;
             event.date = date || event.date;
             event.venue = venue || event.venue;
@@ -104,6 +118,7 @@ const updateEvent = async (req, res) => {
             event.rounds = rounds || event.rounds;
             event.winnerPrize = winnerPrize || event.winnerPrize;
             event.runnerPrize = runnerPrize || event.runnerPrize;
+            event.generalPrize = generalPrize || event.generalPrize;
             event.fromTime = fromTime || event.fromTime;
             event.toTime = toTime || event.toTime;
 
@@ -113,6 +128,7 @@ const updateEvent = async (req, res) => {
             res.status(404).json({ message: 'Event not found' });
         }
     } catch (error) {
+        console.error('Update Event Error:', error);
         res.status(400).json({ message: error.message });
     }
 };

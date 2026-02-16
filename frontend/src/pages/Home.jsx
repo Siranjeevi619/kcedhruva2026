@@ -14,8 +14,7 @@ import DepartmentCard from '../components/DepartmentCard';
 import Passes from './Passes';
 import { DEPARTMENTS } from '../utils/constants';
 import { API_URL } from '../utils/config';
-// import Logo from '../assets/dhruvalogo.png';
-import dhruvalogo from '../assets/dhruvalogo.png';
+import dhruvalogo from '../assets/DhruvaLogo.png';
 import Doodles from '../components/Doodles';
 const Home = () => {
     const { config } = useGlobalConfig();

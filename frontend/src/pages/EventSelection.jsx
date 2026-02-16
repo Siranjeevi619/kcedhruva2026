@@ -6,6 +6,8 @@ import Footer from '../components/Footer';
 import { useGlobalConfig } from '../context/GlobalConfigContext';
 import { API_URL } from '../utils/config';
 
+import Doodles from '../components/Doodles';
+
 const EventSelection = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -18,7 +20,11 @@ const EventSelection = () => {
         email: '',
         phone: '',
         department: '',
-        year: ''
+        year: '',
+        college: '',
+        district: '',
+        state: '',
+
     });
     const [submitting, setSubmitting] = useState(false);
 
@@ -41,6 +47,14 @@ const EventSelection = () => {
                 eventIds: [], // No specific events selected
                 ...formData
             });
+
+            // Check if payment was bypassed
+            if (regData.paymentStatus === 'Completed' || regData.paymentStatus === 'Bypassed') {
+                alert('Registration Successful!');
+                navigate('/');
+                setSubmitting(false);
+                return;
+            }
 
             // Razorpay Checkout
             const options = {
@@ -97,7 +111,8 @@ const EventSelection = () => {
     if (!pass) return null;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white font-inter flex flex-col">
+        <div className="min-h-screen bg-[#0a0a0a] text-white font-inter flex flex-col relative overflow-x-hidden">
+            <Doodles />
             <Navbar />
 
             <main className="flex-1 max-w-3xl mx-auto w-full px-4 pt-24 pb-12">
@@ -134,7 +149,7 @@ const EventSelection = () => {
                                 <option value="CSECS">CSE(CY)</option>
                                 <option value="ECE">ECE</option>
                                 <option value="EEE">EEE</option>
-                                <option value="EEE-VLSI">EEE-VLSI</option>
+                                <option value="ETE&VLSI">ETE & VLSI</option>
                                 <option value="MECH">MECH</option>
                                 <option value="IT">IT</option>
                                 <option value="CHEM">CHEM</option>
@@ -164,11 +179,12 @@ const EventSelection = () => {
 
                         <input name="email" type="email" value={formData.email} onChange={handleFormChange} required placeholder="Email Address" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
                         <input name="phone" value={formData.phone} onChange={handleFormChange} required placeholder="Phone Number" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
+                        <input name="college" value={formData.college} onChange={handleFormChange} required placeholder="College Name" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
+                        <input name="district" value={formData.district} onChange={handleFormChange} required placeholder="District" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
 
                         <div className="pt-6 border-t border-white/10 mt-6">
                             <button
                                 type="submit"
-                                disabled={submitting}
                                 className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-orange-500/20"
                             >
                                 {submitting ? 'Processing Payment...' : `Pay ₹${pass.price} & Register`}

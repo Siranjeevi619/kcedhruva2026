@@ -129,13 +129,13 @@ const sendRegistrationEmail = async (registration, pass, events) => {
                             </p>
                         </div>
 
-                        <!-- Registered Events -->
-                        <div style="margin-top: 30px;">
-                            <h3 style="color: ${theme.text}; border-bottom: 1px solid #333; padding-bottom: 10px;">Registered Events</h3>
-                            <ul style="color: #ccc; padding-left: 20px; line-height: 1.6;">
-                                ${eventListHtml}
-                            </ul>
-                        </div>
+                        // <!-- Registered Events -->
+                        // <div style="margin-top: 30px;">
+                        //     <h3 style="color: ${theme.text}; border-bottom: 1px solid #333; padding-bottom: 10px;">Registered Events</h3>
+                        //     <ul style="color: #ccc; padding-left: 20px; line-height: 1.6;">
+                        //         ${eventListHtml}
+                        //     </ul>
+                        // </div>
                     </div>
 
                     <!-- Footer -->

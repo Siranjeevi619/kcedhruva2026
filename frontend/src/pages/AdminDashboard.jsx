@@ -116,27 +116,33 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                             <h3 className="text-lg font-bold mb-4">Registrations per Pass</h3>
-                            <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={passRegistrationData}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                                        <XAxis dataKey="name" stroke="#999" />
-                                        <YAxis stroke="#999" />
-                                        <Tooltip
-                                            cursor={{ fill: '#333' }}
-                                            contentStyle={{
-                                                backgroundColor: '#1a1a1a',
-                                                border: 'none',
-                                                borderRadius: '8px'
-                                            }}
-                                        />
-                                        <Bar
-                                            dataKey="registrations"
-                                            fill="#8884d8"
-                                            barSize={40}
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                            <div className="h-64 w-full">
+                                {passRegistrationData.length > 0 ? (
+                                    <ResponsiveContainer width="99%" height="100%">
+                                        <BarChart data={passRegistrationData}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                                            <XAxis dataKey="name" stroke="#999" />
+                                            <YAxis stroke="#999" />
+                                            <Tooltip
+                                                cursor={{ fill: '#333' }}
+                                                contentStyle={{
+                                                    backgroundColor: '#1a1a1a',
+                                                    border: 'none',
+                                                    borderRadius: '8px'
+                                                }}
+                                            />
+                                            <Bar
+                                                dataKey="registrations"
+                                                fill="#8884d8"
+                                                barSize={40}
+                                            />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="flex items-center justify-center h-full text-gray-500">
+                                        No registration data available
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -6,7 +6,9 @@ import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import { getImageUrl } from '../utils/imageUtils';
 import { Calendar, MapPin, User, Phone, BookOpen, Clock, ExternalLink, IndianRupee } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { API_URL } from '../utils/config';
+import Doodles from '../components/Doodles';
 
 const RegisterEvent = () => {
     const { eventId } = useParams();
@@ -33,14 +35,21 @@ const RegisterEvent = () => {
     if (!event) return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">Event not found</div>;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white font-inter flex flex-col">
+        <div className="min-h-screen bg-violet-950 text-white font-inter flex flex-col relative overflow-x-hidden">
+            <Doodles />
             <Navbar />
 
             <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-12 md:py-20 font-sans">
                 {/* Top Section: Hero Image & Registration */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
                     {/* Left: Event Image (4:3) with Stylish Overlay */}
-                    <div className="lg:col-span-2 relative aspect-[4/3] rounded-3xl overflow-hidden group shadow-2xl border border-white/10">
+                    <motion.div
+                        initial={{ opacity: 0, y: -50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="lg:col-span-2 relative aspect-[4/3] rounded-3xl overflow-hidden group shadow-2xl border border-white/10"
+                    >
                         <img
                             src={getImageUrl(event.image) || 'https://via.placeholder.com/800x400'}
                             alt={event.title}
@@ -55,10 +64,16 @@ const RegisterEvent = () => {
                                 {event.title}
                             </h1>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Right: Glassmorphism Registration Box */}
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-center h-full relative overflow-hidden group hover:border-white/20 transition-colors">
+                    <motion.div
+                        initial={{ opacity: 0, y: -50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-center h-full relative overflow-hidden group hover:border-white/20 transition-colors"
+                    >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
 
@@ -74,7 +89,7 @@ const RegisterEvent = () => {
                         >
                             Get Entry Pass
                         </button>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Main Content Grid */}
@@ -83,7 +98,13 @@ const RegisterEvent = () => {
                     {/* Row 1: Description & Rules */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Description */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                        >
                             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
                                     <BookOpen size={24} />
@@ -93,10 +114,16 @@ const RegisterEvent = () => {
                             <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
                                 {event.description}
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Rules */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                        >
                             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-red-500/20 rounded-lg text-red-400 shadow-inner">
                                     <BookOpen size={24} />
@@ -118,13 +145,19 @@ const RegisterEvent = () => {
                                     <p className="italic text-gray-500">No specific rules mentioned.</p>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* Row 2: Rounds & Details Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Rounds */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg"
+                        >
                             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 shadow-inner">
                                     <Calendar size={24} />
@@ -143,10 +176,16 @@ const RegisterEvent = () => {
                                     <p className="text-gray-500 italic">No specific rounds details.</p>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Details Grid (Nested) */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full"
+                        >
                             {/* Venue */}
                             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
                                 <span className="text-green-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -206,12 +245,18 @@ const RegisterEvent = () => {
                                     </a>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* Row 3: Faculty Coordinators */}
                     {(event.facultyCoordinators?.length > 0) && (
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg"
+                        >
                             <h4 className="text-xl font-bold text-purple-400 mb-8 inline-block border-b-2 border-purple-500/30 pb-2">Faculty Coordinators</h4>
                             <div className="flex flex-wrap justify-center gap-6">
                                 {event.facultyCoordinators.map((coordinator, index) => (
@@ -231,12 +276,18 @@ const RegisterEvent = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     )}
 
                     {/* Row 4: Student Coordinators */}
                     {(event.studentCoordinators?.length > 0) && (
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg">
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg"
+                        >
                             <h4 className="text-xl font-bold text-blue-400 mb-8 inline-block border-b-2 border-blue-500/30 pb-2">Student Coordinators</h4>
                             <div className="flex flex-wrap justify-center gap-6">
                                 {event.studentCoordinators.map((coordinator, index) => (
@@ -256,7 +307,7 @@ const RegisterEvent = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     )}
 
                 </div>

@@ -14,6 +14,9 @@ import DepartmentCard from '../components/DepartmentCard';
 import Passes from './Passes';
 import { DEPARTMENTS } from '../utils/constants';
 import { API_URL } from '../utils/config';
+// import Logo from '../assets/dhruvalogo.png';
+import dhruvalogo from '../assets/dhruvalogo.png';
+import Doodles from '../components/Doodles';
 const Home = () => {
     const { config } = useGlobalConfig();
     const [events, setEvents] = useState([]);
@@ -46,7 +49,13 @@ const Home = () => {
                 setEvents(data);
 
                 const now = new Date();
-                const upcoming = data.filter(e => new Date(e.date) >= now);
+                now.setHours(0, 0, 0, 0); // Reset time to start of day for inclusive comparison
+
+                const upcoming = data.filter(e => {
+                    const eventDate = new Date(e.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate >= now;
+                });
 
                 setUpcomingEvents(upcoming);
                 // Note: We don't set loading false here immediately to respect the 2s timer if data loads too fast
@@ -96,7 +105,10 @@ const Home = () => {
 
         if (viewMode === 'Events') {
             if (selectedDept) {
-                result = result.filter(e => e.department === selectedDept);
+                result = result.filter(e =>
+                    e.department === selectedDept ||
+                    e.department === decodeURIComponent(selectedDept)
+                );
             } else if (selectedCategory) {
                 result = result.filter(e => e.category === selectedCategory);
             }
@@ -163,6 +175,7 @@ const Home = () => {
             {/* Background Elements */}
             <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px]" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
+            <Doodles />
 
             {loading ? (
                 <div className="h-screen flex items-center justify-center">
@@ -174,7 +187,7 @@ const Home = () => {
 
                     {/* Hero Section - Only show on main view or top level */}
                     {viewMode === 'Categories' && (
-                        <section className="text-center pt-32 pb-20 relative z-15 px-4 min-h-[60vh] flex flex-col justify-center items-center">
+                        <section className="text-center pt-32 pb-20 relative z-15 px-4 min-h-[100vh] flex flex-col justify-center items-center">
                             {config.home_hero_bg && (
                                 <div className="absolute inset-0 z-[-1] ">
                                     {/\.(mp4|webm|ogg)$/i.test(config.home_hero_bg) ? (
@@ -184,7 +197,7 @@ const Home = () => {
                                             loop
                                             muted
                                             playsInline
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-[100vh] object-cover"
                                         />
                                     ) : (
                                         <img src={getImageUrl(config.home_hero_bg)} alt="Hero BG" className="w-full h-full object-cover" />
@@ -192,12 +205,15 @@ const Home = () => {
                                     <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a]" />
                                 </div>
                             )}
-                            <h2 className="inline-block text-4xl md:text-7xl font-bold font-serif mb-10
+                            <img src={dhruvalogo} alt="Logo" className='w-[250px] h-[200px]' /><p className='inline-block text-4xl md:text-7xl font-bold font-serif mb-10
+                                    leading-tight
+                                    bg-gradient-to-r from-violet-400 to-blue-500
+                                    bg-clip-text text-transparent'>The Extraordinary</p>
+                            {/* <h2 className="inline-block text-4xl md:text-7xl font-bold font-serif mb-10
                                     leading-tight
                                     bg-gradient-to-r from-violet-400 to-blue-500
                                     bg-clip-text text-transparent">
-                                {config.website_name || 'Experience'}<br /> The Extraordinary
-                            </h2>
+                            </h2> */}
 
 
 
@@ -229,106 +245,108 @@ const Home = () => {
                     {viewMode === 'Categories' && <PastEvents />}
 
                     {/* Upcoming Events Section (Hierarchical View) */}
-                    <section id="events-section" className="max-w-7xl playwrite-nz-basic-light mx-auto px-4 md:px-6 py-20 relative z-10">
-                        <div className="flex items-center gap-4 mb-8">
+                    <div className="bg-gradient-to-tr from-blue-900 to-purple-600">
+                        <section id="events-section" className="max-w-7xl inter-light-text mx-auto px-4 md:px-6 py-20 relative z-10">
+                            <div className="flex items-center gap-4 mb-8">
 
-                            {viewMode !== 'Categories' && (
-                                <button onClick={handleBack} className="p-2 playwrite-nz-basic-light rounded-full bg-white/10 hover:bg-white/20 transition-all">
-                                    Back
-                                </button>
-                            )}
-                            <h3 className="text-3xl font-bold playwrite-nz-basic-light border-l-4 border-blue-500 pl-4">
-                                {viewMode === 'Categories' ? 'Explore Events' :
-                                    viewMode === 'Departments' ? 'Select Department' :
-                                        `${selectedDept || selectedCategory || 'Upcoming'} Events`}
-                            </h3>
-                        </div>
-
-                        {/* Level 1: Categories */}
-                        {viewMode === 'Categories' && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 laywrite-nz-basic-light gap-8">
-                                {[
-                                    { name: 'Technical', key: 'cat_technical_image', default: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' },
-                                    { name: 'Cultural', key: 'cat_cultural_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' },
-                                    { name: 'Sports', key: 'cat_sports_image', default: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' }
-                                ].map(cat => (
-                                    <div
-                                        key={cat.name}
-                                        onClick={() => handleCategoryClick(cat.name)}
-                                        className="group relative aspect-[4/3] h-auto bg-gradient-to-br laywrite-nz-basic-light from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
-                                    >
-                                        <img
-                                            src={getImageUrl(config[cat.key] || cat.default)}
-                                            alt={cat.name}
-                                            className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all" />
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                                            <h3 className="text-4xl font-bold text-white mb-2 laywrite-nz-basic-light group-hover:translate-z-10 transition-transform">{cat.name}</h3>
-                                            {/* <p className="text-white/80 text-sm font-medium">Click to explore {cat.name.toLowerCase()} events</p> */}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Level 2: Departments (Only for Technical) */}
-                        {viewMode === 'Departments' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {departments.map(dept => {
-                                    // Calculate dynamic stats for this department
-                                    const deptEvents = upcomingEvents.filter(e => e.department === dept.code);
-                                    const stats = {
-                                        workshops: deptEvents.filter(e =>
-                                            e.eventType === 'Workshop' ||
-                                            e.eventType === 'Hands-on' ||
-                                            e.category === 'Workshop'
-                                        ).length,
-                                        technical: deptEvents.filter(e =>
-                                            e.category === 'Technical' &&
-                                            e.eventType !== 'Workshop' &&
-                                            e.eventType !== 'Hands-on'
-                                        ).length,
-                                        nonTechnical: deptEvents.filter(e =>
-                                            e.category === 'Cultural' ||
-                                            e.category === 'Sports'
-                                        ).length
-                                    };
-
-                                    // Use configured image if available, else fallback to default
-                                    const displayImage = config[`dept_${dept.code}_image`] || dept.image;
-
-                                    return (
-                                        <DepartmentCard
-                                            key={dept.code}
-                                            dept={{ ...dept, image: displayImage }}
-                                            stats={stats}
-                                            onClick={() => handleDeptClick(dept.code)}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {/* Level 3: Events List */}
-                        {viewMode === 'Events' && (
-                            <div className="grid grid-cols-1 inter-light-text md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {filteredEvents.length > 0 ? (
-                                    filteredEvents.map((event) => (
-                                        <EventCard
-                                            key={event._id}
-                                            event={event}
-                                            onView={(evt) => navigate(`/register/${evt._id}`)}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="col-span-full text-center py-20 text-gray-500">
-                                        No events found for this selection.
-                                    </div>
+                                {viewMode !== 'Categories' && (
+                                    <button onClick={handleBack} className="p-2 inter-light-text rounded-full bg-white/10 hover:bg-white/20 transition-all">
+                                        Back
+                                    </button>
                                 )}
+                                {/* <h3 className="text-3xl font-bold inter-light-text border-l-4 border-blue-500 pl-4">
+                                    {viewMode === 'Categories' ? 'Explore Events' :
+                                        viewMode === 'Departments' ? 'Select Department' :
+                                            `${selectedDept || selectedCategory || 'Upcoming'} Events`}
+                                </h3> */}
                             </div>
-                        )}
-                    </section>
+
+                            {/* Level 1: Categories */}
+                            {viewMode === 'Categories' && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 inter-light-text gap-8">
+                                    {[
+                                        { name: 'Technical', key: 'cat_technical_image', default: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' },
+                                        { name: 'Cultural', key: 'cat_cultural_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' },
+                                        { name: 'Sports', key: 'cat_sports_image', default: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80' }
+                                    ].map(cat => (
+                                        <div
+                                            key={cat.name}
+                                            onClick={() => handleCategoryClick(cat.name)}
+                                            className="group relative aspect-[4/3] h-auto bg-gradient-to-br inter-light-text from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
+                                        >
+                                            <img
+                                                src={getImageUrl(config[cat.key] || cat.default)}
+                                                alt={cat.name}
+                                                className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all" />
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+                                                <h3 className="text-4xl font-bold text-white mb-2 playwrite-nz-basic-light group-hover:translate-z-10 transition-transform">{cat.name}</h3>
+                                                {/* <p className="text-white/80 text-sm font-medium">Click to explore {cat.name.toLowerCase()} events</p> */}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Level 2: Departments (Only for Technical) */}
+                            {viewMode === 'Departments' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {departments.map(dept => {
+                                        // Calculate dynamic stats for this department
+                                        const deptEvents = upcomingEvents.filter(e => e.department === dept.code);
+                                        const stats = {
+                                            workshops: deptEvents.filter(e =>
+                                                e.eventType === 'Workshop' ||
+                                                e.eventType === 'Hands-on' ||
+                                                e.category === 'Workshop'
+                                            ).length,
+                                            technical: deptEvents.filter(e =>
+                                                e.category === 'Technical' &&
+                                                e.eventType !== 'Workshop' &&
+                                                e.eventType !== 'Hands-on'
+                                            ).length,
+                                            nonTechnical: deptEvents.filter(e =>
+                                                e.category === 'Cultural' ||
+                                                e.category === 'Sports'
+                                            ).length
+                                        };
+
+                                        // Use configured image if available, else fallback to default
+                                        const displayImage = config[`dept_${dept.code}_image`] || dept.image;
+
+                                        return (
+                                            <DepartmentCard
+                                                key={dept.code}
+                                                dept={{ ...dept, image: displayImage }}
+                                                stats={stats}
+                                                onClick={() => handleDeptClick(dept.code)}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {/* Level 3: Events List */}
+                            {viewMode === 'Events' && (
+                                <div className="grid grid-cols-1 inter-light-text md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {filteredEvents.length > 0 ? (
+                                        filteredEvents.map((event) => (
+                                            <EventCard
+                                                key={event._id}
+                                                event={event}
+                                                onView={(evt) => navigate(`/register/${evt._id}`)}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="col-span-full text-center py-20 text-gray-500">
+                                            No events found for this selection.
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    </div>
 
                     {viewMode === 'Categories' && <Passes embed={true} />}
 

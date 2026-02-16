@@ -52,7 +52,7 @@ const Sidebar = () => {
                 children: [
                     { path: '/admin/events/Technical', label: 'All Technical' },
                     ...DEPARTMENTS.map(dept => ({
-                        path: `/admin/events/Technical/${dept.code}`,
+                        path: `/admin/events/Technical/${encodeURIComponent(dept.code)}`,
                         label: dept.code
                     }))
                 ]

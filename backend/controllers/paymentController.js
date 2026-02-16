@@ -57,7 +57,26 @@ const verifyPayment = async (req, res) => {
                 await registration.save();
 
                 // Send Confirmation Email
-                await sendRegistrationEmail(registration, registration.pass, registration.events);
+                if (process.env.ENABLE_EMAIL_AUTOMATION === 'true') {
+                    await sendRegistrationEmail(registration, registration.pass, registration.events);
+                }
+
+                // Log to Google Sheet
+                const { logToSheet } = require('../utils/googleSheets');
+                await logToSheet({
+                    email: registration.email,
+                    studentName: registration.studentName,
+                    rollNumber: registration.rollNumber,
+                    year: registration.year,
+                    department: registration.department,
+                    phone: registration.phone,
+                    college: registration.college,
+                    district: registration.district,
+                    passName: registration.pass.name,
+                    passId: registration.pass._id,
+                    amount: registration.pass.price,
+                    paymentStatus: 'Paid'
+                });
 
                 // Trigger n8n Webhook for Automated Email/Reports
                 const n8nUrl = process.env.N8N_WEBHOOK_URL_CONFIRMATION;

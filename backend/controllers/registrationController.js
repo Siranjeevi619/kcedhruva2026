@@ -12,7 +12,7 @@ const { sendRegistrationEmail } = require('../utils/email');
 // @access  Public
 const registerForEvent = async (req, res) => {
     try {
-        const { passId, eventIds, studentName, rollNumber, email, phone, department, year } = req.body;
+        const { passId, eventIds, studentName, rollNumber, email, phone, department, year, college, district } = req.body;
 
         // 1. Fetch Pass
         const Pass = require('../models/Pass');
@@ -27,24 +27,25 @@ const registerForEvent = async (req, res) => {
             return res.status(400).json({ message: 'One or more invalid event IDs found' });
         }
 
-        // 3. (Constraints Removed)
-        // Registration now allows open access or validation is handled elsewhere/not needed.
-
-
-        // Generate Custom Ticket ID
-        // Standard -> S, Platinum/Pro -> P, Elite -> E, Sports -> S (handled by random number differentiation or specific prefix logic)
+        // 3. Generate Custom Ticket ID
         let prefix = 'D'; // Default
         const passName = pass.name.toLowerCase();
 
         if (passName.includes('standard')) prefix = 'ST';
-        else if (passName.includes('pro') || passName.includes('platinum')) prefix = 'P';
         else if (passName.includes('elite')) prefix = 'E';
+        else if (passName.includes('pro')) prefix = 'P';
+        else if (passName.includes('dhruva pro')) prefix = 'D';
+        else if (passName.includes('cultural')) prefix = 'C';
         else if (passName.includes('sports')) prefix = 'SP';
 
         const randomNum = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
         const ticketId = `${prefix}${randomNum}`;
 
-        // 4. Create Registration
+        // 4. Check Payment Status
+        const enablePayment = process.env.ENABLE_PAYMENT === 'true';
+        const initialStatus = enablePayment ? 'Pending' : 'Completed';
+
+        // 5. Create Registration
         const registration = new Registration({
             pass: passId,
             events: eventIds,
@@ -54,19 +55,39 @@ const registerForEvent = async (req, res) => {
             phone,
             department,
             year,
-            amount: pass.price, // Amount is based on Pass price, not sum of events
-            paymentStatus: 'Pending',
+            college,
+            district,
+            amount: pass.price,
+            paymentStatus: initialStatus,
             ticketId: ticketId
         });
 
         const savedRegistration = await registration.save();
 
-        // 5. Respond (Email moved to payment verification)
+        // 6. Log to Google Sheet (if payment bypassed)
+        if (!enablePayment) {
+            const { logToSheet } = require('../utils/googleSheets');
+            await logToSheet({
+                email,
+                studentName,
+                rollNumber,
+                year,
+                department,
+                phone,
+                college,
+                district,
+                passName: pass.name,
+                passId: passId,
+                amount: pass.price,
+                paymentStatus: 'Bypassed/Completed'
+            });
+        }
 
         res.status(201).json({
-            message: 'Registration initiated',
+            message: enablePayment ? 'Registration initiated' : 'Registration Completed',
             registrationId: savedRegistration._id,
-            amount: pass.price
+            amount: pass.price,
+            paymentStatus: initialStatus
         });
 
     } catch (error) {
@@ -131,34 +152,34 @@ const getAllRegistrations = async (req, res) => {
 // @desc    Trigger Report Generation (Send to n8n)
 // @route   POST /api/registrations/trigger-report
 // @access  Private/Admin
-const triggerReport = async (req, res) => {
-    try {
-        const { type } = req.body; // 'HOD' or 'Club'
+// const triggerReport = async (req, res) => {
+//     try {
+//         const { type } = req.body; // 'HOD' or 'Club'
 
-        // Fetch data
-        const registrations = await Registration.find().populate('event');
+//         // Fetch data
+//         const registrations = await Registration.find().populate('event');
 
-        // In a real scenario, we might batch this or save to a file and send URL
-        // Sending payload to n8n
+//         // In a real scenario, we might batch this or save to a file and send URL
+//         // Sending payload to n8n
 
-        const n8nUrl = process.env.N8N_WEBHOOK_URL_REPORT;
+//         const n8nUrl = process.env.N8N_WEBHOOK_URL_REPORT;
 
-        if (n8nUrl) {
-            // Non-blocking call or await? Await to confirm triggered
-            await axios.post(n8nUrl, {
-                type,
-                timestamp: new Date(),
-                registrations: registrations.slice(0, 100) // Limit payload size for safety
-            });
-            res.json({ message: 'Report generation triggered via n8n' });
-        } else {
-            res.status(503).json({ message: 'n8n Webhook URL not configured' });
-        }
+//         if (n8nUrl) {
+//             // Non-blocking call or await? Await to confirm triggered
+//             await axios.post(n8nUrl, {
+//                 type,
+//                 timestamp: new Date(),
+//                 registrations: registrations.slice(0, 100) // Limit payload size for safety
+//             });
+//             res.json({ message: 'Report generation triggered via n8n' });
+//         } else {
+//             res.status(503).json({ message: 'n8n Webhook URL not configured' });
+//         }
 
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// }
 
 // @desc    Get registrations for a specific event
 // @route   GET /api/registrations/events/:eventId
@@ -168,7 +189,7 @@ const getEventRegistrations = async (req, res) => {
         const { eventId } = req.params;
         const registrations = await Registration.find({ events: eventId })
             .populate('pass', 'name')
-            .select('studentName rollNumber email phone department year pass amount paymentStatus createdAt');
+            .select('studentName rollNumber email phone department year college district pass amount paymentStatus createdAt');
 
         res.json(registrations);
     } catch (error) {
@@ -188,7 +209,7 @@ const exportEventRegistrations = async (req, res) => {
 
         const registrations = await Registration.find({ events: eventId })
             .populate('pass', 'name')
-            .select('studentName rollNumber email phone department year pass amount paymentStatus createdAt');
+            .select('studentName rollNumber email phone department year college district pass amount paymentStatus createdAt');
 
         const data = registrations.map(reg => ({
             Student: reg.studentName,
@@ -197,6 +218,8 @@ const exportEventRegistrations = async (req, res) => {
             Phone: reg.phone,
             Dept: reg.department,
             Year: reg.year,
+            College: reg.college,
+            District: reg.district,
             Pass: reg.pass?.name || 'N/A',
             Status: reg.paymentStatus,
             RegisteredAt: reg.createdAt.toISOString().split('T')[0]
@@ -221,7 +244,6 @@ module.exports = {
     registerForEvent,
     exportRegistrations, // Global export
     getAllRegistrations, // New endpoint for dashboard
-    triggerReport,
     getEventRegistrations,
     exportEventRegistrations
 };

@@ -10,7 +10,7 @@ export const useGlobalConfig = () => useContext(GlobalConfigContext);
 export const GlobalConfigProvider = ({ children }) => {
     const [config, setConfig] = useState({
         website_name: 'Dhruva',
-        event_year: '2025',
+        event_year: '2026',
         contact_email: '',
         contact_phone: '',
         contact_address: '',

@@ -38,6 +38,7 @@ const ManageEvents = () => {
         winnerPrize: '', // Added winner prize
         runnerPrize: '', // Added runner prize
         artistName: '', // Added artistName
+        theme: '', // Added theme
         facultyCoordinators: [{ name: '', phone: '' }],
         studentCoordinators: [{ name: '', phone: '' }]
     });
@@ -63,12 +64,7 @@ const ManageEvents = () => {
     // Filter events based on URL params and search
     const filteredEvents = events.filter(e => {
         // Category Filter
-        // critical: allow 'Workshop' category events to appear under 'Technical' view
-        if (category === 'Technical') {
-            if (e.category !== 'Technical' && e.category !== 'Workshop') return false;
-        } else if (category && e.category !== category) {
-            return false;
-        }
+        if (category && e.category !== category) return false;
 
         // Subcategory Filter (Department or Club depending on context)
         // For Technical, subcategory is usually department
@@ -214,6 +210,7 @@ const ManageEvents = () => {
             winnerPrize: event.winnerPrize || '',
             runnerPrize: event.runnerPrize || '',
             artistName: event.artistName || '',
+            theme: event.theme || '',
             facultyCoordinators: event.facultyCoordinators && event.facultyCoordinators.length > 0
                 ? event.facultyCoordinators
                 : [{ name: '', phone: '' }],
@@ -245,7 +242,10 @@ const ManageEvents = () => {
             toTime: '',
             winnerPrize: '',
             runnerPrize: '',
+            winnerPrize: '',
+            runnerPrize: '',
             artistName: '',
+            theme: '',
             facultyCoordinators: [{ name: '', phone: '' }],
             studentCoordinators: [{ name: '', phone: '' }]
         });
@@ -352,27 +352,15 @@ const ManageEvents = () => {
                                     <input name="title" value={formData.title} onChange={handleChange} placeholder="Event Title" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                     <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
                                         <option value="Technical">Technical</option>
+                                        <option value="Workshop">Workshop</option>
+                                        <option value="Hackathon">Hackathon</option>
+                                        <option value="Ideathon">Ideathon</option>
+                                        <option value="Paper Presentation">Paper Presentation</option>
+                                        <option value="Project Presentation">Project Presentation</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
                                         <option value="Live-In Concert">Live-In Concert</option>
                                     </select>
-
-                                    {/* Event Type Selector for Technical */}
-                                    {formData.category === 'Technical' && (
-                                        <select
-                                            name="eventType"
-                                            value={formData.eventType}
-                                            onChange={handleChange}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
-                                        >
-                                            <option value="Normal">Normal Event</option>
-                                            <option value="Workshop">Workshop</option>
-                                            <option value="Hackathon">Hackathon</option>
-                                            <option value="Ideathon">Ideathon</option>
-                                            <option value="Paper Presentation">Paper Presentation</option>
-                                            <option value="Project Presentation">Project Presentation</option>
-                                        </select>
-                                    )}
 
 
 
@@ -421,6 +409,18 @@ const ManageEvents = () => {
                                     {/* Club Field - Hide if Technical */}
                                     {formData.category !== 'Technical' && (
                                         <input name="club" value={formData.club} onChange={handleChange} placeholder="Club Name (Optional)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                    )}
+
+                                    {/* Theme Field - Show for specific Technical Event Types */}
+                                    {['Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(formData.eventType) && (
+                                        <input
+                                            name="theme"
+                                            value={formData.theme}
+                                            onChange={handleChange}
+                                            placeholder="Event Theme (e.g. AI for Good)"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors"
+                                            required
+                                        />
                                     )}
 
                                     {/* Artist Name - Show for Live-In Concert */}

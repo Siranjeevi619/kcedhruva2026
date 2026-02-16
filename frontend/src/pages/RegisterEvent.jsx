@@ -34,6 +34,24 @@ const RegisterEvent = () => {
     if (loading) return <Loader text="Loading event details..." />;
     if (!event) return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">Event not found</div>;
 
+    // Validation Helpers
+    const isNotEmpty = (str) => {
+        if (!str || typeof str !== 'string') return false;
+        const s = str.trim().toLowerCase();
+        return s !== '' &&
+            !['tba', 'undefined', 'null'].includes(s) &&
+            !s.startsWith('no specific');
+    };
+
+    const hasRounds = event.rounds && Array.isArray(event.rounds) && event.rounds.some(r => isNotEmpty(r.name) || isNotEmpty(r.description));
+    const hasRules = event.rules && (
+        Array.isArray(event.rules)
+            ? event.rules.some(r => isNotEmpty(r))
+            : isNotEmpty(event.rules)
+    );
+
+    const isValidPrize = (p) => isNotEmpty(p);
+
     return (
         <div className="min-h-screen bg-violet-950 text-white font-inter flex flex-col relative overflow-x-hidden">
             <Doodles />
@@ -117,66 +135,62 @@ const RegisterEvent = () => {
                         </motion.div>
 
                         {/* Rules */}
-                        <motion.div
-                            initial={{ opacity: 0, y: -30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
-                        >
-                            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                                <div className="p-2 bg-red-500/20 rounded-lg text-red-400 shadow-inner">
-                                    <BookOpen size={24} />
-                                </div>
-                                Rules & Regulations
-                            </h3>
-                            <div className="text-gray-300 text-base leading-relaxed pl-4">
-                                {event.rules ? (
-                                    Array.isArray(event.rules) ? (
+                        {hasRules && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                            >
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <div className="p-2 bg-red-500/20 rounded-lg text-red-400 shadow-inner">
+                                        <BookOpen size={24} />
+                                    </div>
+                                    Rules & Regulations
+                                </h3>
+                                <div className="text-gray-300 text-base leading-relaxed pl-4">
+                                    {Array.isArray(event.rules) ? (
                                         <ul className="list-disc space-y-3 marker:text-red-400">
-                                            {event.rules.map((rule, idx) => (
+                                            {event.rules.filter(r => isNotEmpty(r)).map((rule, idx) => (
                                                 <li key={idx}>{rule}</li>
                                             ))}
                                         </ul>
                                     ) : (
                                         <p className="whitespace-pre-wrap">{event.rules}</p>
-                                    )
-                                ) : (
-                                    <p className="italic text-gray-500">No specific rules mentioned.</p>
-                                )}
-                            </div>
-                        </motion.div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
 
                     {/* Row 2: Rounds & Details Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className={`grid grid-cols-1 ${hasRounds ? 'lg:grid-cols-2' : ''} gap-8`}>
                         {/* Rounds */}
-                        <motion.div
-                            initial={{ opacity: 0, y: -30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg"
-                        >
-                            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                                <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 shadow-inner">
-                                    <Calendar size={24} />
-                                </div>
-                                Rounds Structure
-                            </h3>
-                            <div className="space-y-4">
-                                {event.rounds && event.rounds.length > 0 ? (
-                                    Array.isArray(event.rounds) ? event.rounds.map((round, index) => (
+                        {hasRounds && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, ease: "easeOut" }}
+                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg"
+                            >
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 shadow-inner">
+                                        <Calendar size={24} />
+                                    </div>
+                                    Rounds Structure
+                                </h3>
+                                <div className="space-y-4">
+                                    {Array.isArray(event.rounds) ? event.rounds.filter(r => isNotEmpty(r.name) || isNotEmpty(r.description)).map((round, index) => (
                                         <div key={index} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:border-purple-500/30 transition-colors">
                                             <h5 className="font-bold text-white text-lg mb-2">{round.name}</h5>
                                             <p className="text-gray-400 text-base">{round.description}</p>
                                         </div>
-                                    )) : <p className="text-gray-300 whitespace-pre-wrap">{event.rounds}</p>
-                                ) : (
-                                    <p className="text-gray-500 italic">No specific rounds details.</p>
-                                )}
-                            </div>
-                        </motion.div>
+                                    )) : <p className="text-gray-300 whitespace-pre-wrap">{event.rounds}</p>}
+                                </div>
+                            </motion.div>
+                        )}
 
                         {/* Details Grid (Nested) */}
                         <motion.div
@@ -221,22 +235,26 @@ const RegisterEvent = () => {
                             </div>
 
                             {/* Winner Prize */}
-                            <div className="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl -mr-10 -mt-10" />
-                                <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
-                                    <IndianRupee size={16} /> Winner Prize
-                                </span>
-                                <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.winnerPrize || 'TBA'}</span>
-                            </div>
+                            {isValidPrize(event.winnerPrize) && (
+                                <div className="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-full blur-xl -mr-10 -mt-10" />
+                                    <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
+                                        <IndianRupee size={16} /> Winner Prize
+                                    </span>
+                                    <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.winnerPrize}</span>
+                                </div>
+                            )}
 
                             {/* Runner Prize */}
-                            <div className="bg-gradient-to-br from-gray-500/10 to-transparent border border-gray-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-gray-500/10 rounded-full blur-xl -mr-10 -mt-10" />
-                                <span className="text-gray-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
-                                    <IndianRupee size={16} /> Runner Prize
-                                </span>
-                                <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.runnerPrize || 'TBA'}</span>
-                            </div>
+                            {isValidPrize(event.runnerPrize) && (
+                                <div className="bg-gradient-to-br from-gray-500/10 to-transparent border border-gray-500/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-gray-500/10 rounded-full blur-xl -mr-10 -mt-10" />
+                                    <span className="text-gray-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 z-10">
+                                        <IndianRupee size={16} /> Runner Prize
+                                    </span>
+                                    <span className="text-2xl font-extrabold text-white z-10 group-hover:scale-105 transition-transform">{event.runnerPrize}</span>
+                                </div>
+                            )}
 
                             {event.pptTemplateUrl && (
                                 <div className="col-span-1 sm:col-span-2">

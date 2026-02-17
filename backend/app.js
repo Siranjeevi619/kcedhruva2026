@@ -25,7 +25,11 @@ app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+
+        const isAllowed = allowedOrigins.includes(origin) ||
+            (typeof origin === 'string' && (origin.endsWith('.vercel.app') || origin.includes('localhost:5173')));
+
+        if (isAllowed) {
             callback(null, true);
         } else {
             console.log('Blocked by CORS:', origin);

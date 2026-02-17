@@ -105,10 +105,11 @@ const Home = () => {
 
         if (viewMode === 'Events') {
             if (selectedDept) {
-                result = result.filter(e =>
-                    e.department === selectedDept ||
-                    e.department === decodeURIComponent(selectedDept)
-                );
+                result = result.filter(e => {
+                    if (!selectedDept) return true;
+                    const normalized = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                    return normalized(e.department) === normalized(selectedDept);
+                });
             } else if (selectedCategory) {
                 result = result.filter(e => e.category === selectedCategory);
             }
@@ -340,7 +341,11 @@ const Home = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {departments.map(dept => {
                                         // Calculate dynamic stats for this department
-                                        const deptEvents = upcomingEvents.filter(e => e.department === dept.code);
+                                        const normalizedMatch = (s1, s2) => {
+                                            const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                            return n(s1) === n(s2);
+                                        };
+                                        const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, dept.code));
                                         const stats = {
                                             workshops: deptEvents.filter(e =>
                                                 e.category === 'Workshop' ||
@@ -380,7 +385,11 @@ const Home = () => {
                                         { name: 'Non Technical', key: 'nonTechnical', imgKey: 'cat_nontechnical_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' },
                                         { name: 'Workshop', key: 'workshops', imgKey: 'cat_workshop_image', default: 'https://images.unsplash.com/photo-1552664730-d307ca884978' }
                                     ].map(sub => {
-                                        const deptEvents = upcomingEvents.filter(e => e.department === selectedDept);
+                                        const normalizedMatch = (s1, s2) => {
+                                            const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                            return n(s1) === n(s2);
+                                        };
+                                        const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, selectedDept));
                                         const count = deptEvents.filter(e => {
                                             if (sub.key === 'workshops') return (e.category === 'Workshop' || e.eventType === 'Workshop' || e.eventType === 'Hands-on');
                                             if (sub.key === 'technical') return (['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) && e.eventType !== 'Workshop' && e.eventType !== 'Hands-on');

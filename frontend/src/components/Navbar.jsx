@@ -39,7 +39,7 @@ const Navbar = () => {
                         { name: 'Computer Science & Engineering (Cyber Security)', path: '/?dept=CSECS' },
                         { name: 'Electronics & Communication Engineering', path: '/?dept=ECE' },
                         { name: 'Electrical & Electronics Engineering', path: '/?dept=EEE' },
-                        { name: 'Electrical & Electronics Engineering (VLSI) & Electronics & Telecommunication Engineering', path: '/?dept=ETE%26VLSI' },
+                        { name: 'Electrical & Electronics Engineering (VLSI) & Electronics & Telecommunication Engineering', path: '/?dept=ETE-VLSI' },
                     ]
                 },
                 {

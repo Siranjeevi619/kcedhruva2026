@@ -25,6 +25,7 @@ const Home = () => {
     const [viewMode, setViewMode] = useState('Categories');
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedDept, setSelectedDept] = useState(null);
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null); // 'Technical', 'Non Technical', 'Workshop'
 
     // Derived state for display
     const [filteredEvents, setFilteredEvents] = useState([]);
@@ -111,6 +112,26 @@ const Home = () => {
             } else if (selectedCategory) {
                 result = result.filter(e => e.category === selectedCategory);
             }
+
+            if (selectedSubCategory) {
+                if (selectedSubCategory === 'Workshop') {
+                    result = result.filter(e =>
+                        e.category === 'Workshop' ||
+                        e.eventType === 'Workshop' ||
+                        e.eventType === 'Hands-on'
+                    );
+                } else if (selectedSubCategory === 'Technical') {
+                    result = result.filter(e =>
+                        ['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) &&
+                        e.eventType !== 'Workshop' &&
+                        e.eventType !== 'Hands-on'
+                    );
+                } else if (selectedSubCategory === 'Non Technical') {
+                    result = result.filter(e =>
+                        ['Non Technical', 'Non-Technical'].includes(e.category)
+                    );
+                }
+            }
             // Additional Type filtering from URL if needed
             const queryParams = new URLSearchParams(location.search);
             const typeParam = queryParams.get('type');
@@ -149,21 +170,33 @@ const Home = () => {
     };
 
     const handleBack = () => {
-        if (viewMode === 'Events' && selectedCategory === 'Technical') {
+        if (viewMode === 'Events' && selectedDept) {
+            setViewMode('CategoryDashboard');
+            setSelectedSubCategory(null);
+        } else if (viewMode === 'CategoryDashboard') {
+            setViewMode('Departments');
+            setSelectedDept(null);
+        } else if (viewMode === 'Events' && selectedCategory === 'Technical') {
             setViewMode('Departments');
             setSelectedDept(null);
         } else {
             setViewMode('Categories');
             setSelectedCategory(null);
             setSelectedDept(null);
+            setSelectedSubCategory(null);
             navigate('/'); // Clear query params
         }
     };
 
     const handleDeptClick = (dept) => {
-        setViewMode('Events');
+        setViewMode('CategoryDashboard');
         setSelectedDept(dept);
         // navigate(`?dept=${dept}`, { replace: true });
+    };
+
+    const handleSubCategoryClick = (subCat) => {
+        setViewMode('Events');
+        setSelectedSubCategory(subCat);
     };
 
     // Departments list from constants
@@ -256,7 +289,8 @@ const Home = () => {
                                 {/* <h3 className="text-3xl font-bold inter-light-text border-l-4 border-blue-500 pl-4">
                                     {viewMode === 'Categories' ? 'Explore Events' :
                                         viewMode === 'Departments' ? 'Select Department' :
-                                            `${selectedDept || selectedCategory || 'Upcoming'} Events`}
+                                            viewMode === 'CategoryDashboard' ? `${selectedDept} Categories` :
+                                                `${selectedDept || selectedCategory || 'Upcoming'} Events`}
                                 </h3> */}
                             </div>
 
@@ -320,6 +354,49 @@ const Home = () => {
                                                 stats={stats}
                                                 onClick={() => handleDeptClick(dept.code)}
                                             />
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {/* Level 2.5: Category Dashboard (Summary Cards) */}
+                            {viewMode === 'CategoryDashboard' && selectedDept && (
+                                <div className="grid grid-cols-1 inter-light-text md:grid-cols-3 gap-8">
+                                    {[
+                                        { name: 'Technical', key: 'technical', imgKey: 'cat_technical_image', default: 'https://images.unsplash.com/photo-1518770660439-4636190af475' },
+                                        { name: 'Non Technical', key: 'nonTechnical', imgKey: 'cat_nontechnical_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' },
+                                        { name: 'Workshop', key: 'workshops', imgKey: 'cat_workshop_image', default: 'https://images.unsplash.com/photo-1552664730-d307ca884978' }
+                                    ].map(sub => {
+                                        const deptEvents = upcomingEvents.filter(e => e.department === selectedDept);
+                                        const count = deptEvents.filter(e => {
+                                            if (sub.key === 'workshops') return (e.category === 'Workshop' || e.eventType === 'Workshop' || e.eventType === 'Hands-on');
+                                            if (sub.key === 'technical') return (['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) && e.eventType !== 'Workshop' && e.eventType !== 'Hands-on');
+                                            if (sub.key === 'nonTechnical') return (['Non Technical', 'Non-Technical'].includes(e.category));
+                                            return false;
+                                        }).length;
+
+                                        return (
+                                            <div
+                                                key={sub.name}
+                                                onClick={() => handleSubCategoryClick(sub.name === 'Workshop' ? 'Workshop' : sub.name)}
+                                                className="group relative aspect-video inter-light-text md:aspect-[4/3] h-auto bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
+                                            >
+                                                <img
+                                                    src={getImageUrl(config[sub.imgKey] || sub.default)}
+                                                    alt={sub.name}
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+                                                    <h3 className="text-3xl inter-bold-text text-white mb-4 group-hover:scale-110 transition-transform">
+                                                        {sub.name === 'Workshop' ? 'Workshops' : sub.name}
+                                                    </h3>
+                                                    <div className="bg-blue-600/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
+                                                        <span className="text-xl inter-bold-text text-white">{count} Events</span>
+                                                    </div>
+                                                    <p className="mt-4 text-white/60 text-xs font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to view</p>
+                                                </div>
+                                            </div>
                                         );
                                     })}
                                 </div>

@@ -58,6 +58,15 @@ const eventSchema = new mongoose.Schema({
     pptTemplateUrl: {
         type: String,
     },
+    resourcePerson: {
+        type: String,
+    },
+    resourcePersonPosition: {
+        type: String,
+    },
+    resourcePersonCompany: {
+        type: String,
+    },
     club: {
         type: String, // E.g., "CSEA", "Dance Club"
         required: false, // Not required for Technical events

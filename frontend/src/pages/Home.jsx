@@ -78,8 +78,8 @@ const Home = () => {
         const typeParam = queryParams.get('type');
 
         if (deptParam) {
-            setViewMode('Events');
-            setSelectedCategory('Technical'); // Assuming depts are mostly technical, but robust logic below handles filter
+            setViewMode('CategoryDashboard');
+            setSelectedCategory('Technical'); // Root category for depts
             setSelectedDept(deptParam);
         } else if (catParam) {
             if (catParam === 'Technical') {

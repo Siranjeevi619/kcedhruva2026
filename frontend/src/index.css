@@ -45,4 +45,9 @@
         font-family: var(--font-inter);
         font-weight: 300;
     }
+
+    .inter-bold-text {
+        font-family: var(--font-inter);
+        font-weight: 700;
+    }
 }

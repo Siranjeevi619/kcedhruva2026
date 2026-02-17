@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Edit, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Clock, Edit, Trash2 } from 'lucide-react';
 import { getImageUrl } from '../utils/imageUtils';
 
 const EventCard = ({ event, onEdit, onDelete, onView }) => {
@@ -19,27 +19,27 @@ const EventCard = ({ event, onEdit, onDelete, onView }) => {
                 <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{event.title}</h3>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{event.description}</p>
 
-                <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                        <span> <Calendar /> {new Date(event.date).toLocaleDateString()}</span>
+                <div className="space-y-3 mb-6">
+                    {/* Row 1: Date */}
+                    <div className="flex items-center gap-3 text-gray-300">
+                        <Calendar size={18} className="text-purple-400 shrink-0" />
+                        <span className="text-sm font-medium">{new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'long' })}</span>
                     </div>
-                    {(event.fromTime && event.toTime) ? (
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock inline-block mr-1"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                                {event.fromTime} - {event.toTime}
+
+                    {/* Row 2: Time */}
+                    {(event.fromTime && event.toTime) || event.timings ? (
+                        <div className="flex items-center gap-3 text-gray-300">
+                            <Clock size={18} className="text-purple-400 shrink-0" />
+                            <span className="text-sm font-medium">
+                                {(event.fromTime && event.toTime) ? `${event.fromTime} - ${event.toTime}` : event.timings}
                             </span>
                         </div>
-                    ) : (event.timings ? (
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock inline-block mr-1"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                                {event.timings}
-                            </span>
-                        </div>
-                    ) : null)}
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                        <span> <MapPin /> {event.venue}</span>
+                    ) : null}
+
+                    {/* Row 3: Location */}
+                    <div className="flex items-center gap-3 text-gray-300">
+                        <MapPin size={18} className="text-purple-400 shrink-0" />
+                        <span className="text-sm font-medium line-clamp-1">{event.venue}</span>
                     </div>
                 </div>
 

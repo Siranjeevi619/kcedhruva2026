@@ -83,7 +83,7 @@ const ManageContent = () => {
 
             // Initialize imageValues from config
             const initialImageValues = {};
-            ['cat_technical_image', 'cat_cultural_image', 'cat_sports_image'].forEach(key => {
+            ['cat_technical_image', 'cat_cultural_image', 'cat_sports_image', 'cat_nontechnical_image', 'cat_workshop_image'].forEach(key => {
                 initialImageValues[key] = confRes.data[key] || '';
             });
             ['AIDS', 'CIVIL', 'CSD', 'CSE', 'EEE', 'ECE', 'IT', 'MECH', 'MBA', 'MCA'].forEach(code => {
@@ -265,7 +265,9 @@ const ManageContent = () => {
                                             {[
                                                 { label: 'Technical', key: 'cat_technical_image' },
                                                 { label: 'Cultural', key: 'cat_cultural_image' },
-                                                { label: 'Sports', key: 'cat_sports_image' }
+                                                { label: 'Sports', key: 'cat_sports_image' },
+                                                { label: 'Non Technical', key: 'cat_nontechnical_image' },
+                                                { label: 'Workshop', key: 'cat_workshop_image' }
                                             ].map(cat => (
                                                 <div key={cat.key} className="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-4">
                                                     <label className="block text-sm font-bold text-gray-400">{cat.label}</label>

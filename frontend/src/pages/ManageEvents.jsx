@@ -315,7 +315,8 @@ const ManageEvents = () => {
             eventType: category === 'Technical' ? 'Normal' :
                 category === 'Workshop' ? 'Workshop' :
                     category === 'Cultural' ? 'Cultural' :
-                        category === 'Sports' ? 'Sports' : 'Normal',
+                        category === 'Non Technical' ? 'Non Technical' :
+                            category === 'Sports' ? 'Sports' : 'Normal',
             department: subcategory && subcategory !== 'All' ? subcategory : '',
             club: '',
             image: '',
@@ -436,6 +437,7 @@ const ManageEvents = () => {
                                     <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white ">
                                         <option value="Technical">Technical</option>
                                         <option value="Workshop">Workshop</option>
+                                        <option value="Non Technical">Non Technical</option>
                                         <option value="Cultural">Cultural</option>
                                         <option value="Sports">Sports</option>
                                         <option value="Live-In Concert">Live-In Concert</option>
@@ -456,14 +458,12 @@ const ManageEvents = () => {
 
                                     {/* Department Field - Always show if Technical or if subcategory maps to it */}
                                     {/* Department Field - Conditional Rendering based on Category */}
-                                    {formData.category === 'Technical' ? (
+                                    {['Technical', 'Non Technical', 'Workshop'].includes(formData.category) ? (
                                         <select
                                             name="department"
                                             value={formData.department}
                                             onChange={handleChange}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
-                                            required
-                                        >
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"                                        >
                                             <option value="">Select Department</option>
                                             {DEPARTMENTS.map(dept => (
                                                 <option key={dept.code} value={dept.code}>

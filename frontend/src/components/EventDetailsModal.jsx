@@ -79,7 +79,8 @@ const EventDetailsModal = ({ event, onClose, showRegister = false, isAdminView =
                         <div className="absolute bottom-6 left-6 right-6">
                             <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-wider
                                 ${event.category === 'Technical' ? 'bg-blue-600 text-white' :
-                                    event.category === 'Cultural' ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
+                                    event.category === 'Cultural' ? 'bg-purple-600 text-white' :
+                                        event.category === 'Non Technical' ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
                                 {event.category}
                             </span>
                             <h2 className="text-3xl font-bold text-white drop-shadow-lg">

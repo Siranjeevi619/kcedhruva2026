@@ -68,6 +68,7 @@ const Sidebar = () => {
                     }))
                 ]
             },
+            { path: '/admin/events/Non Technical/All', icon: Calendar, label: 'Non Technical Fest' },
             { path: '/admin/events/Sports/All', icon: Calendar, label: 'Sports Meet' },
             { path: '/admin/events', icon: Calendar, label: 'All Events' },
             { path: '/admin/passes', icon: Ticket, label: 'Manage Passes' },

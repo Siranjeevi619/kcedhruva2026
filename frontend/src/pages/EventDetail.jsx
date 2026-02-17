@@ -155,7 +155,8 @@ const EventDetail = () => {
                         <div className="absolute bottom-10 left-10 right-10">
                             <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 uppercase tracking-[0.2em]
                                 ${event.category === 'Technical' ? 'bg-blue-600 text-white' :
-                                    event.category === 'Cultural' ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'}`}>
+                                    event.category === 'Cultural' ? 'bg-purple-600 text-white' :
+                                        event.category === 'Non Technical' ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
                                 {event.category} {event.eventType && event.eventType !== 'Normal' && `• ${event.eventType}`}
                             </span>
                             <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl mb-4">

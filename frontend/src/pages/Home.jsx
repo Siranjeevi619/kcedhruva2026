@@ -306,7 +306,7 @@ const Home = () => {
                                                 e.eventType !== 'Hands-on'
                                             ).length,
                                             nonTechnical: deptEvents.filter(e =>
-                                                ['Non-Technical'].includes(e.category)
+                                                ['Non Technical', 'Non-Technical'].includes(e.category)
                                             ).length
                                         };
 

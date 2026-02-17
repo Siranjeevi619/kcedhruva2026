@@ -217,6 +217,7 @@ const PrincipalDashboard = () => {
                                     <option value="Cultural">Cultural</option>
                                     <option value="Sports">Sports</option>
                                     <option value="Workshop">Workshop</option>
+                                    <option value="Non Technical">Non Technical</option>
                                 </select>
                                 <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                             </div>

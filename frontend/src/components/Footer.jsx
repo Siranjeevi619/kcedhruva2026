@@ -72,10 +72,10 @@ const Footer = () => {
                                 className="w-full h-full object-cover opacity-30"
                             />
                         )}
-                        <div className="absolute inset-0 bg-black/80" />
+                        <div className="absolute inset-0 bg-black/10" />
                     </div>
                 ) : (
-                    <div className="absolute inset-0 bg-black/50 z-0" />
+                    <div className="absolute inset-0 bg-black/10 z-0" />
                 )}
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">

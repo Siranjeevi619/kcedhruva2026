@@ -20,7 +20,7 @@ const ManageContent = () => {
 
     const [contact, setContact] = useState({ email: '', phone: '', address: '' });
     const [rulesBg, setRulesBg] = useState('');
-    const [generalConfig, setGeneralConfig] = useState({ website_name: 'Dhruva', event_year: '2025' });
+    const [generalConfig, setGeneralConfig] = useState({ website_name: 'Dhruva', event_year: '2025', registration_open: 'true' });
     const [sponsors, setSponsors] = useState([]);
     const [clubs, setClubs] = useState([]);
     const [pastEvents, setPastEvents] = useState([]);
@@ -74,7 +74,8 @@ const ManageContent = () => {
 
             setGeneralConfig({
                 website_name: confRes.data['website_name'] || 'Dhruva',
-                event_year: confRes.data['event_year'] || '2025'
+                event_year: confRes.data['event_year'] || '2025',
+                registration_open: confRes.data['registration_open'] || 'true'
             });
 
             setSponsors(sponsorsRes.data);
@@ -243,10 +244,24 @@ const ManageContent = () => {
                                         <label className="block text-sm text-gray-400 mb-1">Event Year</label>
                                         <input value={generalConfig.event_year} onChange={(e) => setGeneralConfig({ ...generalConfig, event_year: e.target.value })} placeholder="e.g. 2025" className="w-full bg-black/20 border border-white/10 rounded-lg p-3" />
                                     </div>
+                                    <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/10">
+                                        <div className="flex-1">
+                                            <label className="block text-sm font-bold text-white">Registration Status</label>
+                                            <p className="text-xs text-gray-400">Enable or disable all event registrations and pass purchases.</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setGeneralConfig({ ...generalConfig, registration_open: generalConfig.registration_open === 'true' ? 'false' : 'true' })}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${generalConfig.registration_open === 'true' ? 'bg-blue-600' : 'bg-gray-700'}`}
+                                        >
+                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${generalConfig.registration_open === 'true' ? 'translate-x-6' : 'translate-x-1'}`} />
+                                        </button>
+                                        <span className="text-sm font-bold">{generalConfig.registration_open === 'true' ? 'Open' : 'Closed'}</span>
+                                    </div>
 
                                     <button onClick={() => {
                                         saveConfig('website_name', generalConfig.website_name);
                                         saveConfig('event_year', generalConfig.event_year);
+                                        saveConfig('registration_open', generalConfig.registration_open);
                                     }} className="bg-blue-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
                                         <Save size={18} /> Save General Info
                                     </button>

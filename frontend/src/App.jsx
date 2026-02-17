@@ -24,6 +24,7 @@ const PrincipalDashboard = lazy(() => import('./pages/PrincipalDashboard'));
 const HodDashboard = lazy(() => import('./pages/HodDashboard'));
 
 const EventDetail = lazy(() => import('./pages/EventDetail'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
   return (
@@ -61,6 +62,9 @@ function App() {
                   <Route key={index} path={route.path} element={route.element} />
                 ))}
               </Route>
+
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
           <Chatbot />

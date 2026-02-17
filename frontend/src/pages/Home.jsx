@@ -153,6 +153,19 @@ const Home = () => {
         setFilteredEvents(result);
     }, [upcomingEvents, viewMode, selectedCategory, selectedDept, location.search]);
 
+    // Internal Scroll Management: Scroll to section top on internal navigation
+    useEffect(() => {
+        if (viewMode !== 'Categories') {
+            const timer = setTimeout(() => {
+                const element = document.getElementById('events-section');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [viewMode, selectedCategory, selectedDept, selectedSubCategory]);
+
 
     // Handlers
     const handleCategoryClick = (category) => {

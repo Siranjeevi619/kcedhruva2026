@@ -41,6 +41,11 @@ const EventSelection = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         setSubmitting(true);
+        if (config.registration_open === 'false') {
+            alert('Registration will open soon. Please stay tuned!');
+            setSubmitting(false);
+            return;
+        }
         try {
             const { data: regData } = await axios.post(`${API_URL}/registrations`, {
                 passId: pass._id,
@@ -187,7 +192,7 @@ const EventSelection = () => {
                                 type="submit"
                                 className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-orange-500/20"
                             >
-                                {submitting ? 'Processing Payment...' : `Pay ₹${pass.price} & Register`}
+                                {submitting ? 'Processing...' : config.registration_open === 'false' ? 'Registration Opening Soon' : `Pay ₹${pass.price} & Register`}
                             </button>
                             <p className="text-gray-500 text-xs text-center mt-4">Safe & Secure Payment via Razorpay</p>
                         </div>

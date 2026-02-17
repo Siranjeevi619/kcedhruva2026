@@ -260,6 +260,35 @@ const RegisterEvent = () => {
                         </motion.div>
                     </div>
 
+                    {/* Resource Person Section (Workshop specific) */}
+                    {(event.resourcePerson || event.resourcePersonPosition || event.resourcePersonCompany) && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            className="bg-gradient-to-br from-green-500/10 via-white/5 to-blue-500/10 border border-green-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+                        >
+                            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                                <div className="p-2 bg-green-500/20 rounded-lg text-green-400 shadow-inner">
+                                    <User size={24} />
+                                </div>
+                                Resource Person
+                            </h3>
+
+                            <div className="flex flex-col md:flex-row gap-8 items-center bg-white/5 p-8 rounded-2xl border border-white/10">
+                                <div className="text-center md:text-left flex-1">
+                                    <h4 className="text-3xl font-black text-white mb-2">{event.resourcePerson}</h4>
+                                    <p className="text-xl text-green-400 font-bold mb-1">{event.resourcePersonPosition}</p>
+                                    <p className="text-lg text-gray-400">{event.resourcePersonCompany}</p>
+                                </div>
+                                <div className="hidden md:block w-px h-24 bg-white/10" />
+                                <div className="flex-1 text-gray-300 italic text-lg text-center md:text-left">
+                                    "Learn directly from industry experts and enhance your practical knowledge through hands-on experience."
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
                     {/* Prize Section (Prominent) */}
                     {(isValidPrize(event.prize) || isValidPrize(event.winnerPrize) || isValidPrize(event.runnerPrize) || hasGeneralPrize) && (
                         <motion.div

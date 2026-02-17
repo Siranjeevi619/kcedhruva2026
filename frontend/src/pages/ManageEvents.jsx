@@ -40,7 +40,10 @@ const ManageEvents = () => {
         theme: [''], // Changed to array for multiple topics
         generalPrize: [''], // Added general prize array
         facultyCoordinators: [{ name: '', phone: '' }],
-        studentCoordinators: [{ name: '', phone: '' }]
+        studentCoordinators: [{ name: '', phone: '' }],
+        resourcePerson: '',
+        resourcePersonPosition: '',
+        resourcePersonCompany: ''
     });
 
     const token = localStorage.getItem('adminToken');
@@ -297,9 +300,12 @@ const ManageEvents = () => {
                 : [{ name: '', phone: '' }],
             studentCoordinators: event.studentCoordinators && event.studentCoordinators.length > 0
                 ? event.studentCoordinators
-                : event.coordinators && event.coordinators.length > 0
+                : (event.coordinators && event.coordinators.length > 0)
                     ? event.coordinators
-                    : [{ name: '', phone: '' }]
+                    : [{ name: '', phone: '' }],
+            resourcePerson: event.resourcePerson || '',
+            resourcePersonPosition: event.resourcePersonPosition || '',
+            resourcePersonCompany: event.resourcePersonCompany || ''
         });
         setShowModal(true);
     };
@@ -331,7 +337,10 @@ const ManageEvents = () => {
             artistName: '',
             theme: [''],
             facultyCoordinators: [{ name: '', phone: '' }],
-            studentCoordinators: [{ name: '', phone: '' }]
+            studentCoordinators: [{ name: '', phone: '' }],
+            resourcePerson: '',
+            resourcePersonPosition: '',
+            resourcePersonCompany: ''
         });
     };
 
@@ -530,6 +539,16 @@ const ManageEvents = () => {
                                     {/* Artist Name - Show for Live-In Concert */}
                                     {formData.category === 'Live-In Concert' && (
                                         <input name="artistName" value={formData.artistName} onChange={handleChange} placeholder="Artist / Band Name" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
+                                    )}
+
+                                    {/* Resource Person - Show for Workshop */}
+                                    {formData.category === 'Workshop' && (
+                                        <div className="space-y-4 pt-4 border-t border-white/10">
+                                            <h3 className="text-lg font-semibold text-green-400">Resource Person Details</h3>
+                                            <input name="resourcePerson" value={formData.resourcePerson} onChange={handleChange} placeholder="Resource Person Name" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                            <input name="resourcePersonPosition" value={formData.resourcePersonPosition} onChange={handleChange} placeholder="Resource Person's Position (e.g. Senior Architect)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                            <input name="resourcePersonCompany" value={formData.resourcePersonCompany} onChange={handleChange} placeholder="Resource Person's Company (e.g. Google)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                        </div>
                                     )}
 
                                     <input type="date" name="date" value={formData.date} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors text-white" required />

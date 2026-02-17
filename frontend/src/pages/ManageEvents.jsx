@@ -67,7 +67,7 @@ const ManageEvents = () => {
         if (category) {
             if (category === 'Technical') {
                 // For Technical view, include explicitly 'Technical' events AND specialized types
-                const techTypes = ['Technical', 'Workshop', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'];
+                const techTypes = ['Technical', 'Workshop', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation', 'Non Technical'];
                 if (!techTypes.includes(e.category)) return false;
             } else if (e.category !== category) {
                 return false;

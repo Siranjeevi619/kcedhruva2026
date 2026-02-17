@@ -40,7 +40,7 @@ export const DEPARTMENTS = [
         image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     },
     {
-        code: 'ETE%26VLSI',
+        code: 'ETE-VLSI',
         name: 'Department of Electronics and Telecommunication Engineering & VLSI',
         image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80'
     },

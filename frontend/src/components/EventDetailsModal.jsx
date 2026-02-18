@@ -65,7 +65,7 @@ const EventDetailsModal = ({ event, onClose, showRegister = false, isAdminView =
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-[#1a1c2e] border border-blue-500/20 w-full max-w-xl max-h-[50vh] overflow-y-auto rounded-2xl shadow-2xl relative custom-scrollbar flex flex-col md:flex-row"
+                    className="bg-[#1a1c2e] border border-blue-500/20 w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl relative custom-scrollbar flex flex-col md:flex-row"
                 >
                     {/* Left Side: Image & Tags */}
                     <div className="md:w-2/5 h-64 md:h-auto relative shrink-0">
@@ -75,42 +75,43 @@ const EventDetailsModal = ({ event, onClose, showRegister = false, isAdminView =
                             className="w-full h-full object-cover"
                             onError={(e) => { e.target.src = 'https://via.placeholder.com/800x600?text=Event+Poster'; }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c2e] via-transparent to-transparent" />
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-wider
-                                ${event.category === 'Technical' ? 'bg-blue-600 text-white' :
-                                    event.category === 'Cultural' ? 'bg-purple-600 text-white' :
-                                        event.category === 'Non Technical' ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
+                        <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap gap-2">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg
+                                ${event.category === 'Technical' ? 'bg-blue-600' :
+                                    event.category === 'Cultural' ? 'bg-purple-600' :
+                                        event.category === 'Non Technical' ? 'bg-orange-600' : 'bg-green-600'}`}>
                                 {event.category}
                             </span>
-                            <h2 className="text-3xl font-bold text-white drop-shadow-lg">
+                        </div>
+                        <div className="absolute bottom-4 left-4 right-4">
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] leading-tight italic">
                                 {event.title}
                             </h2>
-                            <p className="text-gray-300 mt-2 text-sm flex items-center gap-2">
-                                <Building2 size={16} />
+                            <p className="text-white/80 mt-1 text-xs font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                                <Building2 size={12} />
                                 {event.department || event.club || 'General Event'}
                             </p>
                         </div>
                     </div>
 
                     {/* Right Side: Content */}
-                    <div className="flex-1 p-8 relative">
+                    <div className="flex-1 p-5 sm:p-8 relative">
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex-1">
                                 {isAdminView && (userRole === 'admin' || userRole === 'hod' || userRole === 'principal' || userRole === 'dean') && (
                                     <button
                                         onClick={handleDownloadCSV}
-                                        className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-green-900/20"
+                                        className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded-xl text-[10px] font-bold transition-all shadow-lg"
                                     >
-                                        <Tag size={14} /> Download CSV
+                                        <Tag size={12} /> CSV
                                     </button>
                                 )}
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors"
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors absolute top-4 right-4 z-20"
                             >
-                                <X size={20} className="text-gray-400 hover:text-white" />
+                                <X size={18} className="text-gray-400 hover:text-white" />
                             </button>
                         </div>
 

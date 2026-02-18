@@ -38,6 +38,13 @@ const AdminDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
 
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('adminUser') || 'null');
+        setUser(userData);
+    }, []);
+
     const getAuthConfig = () => {
         const token = localStorage.getItem('adminToken');
         return { headers: { Authorization: `Bearer ${token}` } };
@@ -105,7 +112,9 @@ const AdminDashboard = () => {
                             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
                                 Dashboard
                             </h1>
-                            <p className="text-gray-400 mt-1">Welcome back, Admin</p>
+                            <p className="text-gray-400 mt-1 uppercase tracking-widest text-xs font-bold">
+                                Welcome back, {user?.role || 'Admin'}
+                            </p>
                         </div>
                     </header>
 

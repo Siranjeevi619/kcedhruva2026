@@ -20,9 +20,6 @@ const Passes = lazy(() => import('./pages/Passes'));
 const RegisterEvent = lazy(() => import('./pages/RegisterEvent'));
 const EventSelection = lazy(() => import('./pages/EventSelection'));
 const LiveConcert = lazy(() => import('./pages/LiveConcert'));
-const PrincipalDashboard = lazy(() => import('./pages/PrincipalDashboard'));
-const HodDashboard = lazy(() => import('./pages/HodDashboard'));
-
 const EventDetail = lazy(() => import('./pages/EventDetail'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 

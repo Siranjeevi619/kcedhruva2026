@@ -181,20 +181,20 @@ const EventSelection = () => {
             <Navbar />
 
             <main className="flex-1 max-w-3xl mx-auto w-full px-4 pt-24 pb-12">
-                <div className="mb-8 p-6 bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/30 rounded-2xl text-center">
-                    <h1 className="text-3xl font-bold mb-2">{pass.name}</h1>
-                    <p className="text-gray-300 mb-4">{pass.description}</p>
-                    <div className="text-2xl font-bold text-orange-400">
+                <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/30 rounded-2xl text-center">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">{pass.name}</h1>
+                    <p className="text-gray-400 text-sm sm:text-base mb-4">{pass.description}</p>
+                    <div className="text-xl sm:text-2xl font-bold text-orange-400">
                         {isSportsPass && !selectedSportEventId ? (
-                            <span className="text-sm text-gray-400 font-normal">Select a sport to see price</span>
+                            <span className="text-xs sm:text-sm text-gray-400 font-normal">Select a sport to see price</span>
                         ) : (
                             `₹${dynamicPrice || pass.price}`
                         )}
                     </div>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                    <h2 className="text-xl font-bold mb-6">Participant Details</h2>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 md:p-8">
+                    <h2 className="text-lg sm:text-xl font-bold mb-6">Participant Details</h2>
                     <form onSubmit={handleRegister} className="space-y-4">
 
                         {isSportsPass && (

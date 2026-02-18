@@ -39,8 +39,8 @@ const ManageEvents = () => {
         artistName: '', // Added artistName
         theme: [''], // Changed to array for multiple topics
         generalPrize: [''], // Added general prize array
-        facultyCoordinators: [{ name: '', phone: '' }],
-        studentCoordinators: [{ name: '', phone: '' }],
+        facultyCoordinators: [],
+        studentCoordinators: [],
         resourcePerson: '',
         resourcePersonPosition: '',
         resourcePersonCompany: '',
@@ -190,17 +190,37 @@ const ManageEvents = () => {
             // But let's keep data consistent if we want to support both.
             // Ensure Description is passed correctly
             // Clean up the payload before sending
-            const payload = {
+            const cleanPayload = {
                 ...formData,
                 description: formData.eventDescription || formData.description,
                 timings: `${formData.fromTime} - ${formData.toTime}`,
                 rounds: formData.rounds.filter(r => isNotEmpty(r.name)),
                 rules: formData.rules.filter(r => isNotEmpty(r)),
                 theme: formData.theme.filter(t => isNotEmpty(t)),
-                generalPrize: formData.generalPrize.filter(p => isNotEmpty(p))
+                generalPrize: formData.generalPrize.filter(p => isNotEmpty(p)),
+                facultyCoordinators: formData.facultyCoordinators.filter(c => isNotEmpty(c.name)),
+                studentCoordinators: formData.studentCoordinators.filter(c => isNotEmpty(c.name))
             };
 
-            console.log('Final Payload:', payload);
+            // Sanitize numeric fields - Mongoose fails if these are empty strings
+            if (cleanPayload.teamPrice === '' || cleanPayload.teamPrice === null) {
+                delete cleanPayload.teamPrice;
+            } else {
+                cleanPayload.teamPrice = Number(cleanPayload.teamPrice);
+            }
+
+            if (cleanPayload.registrationFee === '' || cleanPayload.registrationFee === null) {
+                delete cleanPayload.registrationFee;
+            } else if (cleanPayload.registrationFee) {
+                cleanPayload.registrationFee = Number(cleanPayload.registrationFee);
+            }
+
+            // Ensure date is not an empty string if it's required by schema
+            if (!cleanPayload.date) {
+                delete cleanPayload.date;
+            }
+
+            console.log('Final Cleaned Payload:', cleanPayload);
 
             // Helper to check for meaningful content
             function isNotEmpty(str) {
@@ -210,14 +230,15 @@ const ManageEvents = () => {
             }
 
             if (currentEvent) {
-                await axios.put(`${API_URL}/events/${currentEvent._id}`, payload, getAuthConfig());
+                await axios.put(`${API_URL}/events/${currentEvent._id}`, cleanPayload, getAuthConfig());
             } else {
-                await axios.post(`${API_URL}/events`, payload, getAuthConfig());
+                await axios.post(`${API_URL}/events`, cleanPayload, getAuthConfig());
             }
             setShowModal(false);
             resetForm();
             fetchEvents();
         } catch (error) {
+            console.error('Save Event Error Details:', error.response?.data);
             console.error(error);
             if (error.response?.status === 401) {
                 alert('Session expired. Please login again.');
@@ -304,14 +325,8 @@ const ManageEvents = () => {
                 : (event.theme && typeof event.theme === 'string')
                     ? [event.theme]
                     : [''],
-            facultyCoordinators: event.facultyCoordinators && event.facultyCoordinators.length > 0
-                ? event.facultyCoordinators
-                : [{ name: '', phone: '' }],
-            studentCoordinators: event.studentCoordinators && event.studentCoordinators.length > 0
-                ? event.studentCoordinators
-                : (event.coordinators && event.coordinators.length > 0)
-                    ? event.coordinators
-                    : [{ name: '', phone: '' }],
+            facultyCoordinators: event.facultyCoordinators || [],
+            studentCoordinators: event.studentCoordinators || event.coordinators || [],
             resourcePerson: event.resourcePerson || '',
             resourcePersonPosition: event.resourcePersonPosition || '',
             resourcePersonCompany: event.resourcePersonCompany || '',
@@ -347,8 +362,8 @@ const ManageEvents = () => {
             generalPrize: [''],
             artistName: '',
             theme: [''],
-            facultyCoordinators: [{ name: '', phone: '' }],
-            studentCoordinators: [{ name: '', phone: '' }],
+            facultyCoordinators: [],
+            studentCoordinators: [],
             resourcePerson: '',
             resourcePersonPosition: '',
             resourcePersonCompany: ''
@@ -712,8 +727,8 @@ const ManageEvents = () => {
                                     <h3 className="text-lg font-semibold mb-4 text-blue-400">Student Coordinators</h3>
                                     {formData.studentCoordinators.map((coordinator, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr,1fr,auto] gap-3 mb-4 p-3 bg-white/5 rounded-xl border border-white/5">
-                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'student')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
-                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'student')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
+                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'student')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
+                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'student')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
                                             <button type="button" onClick={() => removeCoordinator(index, 'student')} className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 flex items-center justify-center"><Trash2 size={18} /></button>
                                         </div>
                                     ))}

@@ -92,6 +92,16 @@ const eventSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    // New Fields for Sports
+    gender: {
+        type: String, // 'Men', 'Women', 'Both'
+        enum: ['Men', 'Women', 'Both', ''],
+        default: ''
+    },
+    teamPrice: {
+        type: Number, // Cost per team/participant for Sports
+        default: 0
+    },
     coordinators: [{
         name: String,
         phone: String,

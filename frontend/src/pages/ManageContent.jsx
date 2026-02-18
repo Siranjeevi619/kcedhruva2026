@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
+import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { getImageUrl } from '../utils/imageUtils';
 import { Save, Plus, Trash2, Pencil, Link as LinkIcon } from 'lucide-react';
@@ -9,6 +10,7 @@ import { API_URL } from '../utils/config';
 
 const ManageContent = () => {
     const { refreshConfig, config: siteConfig } = useGlobalConfig();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('general');
     const [rules, setRules] = useState(''); // Keeping state to avoid breakage if referenced, but UI removed
     const [aboutContent, setAboutContent] = useState('');
@@ -35,8 +37,10 @@ const ManageContent = () => {
 
     const [loading, setLoading] = useState(true);
 
-    const token = localStorage.getItem('adminToken');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const getAuthConfig = () => {
+        const token = localStorage.getItem('adminToken');
+        return { headers: { Authorization: `Bearer ${token}` } };
+    };
 
     // Common Fetch
     const fetchData = async () => {
@@ -114,15 +118,19 @@ const ManageContent = () => {
     // --- RULES & CONTACT HANDLERS ---
     const saveConfig = async (key, value) => {
         try {
-            await axios.post(`${API_URL}/content/config`, { key, value }, config);
+            await axios.post(`${API_URL}/content/config`, { key, value }, getAuthConfig());
             alert('Saved successfully!');
-            refreshConfig(); // Refresh global context
-            // Update local state to match saved value (optional but good for consistency)
+            refreshConfig();
             setImageValues(prev => ({ ...prev, [key]: value }));
             fetchData();
         } catch (error) {
             console.error(error);
-            alert('Error saving');
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Error saving');
+            }
         }
     };
 
@@ -136,9 +144,9 @@ const ManageContent = () => {
             let logoUrl = getEmbedLink(itemForm.logo);
             const payload = { ...itemForm, logo: logoUrl };
             if (editingItem) {
-                await axios.put(`${API_URL}/content/${type}s/${editingItem._id}`, payload, config);
+                await axios.put(`${API_URL}/content/${type}s/${editingItem._id}`, payload, getAuthConfig());
             } else {
-                await axios.post(`${API_URL}/content/${type}s`, payload, config);
+                await axios.post(`${API_URL}/content/${type}s`, payload, getAuthConfig());
             }
             setItemForm({ name: '', logo: '', description: '' });
             setEditingItem(null);
@@ -146,7 +154,12 @@ const ManageContent = () => {
             fetchData();
         } catch (error) {
             console.error(error);
-            alert('Error saving item');
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Error saving item');
+            }
         }
     };
 
@@ -161,26 +174,32 @@ const ManageContent = () => {
             const payload = { ...pastEventForm, image: imageUrl };
 
             if (editingPastEvent) {
-                await axios.put(`${API_URL}/content/pastEvents/${editingPastEvent._id}`, payload, config);
+                await axios.put(`${API_URL}/content/pastEvents/${editingPastEvent._id}`, payload, getAuthConfig());
             } else {
-                await axios.post(`${API_URL}/content/pastEvents`, payload, config);
+                await axios.post(`${API_URL}/content/pastEvents`, payload, getAuthConfig());
             }
             setPastEventForm({ title: '', image: '', description: '' });
             setEditingPastEvent(null);
             fetchData();
         } catch (error) {
             console.error(error);
-            alert('Error saving past event');
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Error saving past event');
+            }
         }
     };
 
     const handlePastEventDelete = async (id) => {
         if (window.confirm('Delete this event?')) {
             try {
-                await axios.delete(`${API_URL}/content/pastEvents/${id}`, config);
+                await axios.delete(`${API_URL}/content/pastEvents/${id}`, getAuthConfig());
                 fetchData();
             } catch (error) {
                 console.error(error);
+                if (error.response?.status === 401) navigate('/login');
             }
         }
     };
@@ -189,9 +208,13 @@ const ManageContent = () => {
 
     const deleteItem = async (id, type) => {
         if (window.confirm('Delete this item?')) {
-            await axios.delete(`${API_URL}/content/${type}s/${id}`, config);
-            refreshConfig(); // Refresh global context
-            fetchData();
+            try {
+                await axios.delete(`${API_URL}/content/${type}s/${id}`, getAuthConfig());
+                refreshConfig();
+                fetchData();
+            } catch (error) {
+                if (error.response?.status === 401) navigate('/login');
+            }
         }
     }
 
@@ -382,8 +405,8 @@ const ManageContent = () => {
                                         {/* Dhruva Logo */}
                                         <div>
                                             <h3 className="text-xl font-bold mb-4">Dhruva Logo</h3>
-                                            <div className="mb-4 bg-white/5 p-4 rounded-xl flex items-center justify-center">
-                                                <img src={getImageUrl(aboutLogo)} alt="Dhruva Logo" style={{ width: aboutLogoWidth }} className="object-contain" />
+                                            <div className="mb-4 bg-white/5 p-4 rounded-2xl flex items-center justify-center w-full aspect-video border border-white/5">
+                                                <img src={getImageUrl(aboutLogo)} alt="Dhruva Logo" style={{ maxWidth: aboutLogoWidth }} className="max-h-full object-contain" />
                                             </div>
                                             <div className="space-y-4">
                                                 <div>
@@ -416,8 +439,8 @@ const ManageContent = () => {
                                         {/* KCE Image */}
                                         <div>
                                             <h3 className="text-xl font-bold mb-4">KCE Image</h3>
-                                            <div className="mb-4 bg-white/5 p-4 rounded-xl flex items-center justify-center">
-                                                <img src={getImageUrl(aboutKceImage)} alt="KCE" className="max-h-48 object-cover rounded" />
+                                            <div className="mb-4 bg-white p-6 rounded-2xl flex items-center justify-center w-full aspect-video shadow-inner">
+                                                <img src={getImageUrl(aboutKceImage)} alt="KCE" className="max-h-full max-w-full object-contain" />
                                             </div>
                                             <div className="space-y-4">
                                                 <div className="flex gap-2">

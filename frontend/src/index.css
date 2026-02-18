@@ -35,10 +35,9 @@
         font-weight: 300;
     }
 
-    /* Alias for typo in Home.jsx */
-    .laywrite-nz-basic-light {
+    .playwrite-nz-basic-bold {
         font-family: var(--font-playwrite-nz);
-        font-weight: 300;
+        font-weight: 700;
     }
 
     .inter-light-text {

@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import { getImageUrl } from '../utils/imageUtils';
-import { Calendar, MapPin, User, Phone, BookOpen, Clock, ExternalLink, IndianRupee } from 'lucide-react';
+import { Calendar, MapPin, User, Phone, BookOpen, Clock, ExternalLink, IndianRupee, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { API_URL } from '../utils/config';
 import Doodles from '../components/Doodles';
@@ -57,7 +57,7 @@ const RegisterEvent = () => {
             <Doodles />
             <Navbar />
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-12 md:py-20 font-sans">
+            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 md:py-20 font-sans">
                 {/* Top Section: Hero Image & Registration */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
                     {/* Left: Event Image (4:3) with Stylish Overlay */}
@@ -78,7 +78,7 @@ const RegisterEvent = () => {
                             <span className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-4 inline-block shadow-lg">
                                 {event.category}
                             </span>
-                            <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-2 tracking-tight leading-tight drop-shadow-lg">
+                            <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white mb-2 tracking-tight leading-tight drop-shadow-lg">
                                 {event.title}
                             </h1>
                             {/* {event.theme && (Array.isArray(event.theme) ? event.theme.filter(t => isNotEmpty(t)).length > 0 : isNotEmpty(event.theme)) && (
@@ -106,7 +106,7 @@ const RegisterEvent = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-center h-[50%] relative overflow-hidden group hover:border-white/20 transition-colors"
+                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-center lg:h-[50%] relative overflow-hidden group hover:border-white/20 transition-colors"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
@@ -137,7 +137,7 @@ const RegisterEvent = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
                         >
                             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
@@ -145,7 +145,7 @@ const RegisterEvent = () => {
                                 </div>
                                 About Event
                             </h3>
-                            <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+                            <p className="text-gray-300 text-base md:text-lg leading-relaxed whitespace-pre-wrap">
                                 {event.description}
                             </p>
                         </motion.div>
@@ -157,7 +157,7 @@ const RegisterEvent = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
                             >
                                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                     <div className="p-2 bg-red-500/20 rounded-lg text-red-400 shadow-inner">
@@ -189,7 +189,7 @@ const RegisterEvent = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, ease: "easeOut" }}
-                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg"
+                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 h-full hover:bg-white/[0.07] transition-colors shadow-lg"
                             >
                                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                     <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 shadow-inner">
@@ -217,37 +217,37 @@ const RegisterEvent = () => {
                             className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full"
                         >
                             {/* Venue */}
-                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-green-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
+                                <span className="text-green-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <MapPin size={24} /> Venue
                                 </span>
-                                <span className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">{event.venue}</span>
+                                <span className="text-lg md:text-xl font-bold text-white group-hover:text-green-400 transition-colors">{event.venue}</span>
                             </div>
 
                             {/* Date */}
-                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-blue-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
+                                <span className="text-blue-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <Calendar size={24} /> Date
                                 </span>
-                                <span className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{new Date(event.date).toLocaleDateString()}</span>
+                                <span className="text-lg md:text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{new Date(event.date).toLocaleDateString()}</span>
                             </div>
 
                             {/* Time */}
-                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-purple-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
+                                <span className="text-purple-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <Clock size={24} /> Time
                                 </span>
-                                <span className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                                <span className="text-lg md:text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
                                     {(event.fromTime && event.toTime) ? `${event.fromTime} - ${event.toTime}` : (event.timings || 'TBA')}
                                 </span>
                             </div>
 
                             {/* Dept */}
-                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
-                                <span className="text-yellow-400 text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col justify-center hover:bg-white/[0.07] transition-all group">
+                                <span className="text-yellow-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <BookOpen size={24} /> Department
                                 </span>
-                                <span className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">{event.department || 'General'}</span>
+                                <span className="text-lg md:text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">{event.department || 'General'}</span>
                             </div>
 
                             {event.pptTemplateUrl && (
@@ -260,13 +260,52 @@ const RegisterEvent = () => {
                         </motion.div>
                     </div>
 
+                    {/* Registration Details (Sports) */}
+                    {event.category === 'Sports' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                        >
+                            {/* Registration Fee */}
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <IndianRupee className="text-orange-400 shadow-inner" size={20} strokeWidth={2.5} />
+                                    <p className="text-orange-400 text-xl inter-bold-text uppercase tracking-widest">
+                                        Registration Fee
+                                    </p>
+                                </div>
+                                <p className="text-2xl font-black text-white inter-bold-text hover:text-orange-400 transition-colors">
+                                    ₹{event.teamPrice}/ Team
+                                </p>
+                            </div>
+
+                            {/* Gender Category */}
+                            <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <Users className="text-red-400 shadow-inner" size={20} strokeWidth={2.5} />
+                                    <p className="text-xl text-red-400 inter-bold-text uppercase tracking-widest">
+                                        Gender Category
+                                    </p>
+                                </div>
+                                <p className="text-2xl font-black text-white">
+                                    {event.gender || 'Open'}
+                                </p>
+                            </div>
+                        </motion.div>
+                    )}
+
+
+
                     {/* Resource Person Section (Workshop specific) */}
                     {(event.resourcePerson || event.resourcePersonPosition || event.resourcePersonCompany) && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            className="bg-gradient-to-br from-green-500/10 via-white/5 to-blue-500/10 border border-green-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+                            className="bg-gradient-to-br from-green-500/10 via-white/5 to-blue-500/10 border border-green-500/20 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden"
                         >
                             <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                                 <div className="p-2 bg-green-500/20 rounded-lg text-green-400 shadow-inner">
@@ -275,11 +314,11 @@ const RegisterEvent = () => {
                                 Resource Person
                             </h3>
 
-                            <div className="flex flex-col md:flex-row gap-8 items-center bg-white/5 p-8 rounded-2xl border border-white/10">
+                            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center bg-white/5 p-6 md:p-8 rounded-2xl border border-white/10">
                                 <div className="text-center md:text-left flex-1">
-                                    <h4 className="text-3xl font-black text-white mb-2">{event.resourcePerson}</h4>
-                                    <p className="text-xl text-green-400 font-bold mb-1">{event.resourcePersonPosition}</p>
-                                    <p className="text-lg text-gray-400">{event.resourcePersonCompany}</p>
+                                    <h4 className="text-2xl md:text-3xl font-black text-white mb-2">{event.resourcePerson}</h4>
+                                    <p className="text-lg md:text-xl text-green-400 font-bold mb-1">{event.resourcePersonPosition}</p>
+                                    <p className="text-base md:text-lg text-gray-400">{event.resourcePersonCompany}</p>
                                 </div>
                                 <div className="hidden md:block w-px h-24 bg-white/10" />
                                 <div className="flex-1 text-gray-300 italic text-lg text-center md:text-left">
@@ -295,7 +334,7 @@ const RegisterEvent = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            className="bg-gradient-to-br from-yellow-500/10 via-white/5 to-purple-500/10 border border-yellow-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+                            className="bg-gradient-to-br from-yellow-500/10 via-white/5 to-purple-500/10 border border-yellow-500/20 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl -mr-32 -mt-32" />
                             <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
@@ -309,13 +348,13 @@ const RegisterEvent = () => {
                                 {isValidPrize(event.winnerPrize) && (
                                     <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
                                         <p className="text-yellow-400 text-sm font-bold uppercase tracking-widest mb-2">Winner</p>
-                                        <p className="text-3xl font-black text-white">{event.winnerPrize}</p>
+                                        <p className="text-2xl md:text-3xl font-black text-white">{event.winnerPrize}</p>
                                     </div>
                                 )}
                                 {isValidPrize(event.runnerPrize) && (
                                     <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
                                         <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">Runner</p>
-                                        <p className="text-3xl font-black text-white">{event.runnerPrize}</p>
+                                        <p className="text-2xl md:text-3xl font-black text-white">{event.runnerPrize}</p>
                                     </div>
                                 )}
                                 {isValidPrize(event.prize) && (
@@ -346,7 +385,7 @@ const RegisterEvent = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="bg-white/5 backdrop-blur-sm border border-blue-500/20 rounded-3xl p-8"
+                            className="bg-white/5 backdrop-blur-sm border border-blue-500/20 rounded-3xl p-6 md:p-8"
                         >
                             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
@@ -375,17 +414,17 @@ const RegisterEvent = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 text-center shadow-lg"
                         >
                             <h4 className="text-xl font-bold text-purple-400 mb-8 inline-block border-b-2 border-purple-500/30 pb-2">Faculty Coordinators</h4>
                             <div className="flex flex-wrap justify-center gap-6">
                                 {event.facultyCoordinators.map((coordinator, index) => (
-                                    <div key={index} className="bg-white/5 px-8 py-6 rounded-2xl border border-white/5 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300 group min-w-[200px]">
+                                    <div key={index} className="bg-white/5 px-4 md:px-8 py-6 rounded-2xl border border-white/5 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300 group min-w-0 w-full sm:w-auto sm:min-w-[200px]">
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="p-3 bg-purple-500/20 rounded-full text-purple-400 mb-2 group-hover:scale-110 transition-transform">
                                                 <User size={20} />
                                             </div>
-                                            <span className="font-bold w-[250px] text-white text-lg">{coordinator.name}</span>
+                                            <span className="font-bold text-white text-lg break-words max-w-full">{coordinator.name}</span>
                                             {coordinator.phone && (
                                                 <a href={`tel:${coordinator.phone}`} className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors">
                                                     <Phone size={14} />
@@ -406,17 +445,17 @@ const RegisterEvent = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-lg"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 text-center shadow-lg"
                         >
                             <h4 className="text-xl font-bold text-blue-400 mb-8 inline-block border-b-2 border-blue-500/30 pb-2">Student Coordinators</h4>
                             <div className="flex flex-wrap justify-center gap-6">
                                 {event.studentCoordinators.map((coordinator, index) => (
-                                    <div key={index} className="bg-white/5 px-8 py-6 rounded-2xl border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all duration-300 group min-w-[200px]">
+                                    <div key={index} className="bg-white/5 px-4 md:px-8 py-6 rounded-2xl border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all duration-300 group min-w-0 w-full sm:w-auto sm:min-w-[200px]">
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="p-3 bg-blue-500/20 rounded-full text-blue-400 mb-2 group-hover:scale-110 transition-transform">
                                                 <User size={20} />
                                             </div>
-                                            <span className="font-bold w-[250px] text-white text-lg">{coordinator.name}</span>
+                                            <span className="font-bold text-white text-lg break-words max-w-full">{coordinator.name}</span>
                                             {coordinator.phone && (
                                                 <a href={`tel:${coordinator.phone}`} className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors">
                                                     <Phone size={14} />

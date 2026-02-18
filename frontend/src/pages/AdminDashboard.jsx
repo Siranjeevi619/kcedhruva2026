@@ -38,15 +38,17 @@ const AdminDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    const token = localStorage.getItem('adminToken');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const getAuthConfig = () => {
+        const token = localStorage.getItem('adminToken');
+        return { headers: { Authorization: `Bearer ${token}` } };
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 const [statsRes, allRegRes] = await Promise.all([
-                    axios.get(`${API_URL}/auth/stats`, config),
-                    axios.get(`${API_URL}/registrations/all`, config)
+                    axios.get(`${API_URL}/auth/stats`, getAuthConfig()),
+                    axios.get(`${API_URL}/registrations/all`, getAuthConfig())
                 ]);
 
                 setStats({
@@ -57,6 +59,9 @@ const AdminDashboard = () => {
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching dashboard stats:', error);
+                if (error.response?.status === 401) {
+                    window.location.href = '/login';
+                }
                 setLoading(false);
             }
         };

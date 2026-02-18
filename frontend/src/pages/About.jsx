@@ -37,11 +37,10 @@ const About = ({ embed = false }) => {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="relative w-full max-w-md h-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group"
+                            className="relative w-full max-w-md aspect-video md:aspect-auto md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group bg-[#FFF8E7]"
                         >
-                            <div className="absolute inset-0 group-hover:bg-transparent transition-colors z-10" />
                             {config.about_kce_image ? (
-                                <img src={getImageUrl(config.about_kce_image)} alt="KCE Logo" className="w-full h-full object-contain p-4 bg-white/5 transform group-hover:scale-105 transition-transform duration-700" />
+                                <img src={getImageUrl(config.about_kce_image)} alt="KCE Logo" className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-700" />
                             ) : (
                                 <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-500 flex-col gap-4">
                                     <span className="text-xl">KCE Logo</span>
@@ -54,7 +53,7 @@ const About = ({ embed = false }) => {
                     <div className="flex-1 space-y-6 text-center md:text-left ">
                         <h2 className="inline-block text-3xl md:text-5xl font-bold font-serif mb-6 md:mb-10
                leading-tight
-               bg-gradient-to-r from-violet-400 to-blue-500
+               bg-gradient-to-r from-orange-400 to-teal-500
                bg-clip-text text-transparent">
 
                             About Karpagam College of Engineering
@@ -142,9 +141,9 @@ const About = ({ embed = false }) => {
                                 y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
                                 rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" }
                             }}
-                            className="relative w-full max-w-md"
+                            className="relative w-full max-w-md aspect-video md:aspect-auto md:h-60 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group bg-[#FFF8E7]"
                         >
-                            <div className="relative w-full aspect-video bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center p-8 shadow-2xl overflow-hidden group">
+                            <div className="relative w-full aspect-video border border-white/10 rounded-2xl flex items-center justify-center p-8 shadow-2xl overflow-hidden group">
                                 <div className="absolute inset-0  opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 <img
                                     src={getImageUrl(logoUrl)}
@@ -161,9 +160,9 @@ const About = ({ embed = false }) => {
             <section className="py-20 relative z-10">
                 <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
-                        { title: 'Imagine', desc: 'A platform to spark creativity.', color: 'from-blue-400 to-cyan-400', font: "playwrite-nz-basic-light" },
-                        { title: 'Innovate', desc: 'Pushing boundaries of technology.', color: 'from-purple-400 to-pink-400', font: "playwrite-nz-basic-light" },
-                        { title: 'Inspire', desc: 'Creating moments that last forever.', color: 'from-amber-400 to-orange-400', font: "playwrite-nz-basic-light" }
+                        { title: 'Imagine', desc: 'A platform to spark creativity.', color: 'from-blue-400 to-cyan-400', font: "playwrite-nz-basic-light", back: "bg-blue-600/10" },
+                        { title: 'Innovate', desc: 'Pushing boundaries of technology.', color: 'from-purple-400 to-pink-400', font: "playwrite-nz-basic-light", back: "bg-purple-600/10" },
+                        { title: 'Inspire', desc: 'Creating moments that last forever.', color: 'from-amber-400 to-orange-400', font: "playwrite-nz-basic-light", back: "bg-amber-600/10" }
                     ].map((item, idx) => (
                         <motion.div
                             key={idx}
@@ -171,7 +170,7 @@ const About = ({ embed = false }) => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.2 }}
-                            className="bg-white/5 border border-white/10 p-8 rounded-2xl text-center hover:bg-blue-600/10 transition-colors group"
+                            className={`bg-white/5 border border-white/10 p-8 rounded-2xl text-center hover:bg-blue-600/10 transition-colors group ${item.back}`}
                         >
                             <h3
                                 className={`inline-block text-2xl font-bold mb-4 leading-relaxed

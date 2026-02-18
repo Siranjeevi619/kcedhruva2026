@@ -43,11 +43,15 @@ const ManageEvents = () => {
         studentCoordinators: [{ name: '', phone: '' }],
         resourcePerson: '',
         resourcePersonPosition: '',
-        resourcePersonCompany: ''
+        resourcePersonCompany: '',
+        gender: '', // Added gender
+        teamPrice: '', // Added teamPrice
     });
 
-    const token = localStorage.getItem('adminToken');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const getAuthConfig = () => {
+        const token = localStorage.getItem('adminToken');
+        return { headers: { Authorization: `Bearer ${token}` } };
+    };
 
     useEffect(() => {
         fetchEvents();
@@ -206,27 +210,34 @@ const ManageEvents = () => {
             }
 
             if (currentEvent) {
-                await axios.put(`${API_URL}/events/${currentEvent._id}`, payload, config);
+                await axios.put(`${API_URL}/events/${currentEvent._id}`, payload, getAuthConfig());
             } else {
-                await axios.post(`${API_URL}/events`, payload, config);
+                await axios.post(`${API_URL}/events`, payload, getAuthConfig());
             }
             setShowModal(false);
             resetForm();
             fetchEvents();
         } catch (error) {
-            console.error('Save Error:', error);
-            const errorMsg = error.response?.data?.message || error.message || 'Error saving event';
-            alert(`Error: ${errorMsg}`);
+            console.error(error);
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                window.location.href = '/login';
+            } else {
+                alert('Error saving event');
+            }
         }
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure?')) {
+        if (window.confirm('Are you sure you want to delete this event?')) {
             try {
-                await axios.delete(`${API_URL}/events/${id}`, config);
+                await axios.delete(`${API_URL}/events/${id}`, getAuthConfig());
                 fetchEvents();
             } catch (error) {
                 console.error(error);
+                if (error.response?.status === 401) {
+                    window.location.href = '/login';
+                }
             }
         }
     };
@@ -239,11 +250,9 @@ const ManageEvents = () => {
         let toTime = event.toTime || '';
 
         if (!fromTime && !toTime && event.timings && event.timings.includes('-')) {
-            const parts = event.timings.split('-').map(p => p.trim());
-            if (parts.length === 2) {
-                fromTime = parts[0];
-                toTime = parts[1];
-            }
+            const parts = event.timings.split('-');
+            fromTime = parts[0].trim();
+            toTime = parts[1].trim();
         }
 
         // Safely extract date string YYYY-MM-DD for the date input
@@ -305,7 +314,9 @@ const ManageEvents = () => {
                     : [{ name: '', phone: '' }],
             resourcePerson: event.resourcePerson || '',
             resourcePersonPosition: event.resourcePersonPosition || '',
-            resourcePersonCompany: event.resourcePersonCompany || ''
+            resourcePersonCompany: event.resourcePersonCompany || '',
+            gender: event.gender || '',
+            teamPrice: event.teamPrice || ''
         });
         setShowModal(true);
     };
@@ -561,6 +572,25 @@ const ManageEvents = () => {
                                         <input name="winnerPrize" value={formData.winnerPrize} onChange={handleChange} placeholder="Winner Prize (₹)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
                                         <input name="runnerPrize" value={formData.runnerPrize} onChange={handleChange} placeholder="Runner Prize (₹)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
                                     </div>
+
+                                    {/* Sports Specific Fields */}
+                                    {formData.category === 'Sports' && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-l-4 border-blue-500 pl-4 bg-blue-500/5 p-4 rounded-r-xl">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-400 mb-1">Gender Category</label>
+                                                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors [&>option]:bg-[#1a1a1a]">
+                                                    <option value="">Select Gender</option>
+                                                    <option value="Men">Men</option>
+                                                    <option value="Women">Women</option>
+                                                    <option value="Both">Both</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-400 mb-1">Team/Individual Price (₹)</label>
+                                                <input type="number" name="teamPrice" value={formData.teamPrice} onChange={handleChange} placeholder="Cost per Team (e.g. 500)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* General Prize - Dynamic Array */}
                                     <div className="space-y-3">

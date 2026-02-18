@@ -86,10 +86,18 @@ const Home = () => {
                 // If just 'Technical' is clicked from navbar, show Departments
                 setViewMode('Departments');
                 setSelectedCategory('Technical');
+            } else if (catParam === 'Cultural' && !typeParam) {
+                // If 'Cultural' is clicked without type, show subcategories (Dashboard)
+                setViewMode('CategoryDashboard');
+                setSelectedCategory('Cultural');
+                setSelectedDept(null);
             } else {
-                // For Cultural/Sports, show Events directly (or subtypes if implemented later)
+                // For Cultural with type, Sports, or others
                 setViewMode('Events');
                 setSelectedCategory(catParam);
+                if (catParam === 'Cultural') {
+                    setSelectedSubCategory(typeParam);
+                }
             }
         } else {
             // Default to Categories view if no params
@@ -130,6 +138,11 @@ const Home = () => {
                 } else if (selectedSubCategory === 'Non Technical') {
                     result = result.filter(e =>
                         ['Non Technical', 'Non-Technical'].includes(e.category)
+                    );
+                } else if (selectedSubCategory === 'OnStage' || selectedSubCategory === 'OffStage') {
+                    result = result.filter(e =>
+                        e.eventType === selectedSubCategory ||
+                        e.department === selectedSubCategory
                     );
                 }
             }
@@ -173,13 +186,12 @@ const Home = () => {
         if (category === 'Technical') {
             setViewMode('Departments');
             setSelectedCategory('Technical');
-            // Update URL without reload? Or just state?
-            // User requested "route it to the pages", so maybe URL update is good for history
-            // navigate('?cat=Technical', { replace: true }); // Optional: update URL
+        } else if (category === 'Cultural') {
+            setViewMode('CategoryDashboard');
+            setSelectedCategory('Cultural');
         } else {
             setViewMode('Events');
             setSelectedCategory(category);
-            // navigate(`?cat=${category}`, { replace: true });
         }
     };
 
@@ -187,12 +199,12 @@ const Home = () => {
         if (viewMode === 'Events' && selectedDept) {
             setViewMode('CategoryDashboard');
             setSelectedSubCategory(null);
-        } else if (viewMode === 'CategoryDashboard') {
-            setViewMode('Departments');
-            setSelectedDept(null);
-        } else if (viewMode === 'Events' && selectedCategory === 'Technical') {
-            setViewMode('Departments');
-            setSelectedDept(null);
+        } else if (viewMode === 'Events' && selectedCategory === 'Cultural') {
+            setViewMode('CategoryDashboard');
+            setSelectedSubCategory(null);
+        } else if (viewMode === 'CategoryDashboard' && selectedCategory === 'Cultural') {
+            setViewMode('Categories');
+            setSelectedCategory(null);
         } else {
             setViewMode('Categories');
             setSelectedCategory(null);
@@ -263,7 +275,7 @@ const Home = () => {
 
 
 
-                            <p className="text-base font-mono md:text-[1.5rem] max-w-2xl mx-auto mb-10 px-3 
+                            <p className="text-base inter-light-text md:text-[1.5rem] max-w-2xl mx-auto mb-10 px-3 
     text-gray-200">
 
                                 Join us for the biggest technical, cultural, and sports festival of the year.
@@ -378,49 +390,87 @@ const Home = () => {
                             )}
 
                             {/* Level 2.5: Category Dashboard (Summary Cards) */}
-                            {viewMode === 'CategoryDashboard' && selectedDept && (
-                                <div className="grid grid-cols-1 inter-light-text md:grid-cols-3 gap-8">
-                                    {[
-                                        { name: 'Technical', key: 'technical', imgKey: 'cat_technical_image', default: 'https://images.unsplash.com/photo-1518770660439-4636190af475' },
-                                        { name: 'Non Technical', key: 'nonTechnical', imgKey: 'cat_nontechnical_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' },
-                                        { name: 'Workshop', key: 'workshops', imgKey: 'cat_workshop_image', default: 'https://images.unsplash.com/photo-1552664730-d307ca884978' }
-                                    ].map(sub => {
-                                        const normalizedMatch = (s1, s2) => {
-                                            const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
-                                            return n(s1) === n(s2);
-                                        };
-                                        const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, selectedDept));
-                                        const count = deptEvents.filter(e => {
-                                            if (sub.key === 'workshops') return (e.category === 'Workshop' || e.eventType === 'Workshop' || e.eventType === 'Hands-on');
-                                            if (sub.key === 'technical') return (['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) && e.eventType !== 'Workshop' && e.eventType !== 'Hands-on');
-                                            if (sub.key === 'nonTechnical') return (['Non Technical', 'Non-Technical'].includes(e.category));
-                                            return false;
-                                        }).length;
+                            {viewMode === 'CategoryDashboard' && (
+                                <div className="flex flex-wrap justify-center gap-8 inter-light-text">
+                                    {selectedCategory === 'Cultural' ? (
+                                        // Cultural Dashboard: On Stage / Off Stage
+                                        [
+                                            { name: 'On Stage', type: 'OnStage', imgKey: 'cat_cultural_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' },
+                                            { name: 'Off Stage', type: 'OffStage', imgKey: 'cat_cultural_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' }
+                                        ].map(sub => {
+                                            const count = upcomingEvents.filter(e =>
+                                                e.category === 'Cultural' &&
+                                                (e.eventType === sub.type || e.department === sub.type)
+                                            ).length;
 
-                                        return (
-                                            <div
-                                                key={sub.name}
-                                                onClick={() => handleSubCategoryClick(sub.name === 'Workshop' ? 'Workshop' : sub.name)}
-                                                className="group relative aspect-video inter-light-text md:aspect-[4/3] h-auto bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
-                                            >
-                                                <img
-                                                    src={getImageUrl(config[sub.imgKey] || sub.default)}
-                                                    alt={sub.name}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                                                    <h3 className="text-3xl inter-bold-text text-white mb-4 group-hover:scale-110 transition-transform">
-                                                        {sub.name === 'Workshop' ? 'Workshops' : sub.name}
-                                                    </h3>
-                                                    <div className="bg-blue-600/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
-                                                        <span className="text-xl inter-bold-text text-white">{count} Events</span>
+                                            return (
+                                                <div
+                                                    key={sub.name}
+                                                    onClick={() => handleSubCategoryClick(sub.type)}
+                                                    className="group relative w-full md:w-[calc(33.333%-2rem)] max-w-sm aspect-video inter-light-text md:aspect-[4/3] h-auto bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
+                                                >
+                                                    <img
+                                                        src={getImageUrl(config[sub.imgKey] || sub.default)}
+                                                        alt={sub.name}
+                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+                                                        <h3 className="text-3xl inter-bold-text text-white mb-4 group-hover:scale-110 transition-transform">
+                                                            {sub.name}
+                                                        </h3>
+                                                        <div className="bg-pink-600/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
+                                                            <span className="text-xl inter-bold-text text-white">{count} Events</span>
+                                                        </div>
+                                                        <p className="mt-4 text-white/60 text-xs font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to view</p>
                                                     </div>
-                                                    <p className="mt-4 text-white/60 text-xs font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to view</p>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })
+                                    ) : selectedDept ? (
+                                        // Technical Department Dashboard
+                                        [
+                                            { name: 'Technical', key: 'technical', imgKey: 'cat_technical_image', default: 'https://images.unsplash.com/photo-1518770660439-4636190af475' },
+                                            { name: 'Non Technical', key: 'nonTechnical', imgKey: 'cat_nontechnical_image', default: 'https://images.unsplash.com/photo-1514525253361-bee8a48790c3' },
+                                            { name: 'Workshop', key: 'workshops', imgKey: 'cat_workshop_image', default: 'https://images.unsplash.com/photo-1552664730-d307ca884978' }
+                                        ].map(sub => {
+                                            const normalizedMatch = (s1, s2) => {
+                                                const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                                return n(s1) === n(s2);
+                                            };
+                                            const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, selectedDept));
+                                            const count = deptEvents.filter(e => {
+                                                if (sub.key === 'workshops') return (e.category === 'Workshop' || e.eventType === 'Workshop' || e.eventType === 'Hands-on');
+                                                if (sub.key === 'technical') return (['Technical', 'Hackathon', 'Ideathon', 'Paper Presentation', 'Project Presentation'].includes(e.category) && e.eventType !== 'Workshop' && e.eventType !== 'Hands-on');
+                                                if (sub.key === 'nonTechnical') return (['Non Technical', 'Non-Technical'].includes(e.category));
+                                                return false;
+                                            }).length;
+
+                                            return (
+                                                <div
+                                                    key={sub.name}
+                                                    onClick={() => handleSubCategoryClick(sub.name === 'Workshop' ? 'Workshop' : sub.name)}
+                                                    className="group relative w-full md:w-[calc(33.333%-2rem)] max-w-sm aspect-video inter-light-text md:aspect-[4/3] h-auto bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300"
+                                                >
+                                                    <img
+                                                        src={getImageUrl(config[sub.imgKey] || sub.default)}
+                                                        alt={sub.name}
+                                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+                                                        <h3 className="text-3xl inter-bold-text text-white mb-4 group-hover:scale-110 transition-transform">
+                                                            {sub.name === 'Workshop' ? 'Workshops' : sub.name}
+                                                        </h3>
+                                                        <div className="bg-blue-600/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
+                                                            <span className="text-xl inter-bold-text text-white">{count} Events</span>
+                                                        </div>
+                                                        <p className="mt-4 text-white/60 text-xs font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to view</p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : null}
                                 </div>
                             )}
 

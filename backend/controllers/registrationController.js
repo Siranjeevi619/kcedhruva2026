@@ -41,11 +41,22 @@ const registerForEvent = async (req, res) => {
         const randomNum = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
         const ticketId = `${prefix}${randomNum}`;
 
-        // 4. Check Payment Status
+        // 4. Determine Amount (Dynamic for Sports)
+        let amountToPay = pass.price;
+        if (passName.includes('sports') && events.length > 0) {
+            // For sports, use the specific event's team price
+            // Assuming strict one event selection for sports pass as per UI
+            const sportsEvent = events[0];
+            if (sportsEvent.teamPrice && sportsEvent.teamPrice > 0) {
+                amountToPay = sportsEvent.teamPrice.toString(); // Convert to string to match schema
+            }
+        }
+
+        // 5. Check Payment Status
         const enablePayment = process.env.ENABLE_PAYMENT === 'true';
         const initialStatus = enablePayment ? 'Pending' : 'Completed';
 
-        // 5. Create Registration
+        // 6. Create Registration
         const registration = new Registration({
             pass: passId,
             events: eventIds,
@@ -57,7 +68,7 @@ const registerForEvent = async (req, res) => {
             year,
             college,
             district,
-            amount: pass.price,
+            amount: amountToPay,
             paymentStatus: initialStatus,
             ticketId: ticketId
         });

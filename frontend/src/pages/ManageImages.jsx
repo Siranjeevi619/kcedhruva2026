@@ -49,25 +49,33 @@ const ManageImages = () => {
         setInputs(prev => ({ ...prev, [key]: value }));
     };
 
+    const getAuthConfig = () => {
+        const token = localStorage.getItem('adminToken');
+        return { headers: { 'Authorization': `Bearer ${token}` } };
+    };
+
     const handleSave = async (key) => {
         setUpdating(prev => ({ ...prev, [key]: true }));
         setMessage(null);
 
         try {
-            const token = localStorage.getItem('adminToken');
-            const config = { headers: { 'Authorization': `Bearer ${token}` } };
             const urlToSave = inputs[key];
             const isImageSection = sections.some(s => s.key === key); // Helper to determine type
             const type = isImageSection ? 'image' : 'text';
 
-            await axios.post(`${API_URL}/content/config`, { key, value: urlToSave, type }, config);
+            await axios.post(`${API_URL}/content/config`, { key, value: urlToSave, type }, getAuthConfig());
             setConfigs(prev => ({ ...prev, [key]: urlToSave }));
             setUpdating(prev => ({ ...prev, [key]: false }));
             setMessage({ type: 'success', text: `Successfully updated ${key}` });
         } catch (error) {
             console.error(error);
             setUpdating(prev => ({ ...prev, [key]: false }));
-            setMessage({ type: 'error', text: 'Update failed.' });
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                window.location.href = '/login';
+            } else {
+                setMessage({ type: 'error', text: 'Update failed.' });
+            }
         }
     };
 

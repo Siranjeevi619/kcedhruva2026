@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useGlobalConfig } from '../context/GlobalConfigContext';
 import { API_URL } from '../utils/config';
+import ComingSoonModal from '../components/ComingSoonModal';
+import SuccessModal from '../components/SuccessModal';
 
 import Doodles from '../components/Doodles';
 
@@ -27,12 +29,50 @@ const EventSelection = () => {
 
     });
     const [submitting, setSubmitting] = useState(false);
+    const [showComingSoon, setShowComingSoon] = useState(false);
+    const [successState, setSuccessState] = useState({ show: false, title: '', message: '' });
+
+    // Sports Specific State
+    const [sportsEvents, setSportsEvents] = useState([]);
+    const [selectedSportEventId, setSelectedSportEventId] = useState('');
+    const [dynamicPrice, setDynamicPrice] = useState(null);
+
+    const isSportsPass = pass?.name?.toLowerCase().includes('sports');
 
     useEffect(() => {
         if (!pass) {
             navigate('/passes');
+            return;
+        }
+
+        if (isSportsPass) {
+            fetchSportsEvents();
+        } else {
+            setDynamicPrice(pass.price);
         }
     }, [pass, navigate]);
+
+    const fetchSportsEvents = async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/events`);
+            // Filter strictly for sports events
+            const sports = data.filter(e => e.category === 'Sports');
+            setSportsEvents(sports);
+        } catch (error) {
+            console.error("Failed to fetch sports events", error);
+        }
+    };
+
+    const handleSportSelect = (e) => {
+        const eventId = e.target.value;
+        setSelectedSportEventId(eventId);
+        const event = sportsEvents.find(ev => ev._id === eventId);
+        if (event) {
+            setDynamicPrice(event.teamPrice || pass.price);
+        } else {
+            setDynamicPrice(pass.price);
+        }
+    };
 
     const handleFormChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,21 +82,26 @@ const EventSelection = () => {
         e.preventDefault();
         setSubmitting(true);
         if (config.registration_open === 'false') {
-            alert('Registration will open soon. Please stay tuned!');
+            setShowComingSoon(true);
             setSubmitting(false);
             return;
         }
         try {
-            const { data: regData } = await axios.post(`${API_URL}/registrations`, {
+            const payload = {
                 passId: pass._id,
-                eventIds: [], // No specific events selected
+                eventIds: selectedSportEventId ? [selectedSportEventId] : [],
                 ...formData
-            });
+            };
+
+            const { data: regData } = await axios.post(`${API_URL}/registrations`, payload);
 
             // Check if payment was bypassed
             if (regData.paymentStatus === 'Completed' || regData.paymentStatus === 'Bypassed') {
-                alert('Registration Successful!');
-                navigate('/');
+                setSuccessState({
+                    show: true,
+                    title: 'Registration Successful!',
+                    message: "Welcome to Dhruva! Your registration has been confirmed. See you at the event!"
+                });
                 setSubmitting(false);
                 return;
             }
@@ -76,8 +121,11 @@ const EventSelection = () => {
                             razorpay_signature: response.razorpay_signature,
                             registrationId: regData.registrationId
                         });
-                        alert('Payment Successful & Registration Confirmed!');
-                        navigate('/');
+                        setSuccessState({
+                            show: true,
+                            title: 'Payment Successful!',
+                            message: "Your payment has been verified and registration is confirmed. Get ready for an epic experience!"
+                        });
                     } catch (err) {
                         alert('Payment verification failed. Please contact support.');
                     }
@@ -122,14 +170,39 @@ const EventSelection = () => {
 
             <main className="flex-1 max-w-3xl mx-auto w-full px-4 pt-24 pb-12">
                 <div className="mb-8 p-6 bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/30 rounded-2xl text-center">
-                    <h1 className="text-3xl font-bold mb-2">{pass.name} Registration</h1>
+                    <h1 className="text-3xl font-bold mb-2">{pass.name}</h1>
                     <p className="text-gray-300 mb-4">{pass.description}</p>
-                    <div className="text-2xl font-bold text-orange-400">₹{pass.price}</div>
+                    <div className="text-2xl font-bold text-orange-400">
+                        {isSportsPass && !selectedSportEventId ? (
+                            <span className="text-sm text-gray-400 font-normal">Select a sport to see price</span>
+                        ) : (
+                            `₹${dynamicPrice || pass.price}`
+                        )}
+                    </div>
                 </div>
 
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                     <h2 className="text-xl font-bold mb-6">Participant Details</h2>
                     <form onSubmit={handleRegister} className="space-y-4">
+
+                        {isSportsPass && (
+                            <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                                <label className="block text-sm font-bold text-blue-400 mb-2">Select Sports Event *</label>
+                                <select
+                                    value={selectedSportEventId}
+                                    onChange={handleSportSelect}
+                                    required
+                                    className="w-full bg-black/40 border border-blue-500/30 rounded-lg py-3 px-4 focus:border-blue-500 outline-none text-white [&>option]:bg-black"
+                                >
+                                    <option value="">-- Choose Sport --</option>
+                                    {sportsEvents.map(event => (
+                                        <option key={event._id} value={event._id}>
+                                            {event.title} ({event.gender || 'Open'}) - ₹{event.teamPrice}/{event.gender === 'Mixed' ? 'Team' : 'Person'}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input name="studentName" value={formData.studentName} onChange={handleFormChange} required placeholder="Full Name" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
                             <input name="rollNumber" value={formData.rollNumber} onChange={handleFormChange} required placeholder="Roll Number" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
@@ -199,6 +272,16 @@ const EventSelection = () => {
                     </form>
                 </div>
             </main>
+            <ComingSoonModal
+                isOpen={showComingSoon}
+                onClose={() => setShowComingSoon(false)}
+            />
+            <SuccessModal
+                isOpen={successState.show}
+                onClose={() => setSuccessState({ ...successState, show: false })}
+                title={successState.title}
+                message={successState.message}
+            />
             <Footer />
         </div>
     );

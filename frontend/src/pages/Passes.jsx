@@ -121,7 +121,18 @@ const Passes = ({ embed = false }) => {
                             >
                                 {/* Intro Hero Card - Representative of the first pass or a generic style */}
                                 {passes.length > 0 && (
-                                    <div className="relative w-full max-w-md transform scale-110">
+                                    <motion.div
+                                        className="relative w-full max-w-md transform scale-110"
+                                        animate={{
+                                            y: [-20, 20, -20],
+                                            rotate: [0, 10, -10, 10, 0],
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut"
+                                        }}
+                                    >
                                         {/* Cloning the card UI for the intro */}
                                         {(() => {
                                             const pass = passes[0]; // Use first pass as hero
@@ -156,7 +167,7 @@ const Passes = ({ embed = false }) => {
                                                 </div>
                                             );
                                         })()}
-                                    </div>
+                                    </motion.div>
                                 )}
                             </motion.div>
                         ) : (
@@ -198,14 +209,14 @@ const Passes = ({ embed = false }) => {
                                             <motion.div
                                                 className={`relative flex flex-col h-full ${styles.bg} text-white hover- bg-opacity-10 border ${styles.border} rounded-3xl p-8 hover:transform hover:-translate-y-2 transition-all duration-300 group hover:shadow-2xl ${styles.shadow}`}
                                                 animate={{
-                                                    y: Math.random() < 0.5 ? [-5, 5, -5] : [5, -5, 5],
-                                                    rotate: Math.random() < 0.5 ? [-1, 1, -1] : [1, -1, 1],
+                                                    y: [-10, 10, -10],
+                                                    rotate: [0, 2, -2, 2, 0],
                                                 }}
                                                 transition={{
-                                                    duration: 1.5 + Math.random() * 1.5, // Faster: Random duration between 1.5s and 3s
+                                                    duration: 6,
                                                     repeat: Infinity,
                                                     ease: "easeInOut",
-                                                    delay: Math.random() * (-20)
+                                                    delay: i * 0.2 // Staggered delay for each card
                                                 }}
                                             >
 

@@ -39,7 +39,8 @@ const createEvent = async (req, res) => {
             coordinators, facultyCoordinators, studentCoordinators,
             artistName, timings, prize, rules, rounds,
             winnerPrize, runnerPrize, generalPrize, fromTime, toTime, theme,
-            resourcePerson, resourcePersonPosition, resourcePersonCompany
+            resourcePerson, resourcePersonPosition, resourcePersonCompany,
+            gender, teamPrice
         } = req.body;
 
         const event = new Event({
@@ -71,6 +72,8 @@ const createEvent = async (req, res) => {
             resourcePerson,
             resourcePersonPosition,
             resourcePersonCompany,
+            gender,
+            teamPrice,
             createdBy: req.admin._id
         });
 
@@ -98,7 +101,8 @@ const updateEvent = async (req, res) => {
                 coordinators, facultyCoordinators, studentCoordinators,
                 artistName, timings, prize, rules, rounds,
                 winnerPrize, runnerPrize, generalPrize, fromTime, toTime, theme,
-                resourcePerson, resourcePersonPosition, resourcePersonCompany
+                resourcePerson, resourcePersonPosition, resourcePersonCompany,
+                gender, teamPrice
             } = req.body;
 
             event.title = title || event.title;
@@ -129,6 +133,8 @@ const updateEvent = async (req, res) => {
             event.resourcePerson = resourcePerson || event.resourcePerson;
             event.resourcePersonPosition = resourcePersonPosition || event.resourcePersonPosition;
             event.resourcePersonCompany = resourcePersonCompany || event.resourcePersonCompany;
+            event.gender = gender || event.gender;
+            event.teamPrice = teamPrice !== undefined ? teamPrice : event.teamPrice;
 
             const updatedEvent = await event.save();
             res.json(updatedEvent);

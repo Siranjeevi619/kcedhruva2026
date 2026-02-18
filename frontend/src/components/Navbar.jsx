@@ -45,7 +45,7 @@ const Navbar = () => {
                 {
                     links: [
                         { name: 'Information Technology', path: '/?dept=IT' },
-                        { name: 'Department of Mechanical Engineering', path: '/?dept=MECH' },
+                        { name: 'Mechanical Engineering', path: '/?dept=MECH' },
                         { name: 'Management Studies', path: '/?dept=MBA' },
                         { name: 'Computer Applications', path: '/?dept=MCA' },
                     ]

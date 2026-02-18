@@ -19,8 +19,10 @@ const ManagePasses = () => {
         isActive: true
     });
 
-    const token = localStorage.getItem('adminToken');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const getAuthConfig = () => {
+        const token = localStorage.getItem('adminToken');
+        return { headers: { Authorization: `Bearer ${token}` } };
+    };
 
     useEffect(() => {
         fetchPasses();
@@ -61,16 +63,21 @@ const ManagePasses = () => {
         e.preventDefault();
         try {
             if (currentPass) {
-                await axios.put(`${API_URL}/passes/${currentPass._id}`, formData, config);
+                await axios.put(`${API_URL}/passes/${currentPass._id}`, formData, getAuthConfig());
             } else {
-                await axios.post(`${API_URL}/passes`, formData, config);
+                await axios.post(`${API_URL}/passes`, formData, getAuthConfig());
             }
             setShowModal(false);
             fetchPasses();
         } catch (error) {
             console.error(error);
-            const errMsg = error.response?.data?.message || error.message || 'Error saving pass';
-            alert(`Error: ${errMsg}`);
+            if (error.response?.status === 401) {
+                alert('Session expired. Please login again.');
+                window.location.href = '/login';
+            } else {
+                const errMsg = error.response?.data?.message || error.message || 'Error saving pass';
+                alert(`Error: ${errMsg}`);
+            }
         }
     };
 
@@ -90,13 +97,17 @@ const ManagePasses = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this pass?')) {
             try {
-                await axios.delete(`${API_URL}/passes/${id}`, config);
+                await axios.delete(`${API_URL}/passes/${id}`, getAuthConfig());
                 alert('Pass deleted successfully');
                 fetchPasses();
             } catch (error) {
                 console.error(error);
-                const errMsg = error.response?.data?.message || error.message || 'Error deleting pass';
-                alert(`Error: ${errMsg}`);
+                if (error.response?.status === 401) {
+                    window.location.href = '/login';
+                } else {
+                    const errMsg = error.response?.data?.message || error.message || 'Error deleting pass';
+                    alert(`Error: ${errMsg}`);
+                }
             }
         }
     };

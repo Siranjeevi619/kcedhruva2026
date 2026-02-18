@@ -699,8 +699,8 @@ const ManageEvents = () => {
                                     <h3 className="text-lg font-semibold mb-3 text-purple-400">Faculty Coordinators</h3>
                                     {formData.facultyCoordinators.map((coordinator, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr,1fr,auto] gap-3 mb-4 p-3 bg-white/5 rounded-xl border border-white/5">
-                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'faculty')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
-                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'faculty')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" required />
+                                            <input value={coordinator.name} onChange={(e) => handleCoordinatorChange(index, 'name', e.target.value, 'faculty')} placeholder="Name" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
+                                            <input value={coordinator.phone} onChange={(e) => handleCoordinatorChange(index, 'phone', e.target.value, 'faculty')} placeholder="Phone" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm" />
                                             <button type="button" onClick={() => removeCoordinator(index, 'faculty')} className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 flex items-center justify-center"><Trash2 size={18} /></button>
                                         </div>
                                     ))}

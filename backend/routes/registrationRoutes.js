@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { registerForEvent, exportRegistrations, getAllRegistrations, getEventRegistrations, exportEventRegistrations } = require('../controllers/registrationController');
+const { registerForEvent, preRegister, exportRegistrations, getAllRegistrations, getEventRegistrations, exportEventRegistrations } = require('../controllers/registrationController');
 const { protect, admin } = require('../middlewares/authMiddleware');
 
 router.post('/', registerForEvent);
+router.post('/pre-register', preRegister);
 router.get('/export', protect, admin, exportRegistrations);
 router.get('/all', protect, admin, getAllRegistrations);
 // router.post('/trigger-report', protect, admin, triggerReport);

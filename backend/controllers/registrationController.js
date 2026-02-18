@@ -250,9 +250,62 @@ const exportEventRegistrations = async (req, res) => {
     }
 };
 
+// @desc    Pre-register for an event (Interest/Coming Soon)
+// @route   POST /api/registrations/pre-register
+// @access  Public
+const preRegister = async (req, res) => {
+    try {
+        const { passId, eventIds, studentName, rollNumber, email, phone, department, year, college, district } = req.body;
+
+        const Pass = require('../models/Pass');
+        const pass = await Pass.findById(passId);
+
+        const registration = new Registration({
+            pass: passId,
+            events: eventIds,
+            studentName,
+            rollNumber,
+            email,
+            phone,
+            department,
+            year,
+            college,
+            district,
+            amount: pass ? pass.price : '0',
+            paymentStatus: 'Pre-Registered',
+            ticketId: `PRE${Math.floor(1000 + Math.random() * 9000)}`
+        });
+
+        await registration.save();
+
+        // Log to Google Sheet
+        const { logToSheet } = require('../utils/googleSheets');
+        await logToSheet({
+            email,
+            studentName,
+            rollNumber,
+            year,
+            department,
+            phone,
+            college,
+            district,
+            passName: pass ? pass.name : 'N/A',
+            passId: passId,
+            amount: pass ? pass.price : '0',
+            paymentStatus: 'Pre-Registered'
+        });
+
+        res.status(201).json({ message: 'Interest registered successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 //Original exports plus new ones
 module.exports = {
     registerForEvent,
+    preRegister,
     exportRegistrations, // Global export
     getAllRegistrations, // New endpoint for dashboard
     getEventRegistrations,

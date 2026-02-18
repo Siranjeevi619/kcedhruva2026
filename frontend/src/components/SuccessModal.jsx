@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, X, PartyPopper, ArrowRight } from 'lucide-react';
+import { CheckCircle, X, PartyPopper, ArrowRight, Home, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SuccessModal = ({ isOpen, onClose, title = "Success!", message = "Your registration has been confirmed." }) => {
@@ -9,71 +9,84 @@ const SuccessModal = ({ isOpen, onClose, title = "Success!", message = "Your reg
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+                <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 overflow-y-auto pt-20 pb-10">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        className="fixed inset-0 bg-black/90 backdrop-blur-xl"
                     />
 
                     {/* Modal Content */}
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        initial={{ scale: 0.9, opacity: 0, y: 40 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-lg bg-gradient-to-br from-gray-900 to-black border border-green-500/20 rounded-[2.5rem] p-8 md:p-12 overflow-hidden shadow-[0_0_50px_rgba(34,197,94,0.15)]"
+                        exit={{ scale: 0.9, opacity: 0, y: 40 }}
+                        className="relative w-full max-w-xl bg-[#0d0d0d] border border-green-500/20 rounded-[3rem] p-8 md:p-14 overflow-hidden shadow-[0_0_80px_rgba(34,197,94,0.15)]"
                     >
-                        {/* Animated Background Elements */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-green-600/10 rounded-full blur-[80px] -mr-32 -mt-32" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] -ml-32 -mb-32" />
+                        {/* Premium Glow Effects */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-600/20 rounded-full blur-[100px]" />
+                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]" />
+
+                        {/* Close Icon - Optional as we have buttons, but nice for UX */}
+                        <button
+                            onClick={onClose}
+                            className="absolute top-8 right-8 p-3 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group"
+                        >
+                            <X size={20} className="group-hover:rotate-90 transition-transform" />
+                        </button>
 
                         <div className="relative z-10 text-center">
                             {/* Icon Animation */}
                             <motion.div
                                 initial={{ scale: 0 }}
-                                animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
-                                transition={{ type: "spring", damping: 12, stiffness: 200 }}
-                                className="inline-flex p-5 bg-green-500/20 rounded-3xl mb-8 border border-green-500/20"
+                                animate={{ scale: 1, rotate: [0, 15, -15, 0] }}
+                                transition={{ type: "spring", damping: 10, stiffness: 150 }}
+                                className="inline-flex p-6 bg-green-500/20 rounded-[2rem] mb-10 border border-green-500/30 shadow-2xl"
                             >
-                                <CheckCircle size={48} className="text-green-400" />
+                                <CheckCircle size={64} className="text-green-400" />
                             </motion.div>
 
-                            <h2 className="text-4xl md:text-5xl font-black mb-4 italic tracking-tight">
-                                <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                            <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-tight italic">
+                                <span className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">
                                     {title}
                                 </span>
                             </h2>
 
-                            <p className="text-gray-300 text-lg mb-10 max-w-sm mx-auto leading-relaxed">
+                            <p className="text-gray-300 text-lg md:text-xl mb-12 max-w-sm mx-auto leading-relaxed">
                                 {message}
                             </p>
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-4">
                                 <button
                                     onClick={() => {
                                         onClose();
                                         navigate('/');
                                     }}
-                                    className="w-full py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white font-bold rounded-2xl transition-all shadow-xl shadow-green-500/20 flex items-center justify-center gap-2 group"
+                                    className="w-full py-5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-black text-lg rounded-[1.5rem] transition-all shadow-2xl shadow-green-500/30 flex items-center justify-center gap-3 group relative overflow-hidden"
                                 >
-                                    Return Home
-                                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                    <Home size={22} className="relative z-10" />
+                                    <span className="relative z-10">Return to Portal</span>
+                                    <ArrowRight size={22} className="relative z-10 group-hover:translate-x-2 transition-transform" />
                                 </button>
 
                                 <button
                                     onClick={onClose}
-                                    className="w-full py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all border border-white/10"
+                                    className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-[1.5rem] transition-all border border-white/10 flex items-center justify-center gap-2"
                                 >
-                                    Dismiss
+                                    Keep Exploring
                                 </button>
                             </div>
 
-                            <div className="mt-8 flex justify-center gap-2">
-                                <PartyPopper className="text-green-400 animate-bounce" size={20} />
-                                <span className="text-[10px] text-gray-500 uppercase tracking-[0.3em]">Registration Confirmed</span>
+                            <div className="mt-12 flex items-center justify-center gap-3">
+                                <div className="h-px w-8 bg-white/10" />
+                                <PartyPopper className="text-green-400 animate-pulse" size={24} />
+                                <span className="text-[11px] text-gray-500 uppercase tracking-[0.5em] font-black">Success</span>
+                                <div className="h-px w-8 bg-white/10" />
                             </div>
                         </div>
                     </motion.div>

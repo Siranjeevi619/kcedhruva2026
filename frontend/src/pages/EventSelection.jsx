@@ -82,8 +82,20 @@ const EventSelection = () => {
         e.preventDefault();
         setSubmitting(true);
         if (config.registration_open === 'false') {
-            setShowComingSoon(true);
-            setSubmitting(false);
+            try {
+                const payload = {
+                    passId: pass._id,
+                    eventIds: selectedSportEventId ? [selectedSportEventId] : [],
+                    ...formData
+                };
+                await axios.post(`${API_URL}/registrations/pre-register`, payload);
+                setShowComingSoon(true);
+            } catch (err) {
+                console.error(err);
+                alert(err.response?.data?.message || 'Failed to register interest');
+            } finally {
+                setSubmitting(false);
+            }
             return;
         }
         try {
@@ -264,7 +276,7 @@ const EventSelection = () => {
                                 type="submit"
                                 className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-orange-500/20"
                             >
-                                {submitting ? 'Processing...' : config.registration_open === 'false' ? 'Registration Opening Soon' : `Pay ₹${pass.price} & Register`}
+                                {submitting ? 'Processing...' : config.registration_open === 'false' ? 'Register' : `Pay ₹${pass.price} & Register`}
                             </button>
                             <p className="text-gray-500 text-xs text-center mt-4">Safe & Secure Payment via Razorpay</p>
                         </div>
@@ -274,6 +286,7 @@ const EventSelection = () => {
             <ComingSoonModal
                 isOpen={showComingSoon}
                 onClose={() => setShowComingSoon(false)}
+                isPreRegistration={true}
             />
             <SuccessModal
                 isOpen={successState.show}

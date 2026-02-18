@@ -629,7 +629,6 @@ const ManageEvents = () => {
                                                 onChange={handleChange}
                                                 placeholder="Image URL (Drive link supported)"
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-3 focus:border-blue-500 outline-none transition-colors"
-                                                required
                                             />
                                         </div>
 

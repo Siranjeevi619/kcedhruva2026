@@ -29,15 +29,7 @@ const AdminLogin = () => {
             localStorage.setItem('adminToken', data.token);
             localStorage.setItem('adminUser', JSON.stringify(data));
 
-            if (data.role === 'superadmin' || data.role === 'admin') {
-                navigate('/admin/dashboard');
-            } else if (data.role === 'principal' || data.role === 'dean') {
-                navigate('/admin/analytics');
-            } else if (data.role === 'hod') {
-                navigate('/admin/department');
-            } else {
-                navigate('/admin/dashboard'); // Default fallback
-            }
+            navigate('/admin/dashboard');
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || 'Login failed');

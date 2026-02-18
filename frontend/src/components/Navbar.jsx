@@ -93,8 +93,8 @@ const Navbar = () => {
 
                                     {/* Mega Menu Dropdown (3-column) */}
                                     {link.columns && (
-                                        <div className="absolute top-16 left-1/2 -translate-x-1/2 min-w-[800px] md:min-w-[1000px] rounded-2xl shadow-2xl bg-black/80 backdrop-blur-3xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform -translate-y-2 group-hover:translate-y-0 overflow-hidden">
-                                            <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-10">
+                                        <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[95vw] lg:w-[90vw] max-w-6xl rounded-2xl shadow-2xl bg-black/80 backdrop-blur-3xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform -translate-y-2 group-hover:translate-y-0 overflow-hidden">
+                                            <div className="p-6 md:p-8 lg:p-10 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
                                                 {link.columns.map((column, idx) => (
                                                     <div key={idx} className="space-y-5">
                                                         {column.title && (

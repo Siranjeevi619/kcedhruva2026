@@ -23,27 +23,6 @@ const Sidebar = () => {
     };
 
     const getNavItems = () => {
-        // HOD: Specific Department Dashboard Only
-        if (user?.role === 'hod') {
-            return [
-                { path: '/admin/department', icon: LayoutDashboard, label: 'Department' },
-                // { path: '/admin/events', icon: Calendar, label: 'My Events' } // Removed as per request (editable view hidden)
-            ];
-        }
-
-        // Principal / Dean: Strategic View (Analytics & Overview)
-        // Strictly NOT mingling with "Manage X" admin tasks. Removed detailed trees.
-        if (user?.role === 'principal' || user?.role === 'dean') {
-            return [
-                { path: '/admin/analytics', icon: LayoutDashboard, label: 'Overview' },
-                // Removed detailed technical/cultural/sports trees as requested
-                // { label: 'Technical', ... },
-                // { label: 'Cultural', ... },
-                // { label: 'Sports', ... }
-            ];
-        }
-
-        // Super Admin: Full Control
         return [
             { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
             {

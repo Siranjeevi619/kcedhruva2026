@@ -97,12 +97,12 @@ const Passes = ({ embed = false }) => {
             {!embed && <Navbar />}
             <Doodles />
 
-            <div className={`${!embed ? 'pt-32' : ''} pb-20 px-6 max-w-7xl mx-auto`}>
-                <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-br from-green-400 via-orange-500 to-red-500">
+            <div className={`${!embed ? 'pt-24 sm:pt-32' : 'pt-10'} pb-20 px-4 sm:px-6 max-w-7xl mx-auto`}>
+                <div className="text-center mb-10 sm:mb-16">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-br from-green-400 via-orange-500 to-red-500 tracking-tight">
                         Get Your Access
                     </h1>
-                    <p className="text-gray-400 text-lg">Choose the perfect pass for the ultimate experience</p>
+                    <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto">Choose the perfect pass for the ultimate experience</p>
                 </div>
 
                 {loading ? <Loader text="Loading passes..." /> : (
@@ -124,11 +124,11 @@ const Passes = ({ embed = false }) => {
                                     <motion.div
                                         className="relative w-full max-w-md transform scale-110"
                                         animate={{
-                                            y: [-20, 20, -20],
-                                            rotate: [0, 10, -10, 10, 0],
+                                            y: [-10, 10, -10],
+                                            rotate: [0, 5, -5, 5, 0],
                                         }}
                                         transition={{
-                                            duration: 2,
+                                            duration: 4,
                                             repeat: Infinity,
                                             ease: "easeInOut"
                                         }}

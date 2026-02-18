@@ -250,7 +250,7 @@ const Home = () => {
 
                     {/* Hero Section - Only show on main view or top level */}
                     {viewMode === 'Categories' && (
-                        <section className="text-center pt-32 pb-20 relative z-15 px-4 min-h-[100vh] flex flex-col justify-center items-center">
+                        <section className="text-center pt-24 sm:pt-32 pb-16 sm:pb-20 relative z-15 px-4 min-h-[100vh] flex flex-col justify-center items-center">
                             {config.home_hero_bg && (
                                 <div className="absolute inset-0 z-[-1] ">
                                     {/\.(mp4|webm|ogg)$/i.test(config.home_hero_bg) ? (
@@ -268,15 +268,15 @@ const Home = () => {
                                     <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a]" />
                                 </div>
                             )}
-                            <img src={dhruvalogo} alt="Logo" className='w-[250px] h-[200px]' /><p className='inline-block text-4xl md:text-7xl font-bold font-serif mb-10
-                                    leading-tight
-                                    bg-gradient-to-r from-violet-400 to-blue-500
-                                    bg-clip-text text-transparent'>The Extraordinary</p>
-                            {/* <h2 className="inline-block text-4xl md:text-7xl font-bold font-serif mb-10
+                            <div className="mb-6 md:mb-10 w-full flex justify-center">
+                                <img src={dhruvalogo} alt="Logo" className='w-[150px] h-[120px] sm:w-[250px] sm:h-[200px] object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)] animate-pulse' />
+                            </div>
+                            <h2 className="inline-block text-3xl sm:text-5xl md:text-7xl font-bold font-serif mb-6 md:mb-10
                                     leading-tight
                                     bg-gradient-to-r from-violet-400 to-blue-500
                                     bg-clip-text text-transparent">
-                            </h2> */}
+                                The Extraordinary
+                            </h2>
 
 
 

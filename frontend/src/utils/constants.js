@@ -10,8 +10,8 @@ export const DEPARTMENTS = [
         image: 'https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&w=800&q=80'
     },
     {
-        code: 'CSD',
-        name: 'Department of Computer Science and Design',
+        code: 'CSD-CST',
+        name: 'Department of Computer Science and Design & Technology',
         image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80'
     },
     {
@@ -22,11 +22,6 @@ export const DEPARTMENTS = [
     {
         code: 'CSECS',
         name: 'Department of Computer Science and Engineering(Cyber Security)',
-        image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80'
-    },
-    {
-        code: 'CST',
-        name: 'Department of Computer Science and Technology',
         image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80'
     },
     {

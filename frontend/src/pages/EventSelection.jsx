@@ -221,13 +221,12 @@ const EventSelection = () => {
                                 {/* Core Engineering */}
                                 <option value="AIDS">AIDS</option>
                                 <option value="CIVIL">CIVIL</option>
-                                <option value="CSD">CSD</option>
+                                <option value="CSD-CST">CSD-CST</option>
                                 <option value="CSE">CSE</option>
-                                <option value="CST">CST</option>
                                 <option value="CSECS">CSE(CY)</option>
                                 <option value="ECE">ECE</option>
                                 <option value="EEE">EEE</option>
-                                <option value="ETE&VLSI">ETE & VLSI</option>
+                                <option value="ETE-VLSI">ETE-VLSI</option>
                                 <option value="MECH">MECH</option>
                                 <option value="IT">IT</option>
                                 <option value="CHEM">CHEM</option>

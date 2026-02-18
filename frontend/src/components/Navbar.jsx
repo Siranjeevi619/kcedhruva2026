@@ -30,7 +30,7 @@ const Navbar = () => {
                     links: [
                         { name: 'Artificial Intelligence & Data Science', path: '/?dept=AIDS' },
                         { name: 'Civil Engineering', path: '/?dept=CIVIL' },
-                        { name: 'Computer Science & Design', path: '/?dept=CSD' },
+                        { name: 'Computer Science and Design & Technology', path: '/?dept=CSD-CST' },
                         { name: 'Computer Science & Engineering', path: '/?dept=CSE' },
                     ]
                 },
@@ -39,7 +39,7 @@ const Navbar = () => {
                         { name: 'Computer Science & Engineering (Cyber Security)', path: '/?dept=CSECS' },
                         { name: 'Electronics & Communication Engineering', path: '/?dept=ECE' },
                         { name: 'Electrical & Electronics Engineering', path: '/?dept=EEE' },
-                        { name: 'Electrical & Electronics Engineering (VLSI) & Electronics & Telecommunication Engineering', path: '/?dept=ETE-VLSI' },
+                        { name: 'Electronics & Telecommunication Engineering & VLSI', path: '/?dept=ETE-VLSI' },
                     ]
                 },
                 {

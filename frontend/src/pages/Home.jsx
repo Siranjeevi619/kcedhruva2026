@@ -115,7 +115,12 @@ const Home = () => {
             if (selectedDept) {
                 result = result.filter(e => {
                     if (!selectedDept) return true;
-                    const normalized = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                    const normalized = (s) => {
+                        let n = (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                        if (n === 'csd' || n === 'cst' || n === 'csdcst') return 'csdcst';
+                        if (n === 'ete' || n === 'vlsi' || n === 'etevlsi') return 'etevlsi';
+                        return n;
+                    };
                     return normalized(e.department) === normalized(selectedDept);
                 });
             } else if (selectedCategory) {
@@ -354,7 +359,12 @@ const Home = () => {
                                     {departments.map(dept => {
                                         // Calculate dynamic stats for this department
                                         const normalizedMatch = (s1, s2) => {
-                                            const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                            const n = (s) => {
+                                                let val = (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                                if (val === 'csd' || val === 'cst' || val === 'csdcst') return 'csdcst';
+                                                if (val === 'ete' || val === 'vlsi' || val === 'etevlsi') return 'etevlsi';
+                                                return val;
+                                            };
                                             return n(s1) === n(s2);
                                         };
                                         const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, dept.code));
@@ -435,7 +445,12 @@ const Home = () => {
                                             { name: 'Workshop', key: 'workshops', imgKey: 'cat_workshop_image', default: 'https://images.unsplash.com/photo-1552664730-d307ca884978' }
                                         ].map(sub => {
                                             const normalizedMatch = (s1, s2) => {
-                                                const n = (s) => (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                                const n = (s) => {
+                                                    let val = (s || '').replace(/%26|&|-|_/g, '').replace(/\s/g, '').toLowerCase();
+                                                    if (val === 'csd' || val === 'cst' || val === 'csdcst') return 'csdcst';
+                                                    if (val === 'ete' || val === 'vlsi' || val === 'etevlsi') return 'etevlsi';
+                                                    return val;
+                                                };
                                                 return n(s1) === n(s2);
                                             };
                                             const deptEvents = upcomingEvents.filter(e => normalizedMatch(e.department, selectedDept));

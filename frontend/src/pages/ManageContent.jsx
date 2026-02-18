@@ -91,7 +91,7 @@ const ManageContent = () => {
             ['cat_technical_image', 'cat_cultural_image', 'cat_sports_image', 'cat_nontechnical_image', 'cat_workshop_image'].forEach(key => {
                 initialImageValues[key] = confRes.data[key] || '';
             });
-            ['AIDS', 'CIVIL', 'CSD', 'CSE', 'EEE', 'ECE', 'IT', 'MECH', 'MBA', 'MCA'].forEach(code => {
+            ['AIDS', 'CIVIL', 'CSD-CST', 'CSE', 'EEE', 'ECE', 'IT', 'MECH', 'MBA', 'MCA'].forEach(code => {
                 initialImageValues[`dept_${code}_image`] = confRes.data[`dept_${code}_image`] || '';
             });
             setImageValues(initialImageValues);
@@ -340,7 +340,7 @@ const ManageContent = () => {
                                         </h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                             {[
-                                                'AIDS', 'CIVIL', 'CSD', 'CSE', 'EEE', 'ECE', 'IT', 'MECH', 'MBA', 'MCA'
+                                                'AIDS', 'CIVIL', 'CSD-CST', 'CSE', 'EEE', 'ECE', 'IT', 'MECH', 'MBA', 'MCA'
                                             ].map(code => (
                                                 <div key={code} className="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-4">
                                                     <label className="block text-sm font-bold text-gray-400">{code}</label>

@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
     'https://kcedhruva-orpin.vercel.app',
+    'https://www.kcedhruva.in'
 ];
 
 if (process.env.CLIENT_URL) {
@@ -27,7 +28,7 @@ app.use(cors({
         if (!origin) return callback(null, true);
 
         const isAllowed = allowedOrigins.includes(origin) ||
-            (typeof origin === 'string' && (origin.endsWith('.vercel.app') || origin.includes('localhost:5173')));
+            (typeof origin === 'string' && (origin.endsWith('.vercel.app')));
 
         if (isAllowed) {
             callback(null, true);

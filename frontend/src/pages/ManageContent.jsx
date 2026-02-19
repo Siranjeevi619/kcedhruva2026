@@ -19,8 +19,13 @@ const ManageContent = () => {
     const [aboutLogo, setAboutLogo] = useState('');
     const [aboutLogoWidth, setAboutLogoWidth] = useState('');
     const [aboutHeroBg, setAboutHeroBg] = useState('');
+    const [aboutVideo, setAboutVideo] = useState('');
+    const [aboutKceVideo, setAboutKceVideo] = useState('');
 
-    const [contact, setContact] = useState({ email: '', phone: '', address: '' });
+    const [contact, setContact] = useState({ email: '', address: '' });
+    const [contactPhones, setContactPhones] = useState(['']);
+    const [footerBgVideo, setFooterBgVideo] = useState('');
+    const [footerBgVideoMobile, setFooterBgVideoMobile] = useState('');
     const [rulesBg, setRulesBg] = useState('');
     const [generalConfig, setGeneralConfig] = useState({ website_name: 'Dhruva', event_year: '2025', registration_open: 'true' });
     const [sponsors, setSponsors] = useState([]);
@@ -60,11 +65,18 @@ const ManageContent = () => {
             setAboutLogo(confRes.data['about_logo'] || '/dhruvalogo.png');
             setAboutLogoWidth(confRes.data['about_logo_width'] || '150px');
             setAboutHeroBg(confRes.data['about_hero_bg'] || '');
+            setAboutVideo(confRes.data['about_video'] || '');
+            setAboutKceVideo(confRes.data['about_kce_video'] || '');
             setContact({
                 email: confRes.data['contact_email'] || '',
-                phone: confRes.data['contact_phone'] || '',
                 address: confRes.data['contact_address'] || ''
             });
+
+            const phones = confRes.data['contact_phones'] || confRes.data['contact_phone'] || '';
+            setContactPhones(phones ? phones.split(',').map(p => p.trim()) : ['']);
+
+            setFooterBgVideo(confRes.data['footer_bg_video'] || '');
+            setFooterBgVideoMobile(confRes.data['footer_bg_video_mobile'] || '');
 
             // Past Events Static Content
             setPastEventDesc(confRes.data['past_event_desc'] || 'Join us as we bring together vivid minds...');
@@ -116,9 +128,9 @@ const ManageContent = () => {
     };
 
     // --- RULES & CONTACT HANDLERS ---
-    const saveConfig = async (key, value) => {
+    const saveConfig = async (key, value, type = 'text') => {
         try {
-            await axios.post(`${API_URL}/content/config`, { key, value }, getAuthConfig());
+            await axios.post(`${API_URL}/content/config`, { key, value, type }, getAuthConfig());
             alert('Saved successfully!');
             refreshConfig();
             setImageValues(prev => ({ ...prev, [key]: value }));
@@ -222,6 +234,7 @@ const ManageContent = () => {
         { id: 'general', label: 'General Info' },
         { id: 'home_media', label: 'Home Media' },
         { id: 'contact', label: 'Contact Details' },
+        { id: 'footer', label: 'Footer Settings' },
         { id: 'about', label: 'About Page' },
         { id: 'sponsors', label: 'Sponsors' },
         { id: 'clubs', label: 'Clubs' },
@@ -320,7 +333,7 @@ const ManageContent = () => {
                                                             className="flex-1 bg-black/20 border border-white/10 rounded-lg p-2 text-xs text-gray-500 focus:text-white focus:border-blue-500 outline-none transition-colors"
                                                         />
                                                         <button
-                                                            onClick={() => saveConfig(cat.key, imageValues[cat.key])}
+                                                            onClick={() => saveConfig(cat.key, imageValues[cat.key], 'image')}
                                                             className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-lg transition-colors"
                                                             title="Save Image URL"
                                                         >
@@ -355,7 +368,7 @@ const ManageContent = () => {
                                                             className="flex-1 bg-black/20 border border-white/10 rounded-lg p-2 text-xs text-gray-500 focus:text-white focus:border-purple-500 outline-none transition-colors"
                                                         />
                                                         <button
-                                                            onClick={() => saveConfig(`dept_${code}_image`, imageValues[`dept_${code}_image`])}
+                                                            onClick={() => saveConfig(`dept_${code}_image`, imageValues[`dept_${code}_image`], 'image')}
                                                             className="bg-purple-600 hover:bg-purple-500 text-white p-2 rounded-lg transition-colors"
                                                             title="Save Image URL"
                                                         >
@@ -408,7 +421,7 @@ const ManageContent = () => {
                                             <div className="mb-4 bg-white/5 p-4 rounded-2xl flex items-center justify-center w-full aspect-video border border-white/5">
                                                 <img src={getImageUrl(aboutLogo)} alt="Dhruva Logo" style={{ maxWidth: aboutLogoWidth }} className="max-h-full object-contain" />
                                             </div>
-                                            <div className="space-y-4">
+                                            <div className="space-y-4 font-serif">
                                                 <div>
                                                     <label className="block text-sm text-gray-400 mb-1">Logo URL/Path</label>
                                                     <div className="flex gap-2">
@@ -428,11 +441,47 @@ const ManageContent = () => {
                                                     />
                                                 </div>
                                                 <button onClick={() => {
-                                                    saveConfig('about_logo', aboutLogo);
-                                                    saveConfig('about_logo_width', aboutLogoWidth);
+                                                    saveConfig('about_logo', aboutLogo, 'image');
+                                                    saveConfig('about_logo_width', aboutLogoWidth, 'text');
                                                 }} className="bg-blue-600 px-4 py-2 rounded-lg font-bold text-sm">
                                                     Save Logo Settings
                                                 </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Dhruva Video */}
+                                        <div>
+                                            <h3 className="text-xl font-bold mb-4">Dhruva Video (Optional)</h3>
+                                            <div className="mb-4 bg-white/5 p-4 rounded-2xl flex items-center justify-center w-full aspect-video border border-white/5 overflow-hidden">
+                                                {aboutVideo ? (
+                                                    <video src={getImageUrl(aboutVideo)} className="w-full h-full object-contain" autoPlay muted loop />
+                                                ) : (
+                                                    <div className="text-gray-500 italic">No video set</div>
+                                                )}
+                                            </div>
+                                            <div className="space-y-4 font-serif">
+                                                <div>
+                                                    <label className="block text-sm text-gray-400 mb-1">Video URL (mp4, webm)</label>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            value={aboutVideo}
+                                                            onChange={(e) => setAboutVideo(e.target.value)}
+                                                            className="flex-1 bg-black/20 border border-white/10 rounded-lg p-2"
+                                                            placeholder="Paste video URL"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => saveConfig('about_video', aboutVideo, 'video')} className="flex-1 bg-blue-600 px-4 py-2 rounded-lg font-bold text-sm">
+                                                        Save Video URL
+                                                    </button>
+                                                    {aboutVideo && (
+                                                        <button onClick={() => { setAboutVideo(''); saveConfig('about_video', '', 'video'); }} className="bg-red-600/20 text-red-500 px-4 py-2 rounded-lg font-bold text-sm border border-red-500/50">
+                                                            Remove Video
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-500 italic">If set, this video will be displayed instead of the logo on the About page.</p>
                                             </div>
                                         </div>
 
@@ -442,7 +491,7 @@ const ManageContent = () => {
                                             <div className="mb-4 bg-white p-6 rounded-2xl flex items-center justify-center w-full aspect-video shadow-inner">
                                                 <img src={getImageUrl(aboutKceImage)} alt="KCE" className="max-h-full max-w-full object-contain" />
                                             </div>
-                                            <div className="space-y-4">
+                                            <div className="space-y-4 font-serif">
                                                 <div className="flex gap-2">
                                                     <input
                                                         value={aboutKceImage}
@@ -451,9 +500,45 @@ const ManageContent = () => {
                                                         placeholder="Image URL"
                                                     />
                                                 </div>
-                                                <button onClick={() => saveConfig('about_kce_image', aboutKceImage)} className="bg-purple-600 px-4 py-2 rounded-lg font-bold text-sm">
+                                                <button onClick={() => saveConfig('about_kce_image', aboutKceImage, 'image')} className="bg-purple-600 px-4 py-2 rounded-lg font-bold text-sm">
                                                     Save KCE Image
                                                 </button>
+                                            </div>
+                                        </div>
+
+                                        {/* KCE Video */}
+                                        <div>
+                                            <h3 className="text-xl font-bold mb-4">KCE Video (Optional)</h3>
+                                            <div className="mb-4 bg-white/5 p-4 rounded-2xl flex items-center justify-center w-full aspect-video border border-white/5 overflow-hidden">
+                                                {aboutKceVideo ? (
+                                                    <video src={getImageUrl(aboutKceVideo)} className="w-full h-full object-contain" autoPlay muted loop />
+                                                ) : (
+                                                    <div className="text-gray-500 italic">No video set</div>
+                                                )}
+                                            </div>
+                                            <div className="space-y-4 font-serif">
+                                                <div>
+                                                    <label className="block text-sm text-gray-400 mb-1">Video URL (mp4, webm)</label>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            value={aboutKceVideo}
+                                                            onChange={(e) => setAboutKceVideo(e.target.value)}
+                                                            className="flex-1 bg-black/20 border border-white/10 rounded-lg p-2"
+                                                            placeholder="Paste video URL"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => saveConfig('about_kce_video', aboutKceVideo, 'video')} className="flex-1 bg-purple-600 px-4 py-2 rounded-lg font-bold text-sm">
+                                                        Save Video URL
+                                                    </button>
+                                                    {aboutKceVideo && (
+                                                        <button onClick={() => { setAboutKceVideo(''); saveConfig('about_kce_video', '', 'video'); }} className="bg-red-600/20 text-red-500 px-4 py-2 rounded-lg font-bold text-sm border border-red-500/50">
+                                                            Remove Video
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-500 italic">If set, this video will be displayed instead of the KCE image on the About page.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -483,7 +568,7 @@ const ManageContent = () => {
                                             <input
                                                 value={rulesBg}
                                                 onChange={(e) => setRulesBg(e.target.value)}
-                                                onBlur={() => saveConfig('rules_bg', rulesBg)}
+                                                onBlur={() => saveConfig('rules_bg', rulesBg, 'image')}
                                                 placeholder="Background Image URL"
                                                 className="w-full bg-black/20 border border-white/10 rounded-lg p-2"
                                             />
@@ -493,27 +578,129 @@ const ManageContent = () => {
                             )}
 
                             {activeTab === 'contact' && (
-                                <div className="max-w-xl space-y-4 animate-fadeIn">
-                                    <div>
-                                        <label className="block text-sm text-gray-400 mb-1">Email</label>
-                                        <input value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} placeholder="Email" className="w-full bg-black/20 border border-white/10 rounded-lg p-3" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm text-gray-400 mb-1">Phone</label>
-                                        <input value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} placeholder="Phone" className="w-full bg-black/20 border border-white/10 rounded-lg p-3" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm text-gray-400 mb-1">Address</label>
-                                        <textarea value={contact.address} onChange={(e) => setContact({ ...contact, address: e.target.value })} placeholder="Address" className="w-full bg-black/20 border border-white/10 rounded-lg p-3" />
-                                    </div>
+                                <div className="max-w-xl space-y-6 animate-fadeIn">
+                                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
+                                        <h3 className="text-xl font-bold mb-4">Contact Information</h3>
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Email Address</label>
+                                            <input value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} placeholder="Email" className="w-full bg-black/20 border border-white/10 rounded-lg p-3 focus:border-blue-500 outline-none" />
+                                        </div>
 
-                                    <button onClick={() => {
-                                        saveConfig('contact_email', contact.email);
-                                        saveConfig('contact_phone', contact.phone);
-                                        saveConfig('contact_address', contact.address);
-                                    }} className="bg-blue-600 px-6 py-2 rounded-lg font-bold flex items-center gap-2">
-                                        <Save size={18} /> Save Contact Info
-                                    </button>
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-2">Phone Numbers</label>
+                                            <div className="space-y-2">
+                                                {contactPhones.map((phone, index) => (
+                                                    <div key={index} className="flex gap-2">
+                                                        <input
+                                                            value={phone}
+                                                            onChange={(e) => {
+                                                                const newPhones = [...contactPhones];
+                                                                newPhones[index] = e.target.value;
+                                                                setContactPhones(newPhones);
+                                                            }}
+                                                            placeholder={`Phone Number ${index + 1}`}
+                                                            className="flex-1 bg-black/20 border border-white/10 rounded-lg p-3 focus:border-blue-500 outline-none"
+                                                        />
+                                                        {contactPhones.length > 1 && (
+                                                            <button
+                                                                onClick={() => setContactPhones(contactPhones.filter((_, i) => i !== index))}
+                                                                className="p-3 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
+                                                            >
+                                                                <Trash2 size={18} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                <button
+                                                    onClick={() => setContactPhones([...contactPhones, ''])}
+                                                    className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 font-bold mt-2"
+                                                >
+                                                    <Plus size={16} /> Add Another Number
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Office Address</label>
+                                            <textarea value={contact.address} onChange={(e) => setContact({ ...contact, address: e.target.value })} placeholder="Address" rows="3" className="w-full bg-black/20 border border-white/10 rounded-lg p-3 focus:border-blue-500 outline-none" />
+                                        </div>
+
+                                        <button onClick={() => {
+                                            saveConfig('contact_email', contact.email);
+                                            saveConfig('contact_phones', contactPhones.filter(p => p.trim() !== '').join(', '));
+                                            saveConfig('contact_address', contact.address);
+                                        }} className="bg-blue-600 px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2 w-full mt-4 hover:bg-blue-500 transition-all">
+                                            <Save size={18} /> Save Contact Details
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'footer' && (
+                                <div className="max-w-4xl animate-fadeIn space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Desktop Video */}
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
+                                            <h3 className="text-xl font-bold mb-2">Desktop Footer Background</h3>
+                                            <div className="aspect-video bg-black/40 rounded-xl overflow-hidden border border-white/5 relative">
+                                                {footerBgVideo ? (
+                                                    /\.(mp4|webm|ogg)$/i.test(footerBgVideo) ? (
+                                                        <video src={getImageUrl(footerBgVideo)} className="w-full h-full object-cover opacity-50" muted />
+                                                    ) : (
+                                                        <img src={getImageUrl(footerBgVideo)} className="w-full h-full object-cover opacity-50" />
+                                                    )
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-600">No media set</div>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    value={footerBgVideo}
+                                                    onChange={(e) => setFooterBgVideo(e.target.value)}
+                                                    placeholder="Enter Video/Image URL"
+                                                    className="flex-1 bg-black/20 border border-white/10 rounded-lg p-3 focus:border-blue-500 outline-none"
+                                                />
+                                                <button
+                                                    onClick={() => saveConfig('footer_bg_video', footerBgVideo, 'video')}
+                                                    className="bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg transition-colors"
+                                                >
+                                                    <Save size={18} />
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-gray-500 italic">This background will be used for desktop screens.</p>
+                                        </div>
+
+                                        {/* Mobile Video */}
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
+                                            <h3 className="text-xl font-bold mb-2 text-purple-400">Mobile Footer Background</h3>
+                                            <div className="aspect-[9/16] max-h-64 mx-auto bg-black/40 rounded-xl overflow-hidden border border-white/5 relative">
+                                                {footerBgVideoMobile ? (
+                                                    /\.(mp4|webm|ogg)$/i.test(footerBgVideoMobile) ? (
+                                                        <video src={getImageUrl(footerBgVideoMobile)} className="w-full h-full object-cover opacity-50" muted />
+                                                    ) : (
+                                                        <img src={getImageUrl(footerBgVideoMobile)} className="w-full h-full object-cover opacity-50" />
+                                                    )
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-600">No media set</div>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    value={footerBgVideoMobile}
+                                                    onChange={(e) => setFooterBgVideoMobile(e.target.value)}
+                                                    placeholder="Enter Mobile Video URL"
+                                                    className="flex-1 bg-black/20 border border-white/10 rounded-lg p-3 focus:border-purple-500 outline-none"
+                                                />
+                                                <button
+                                                    onClick={() => saveConfig('footer_bg_video_mobile', footerBgVideoMobile, 'video')}
+                                                    className="bg-purple-600 hover:bg-purple-500 text-white px-4 rounded-lg transition-colors"
+                                                >
+                                                    <Save size={18} />
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-gray-500 italic">This background will be used specifically for mobile screens.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
@@ -526,7 +713,7 @@ const ManageContent = () => {
                                                 <img
                                                     src={getImageUrl(item.logo)}
                                                     alt={item.name}
-                                                    className="w-16 h-16 object-cover rounded-lg"
+                                                    className="w-16 h-16 object-contain rounded-lg bg-black/20 p-1"
                                                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/64?text=Logo'; }}
                                                 />
                                                 <div className="flex-1">

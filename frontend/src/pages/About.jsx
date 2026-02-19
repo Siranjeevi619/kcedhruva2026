@@ -39,7 +39,16 @@ const About = ({ embed = false }) => {
                             }}
                             className="relative w-full max-w-md aspect-video md:aspect-auto md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group bg-[#FFF8E7]"
                         >
-                            {config.about_kce_image ? (
+                            {config.about_kce_video ? (
+                                <video
+                                    src={getImageUrl(config.about_kce_video)}
+                                    className="w-full h-full object-cover"
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                />
+                            ) : config.about_kce_image ? (
                                 <img src={getImageUrl(config.about_kce_image)} alt="KCE Logo" className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-700" />
                             ) : (
                                 <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-500 flex-col gap-4">
@@ -145,11 +154,22 @@ const About = ({ embed = false }) => {
                         >
                             <div className="relative w-full aspect-video border border-white/10 rounded-2xl flex items-center justify-center p-8 shadow-2xl overflow-hidden group">
                                 <div className="absolute inset-0  opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                <img
-                                    src={getImageUrl(logoUrl)}
-                                    alt="Dhruva Logo"
-                                    className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transform group-hover:scale-105 transition-transform duration-500"
-                                />
+                                {config.about_video ? (
+                                    <video
+                                        src={getImageUrl(config.about_video)}
+                                        className="w-full h-full object-cover"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                    />
+                                ) : (
+                                    <img
+                                        src={getImageUrl(logoUrl)}
+                                        alt="Dhruva Logo"
+                                        className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transform group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                )}
                             </div>
                         </motion.div>
                     </div>

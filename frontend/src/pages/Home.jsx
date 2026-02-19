@@ -310,6 +310,9 @@ const Home = () => {
                     {/* Upcoming Events Section (Hierarchical View) */}
                     <div className="bg-gradient-to-tr from-blue-900 to-purple-600">
                         <section id="events-section" className="max-w-7xl inter-light-text mx-auto px-4 md:px-6 py-20 relative z-10">
+                            {/* <h2 className="text-3xl font-bold inter-bold-text border-l-4 border-blue-500 pl-4">
+                                Upcoming Events
+                            </h2> */}
                             <div className="flex items-center gap-4 mb-8">
 
                                 {viewMode !== 'Categories' && (
@@ -317,12 +320,12 @@ const Home = () => {
                                         Back
                                     </button>
                                 )}
-                                {/* <h3 className="text-3xl font-bold inter-light-text border-l-4 border-blue-500 pl-4">
+                                <h3 className="text-3xl font-bold inter-light-text border-l-4 border-blue-500 pl-4">
                                     {viewMode === 'Categories' ? 'Explore Events' :
                                         viewMode === 'Departments' ? 'Select Department' :
                                             viewMode === 'CategoryDashboard' ? `${selectedDept} Categories` :
                                                 `${selectedDept || selectedCategory || 'Upcoming'} Events`}
-                                </h3> */}
+                                </h3>
                             </div>
 
                             {/* Level 1: Categories */}

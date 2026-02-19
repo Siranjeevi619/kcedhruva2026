@@ -130,16 +130,16 @@ const RegisterEvent = () => {
                 <div className="space-y-8">
 
                     {/* Row 1: Description & Rules */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg gap-8">
                         {/* Description */}
                         <motion.div
                             initial={{ opacity: 0, y: -30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8"
                         >
-                            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                            <h3 className="text-2xl font-bold text-black mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
                                     <BookOpen size={24} />
                                 </div>

@@ -12,7 +12,7 @@ const siteConfigSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['image', 'text'],
+        enum: ['image', 'text', 'video'],
         default: 'image'
     }
 }, { timestamps: true });

@@ -17,7 +17,7 @@ const EventCard = ({ event, onEdit, onDelete, onView }) => {
 
             <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{event.title}</h3>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">{event.description}</p>
+                <p className="text-white text-sm mb-4 line-clamp-2">{event.description}</p>
 
                 <div className="space-y-3 mb-6">
                     {/* Row 1: Date */}

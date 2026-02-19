@@ -11,6 +11,18 @@ const Marquee = MarqueePkg.default || MarqueePkg;
 const Footer = () => {
     const { config, sponsors, clubs } = useGlobalConfig();
     const location = useLocation();
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const footerBg = (isMobile && config.footer_bg_video_mobile) ? config.footer_bg_video_mobile : config.footer_bg_video;
+    const phoneNumbers = config.contact_phones
+        ? config.contact_phones.split(',').map(p => p.trim())
+        : [config.contact_phone || '+91 12345 67890'];
 
     return (
         <footer className="bg-black/50 text-white">
@@ -39,11 +51,11 @@ const Footer = () => {
                     <h3 className="text-3xl font-bold text-center mb-16 shadow-lg">Our Clubs</h3>
                     <Marquee gradient={false} speed={40}>
                         {clubs.map(club => (
-                            <div key={club._id} className="mx-8 hover:grayscale-0 transition-all opacity-100 hover:opacity-100">
+                            <div key={club._id} className="mx-8 w-40 flex items-center justify-center hover:grayscale-0 transition-all opacity-100 hover:opacity-100">
                                 <img
                                     src={getImageUrl(club.logo)}
                                     alt={club.name}
-                                    className="h-25 w-auto object-contain"
+                                    className="h-25 w-25 object-contain"
                                 />
                             </div>
                         ))}
@@ -54,11 +66,12 @@ const Footer = () => {
             {/* Main Footer Links & Info Section (with Background Media) */}
             <div className="relative border-t border-white/10 pt-16 pb-8 overflow-hidden">
                 {/* Background Media */}
-                {config.footer_bg_video ? (
+                {footerBg ? (
                     <div className="absolute inset-0 z-0">
-                        {/\.(mp4|webm|ogg)$/i.test(config.footer_bg_video) ? (
+                        {/\.(mp4|webm|ogg)$/i.test(footerBg) ? (
                             <video
-                                src={getImageUrl(config.footer_bg_video)}
+                                key={footerBg} // Force rerender on source change
+                                src={getImageUrl(footerBg)}
                                 autoPlay
                                 loop
                                 muted
@@ -67,7 +80,7 @@ const Footer = () => {
                             />
                         ) : (
                             <img
-                                src={getImageUrl(config.footer_bg_video)}
+                                src={getImageUrl(footerBg)}
                                 alt="Footer Background"
                                 className="w-full h-full object-cover opacity-30"
                             />
@@ -105,13 +118,15 @@ const Footer = () => {
                                 <MapPin size={18} className="text-blue-500 mt-0.5 shrink-0" />
                                 <span>{config.contact_address || 'College Campus, India'}</span>
                             </li>
-                            <li className="flex items-center gap-3">
-                                <Phone size={18} className="text-blue-500 shrink-0" />
-                                <span>{config.contact_phone || '+91 12345 67890'}</span>
-                            </li>
+                            {phoneNumbers.map((phone, idx) => (
+                                <li key={idx} className="flex items-center gap-3">
+                                    <Phone size={18} className="text-blue-500 shrink-0" />
+                                    <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hover:text-blue-400 transition-colors">{phone}</a>
+                                </li>
+                            ))}
                             <li className="flex items-center gap-3">
                                 <Mail size={18} className="text-blue-500 shrink-0" />
-                                <span>{config.contact_email || 'contact@dhruva.com'}</span>
+                                <a href={`mailto:${config.contact_email || 'contact@dhruva.com'}`} className="hover:text-blue-400 transition-colors">{config.contact_email || 'contact@dhruva.com'}</a>
                             </li>
                         </ul>
                     </div>

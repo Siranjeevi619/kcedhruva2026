@@ -174,19 +174,30 @@ const Navbar = () => {
                         >
                             {(link.columns || link.dropdown) ? (
                                 <div className="">
-                                    <button
-                                        onClick={() => toggleMobileDropdown(link.name)}
-                                        className="w-full flex items-center justify-between py-2 text-lg font-medium text-white/80"
-                                    >
-                                        <span>{link.name}</span>
-                                        <ChevronDown
-                                            size={18}
-                                            className={`transition-transform duration-300 ${activeMobileDropdown === link.name
-                                                ? 'rotate-180'
-                                                : ''
-                                                }`}
-                                        />
-                                    </button>
+                                    <div className="flex items-center justify-between w-full">
+                                        <Link
+                                            to={link.path}
+                                            onClick={() => setIsOpen(false)}
+                                            className="flex-1 py-2 text-lg font-medium text-white/80"
+                                        >
+                                            {link.name}
+                                        </Link>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleMobileDropdown(link.name);
+                                            }}
+                                            className="p-2 text-white/80"
+                                        >
+                                            <ChevronDown
+                                                size={18}
+                                                className={`transition-transform duration-300 ${activeMobileDropdown === link.name
+                                                    ? 'rotate-180'
+                                                    : ''
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
 
                                     {/* Dropdown */}
                                     <div

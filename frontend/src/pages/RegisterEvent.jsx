@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import { getImageUrl } from '../utils/imageUtils';
-import { Calendar, MapPin, User, Phone, BookOpen, Clock, ExternalLink, IndianRupee, Users } from 'lucide-react';
+import { Calendar, MapPin, User, Phone, BookOpen, Clock, ExternalLink, IndianRupee, Users, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { API_URL } from '../utils/config';
 import Doodles from '../components/Doodles';
@@ -58,15 +58,25 @@ const RegisterEvent = () => {
             <Navbar />
 
             <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 md:py-20 font-sans">
+                {/* Back Button */}
+                <div className="mb-8">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-full transition-all border border-white/10 hover:border-white/20 group backdrop-blur-sm"
+                    >
+                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="font-medium">Back</span>
+                    </button>
+                </div>
                 {/* Top Section: Hero Image & Registration */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-                    {/* Left: Event Image (4:3) with Stylish Overlay */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                    {/* Left: Event Image (1:1) with Stylish Overlay */}
                     <motion.div
                         initial={{ opacity: 0, y: -50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="lg:col-span-2 relative aspect-[4/3] rounded-3xl overflow-hidden group shadow-2xl border border-white/10"
+                        className="relative aspect-square rounded-3xl overflow-hidden group shadow-2xl border border-white/10"
                     >
                         <img
                             src={getImageUrl(event.image) || 'https://via.placeholder.com/800x400'}
@@ -106,20 +116,20 @@ const RegisterEvent = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-center lg:h-[50%] relative overflow-hidden group hover:border-white/20 transition-colors"
+                        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex flex-col justify-center relative overflow-hidden group hover:border-white/20 transition-colors h-fit self-center"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
 
-                        <h2 className="text-3xl font-bold mb-6 text-white relative z-10">
+                        <h2 className="text-3xl font-bold mb-4 text-white relative z-10">
                             Secure Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Spot</span>
                         </h2>
-                        <p className="text-gray-300 mb-8 leading-relaxed relative z-10 text-lg">
+                        <p className="text-gray-300 mb-6 leading-relaxed relative z-10 text-lg">
                             Join us for an unforgettable experience. Participate, compete, and win big. Get your pass now!
                         </p>
                         <button
                             onClick={() => navigate('/passes')}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 transform hover:-translate-y-1 relative z-10 text-lg"
+                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-500/25 transform hover:-translate-y-1 relative z-10 text-lg"
                         >
                             Get Entry Pass
                         </button>
@@ -130,7 +140,7 @@ const RegisterEvent = () => {
                 <div className="space-y-8">
 
                     {/* Row 1: Description & Rules */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg gap-8">
+                    <div className={`grid grid-cols-1 ${hasRules ? 'lg:grid-cols-2' : ''} bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-white/[0.07] transition-colors shadow-lg gap-8`}>
                         {/* Description */}
                         <motion.div
                             initial={{ opacity: 0, y: -30 }}
@@ -139,7 +149,7 @@ const RegisterEvent = () => {
                             transition={{ duration: 0.6, ease: "easeOut" }}
                             className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8"
                         >
-                            <h3 className="text-2xl font-bold text-black mb-6 flex items-center gap-3">
+                            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 shadow-inner">
                                     <BookOpen size={24} />
                                 </div>
@@ -238,7 +248,7 @@ const RegisterEvent = () => {
                                     <Clock size={24} /> Time
                                 </span>
                                 <span className="text-lg md:text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
-                                    {(event.fromTime && event.toTime) ? `${event.fromTime} - ${event.toTime}` : (event.timings || 'TBA')}
+                                    {event.fromTime ? (event.toTime ? `${event.fromTime} - ${event.toTime}` : event.fromTime) : (event.timings || 'TBA')}
                                 </span>
                             </div>
 

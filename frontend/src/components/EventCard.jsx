@@ -27,11 +27,11 @@ const EventCard = ({ event, onEdit, onDelete, onView }) => {
                     </div>
 
                     {/* Row 2: Time */}
-                    {(event.fromTime && event.toTime) || event.timings ? (
+                    {event.fromTime || event.timings ? (
                         <div className="flex items-center gap-3 text-gray-300">
                             <Clock size={18} className="text-purple-400 shrink-0" />
                             <span className="text-sm font-medium">
-                                {(event.fromTime && event.toTime) ? `${event.fromTime} - ${event.toTime}` : event.timings}
+                                {event.fromTime ? (event.toTime ? `${event.fromTime} - ${event.toTime}` : event.fromTime) : event.timings}
                             </span>
                         </div>
                     ) : null}

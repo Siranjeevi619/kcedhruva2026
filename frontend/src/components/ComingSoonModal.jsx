@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Calendar, Sparkles, Timer, CheckCircle, Smartphone, Mail, User } from 'lucide-react';
+import { Bell, X, Timer, CheckCircle } from 'lucide-react';
 
 const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
     const [isSaved, setIsSaved] = useState(false);
@@ -15,13 +15,14 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 overflow-y-auto pt-20 pb-10">
+
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-md"
                     />
 
                     {/* Modal Content */}
@@ -29,22 +30,45 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
                         initial={{ scale: 0.9, opacity: 0, y: 40 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 40 }}
-                        className="relative w-full max-w-[95%] sm:max-w-xl bg-[#0d0d0d] border border-white/10 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_0_80px_rgba(59,130,246,0.15)]"
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="relative w-full max-w-[95%] sm:max-w-xl 
+                                   bg-white/10 
+                                   backdrop-blur-2xl 
+                                   border border-white/20 
+                                   rounded-[2rem] sm:rounded-[3rem] 
+                                   p-6 sm:p-10 md:p-14 
+                                   overflow-hidden 
+                                   shadow-[0_8px_40px_rgba(0,0,0,0.35)]"
                     >
-                        {/* Premium Glow Effects */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]" />
-                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-600/20 rounded-full blur-[100px]" />
+
+                        {/* Soft Gradient Light Overlay */}
+                        <div className="absolute inset-0 rounded-[3rem] pointer-events-none">
+                            <div className="absolute top-0 left-0 w-full h-full 
+                                            bg-gradient-to-br 
+                                            from-white/20 via-transparent to-transparent 
+                                            opacity-40" />
+                        </div>
+
+                        {/* Ambient Glow Effects */}
+                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-400/20 rounded-full blur-[120px]" />
+                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-400/20 rounded-full blur-[120px]" />
 
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 sm:top-8 sm:right-8 p-2 sm:p-3 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl sm:rounded-2xl transition-all border border-white/10 group z-50"
+                            className="absolute top-4 right-4 sm:top-8 sm:right-8 
+                                       p-3 text-gray-300 hover:text-white 
+                                       bg-white/10 hover:bg-white/20 
+                                       backdrop-blur-lg 
+                                       rounded-2xl 
+                                       border border-white/20 
+                                       transition-all group z-50"
                         >
                             <X size={18} className="group-hover:rotate-90 transition-transform" />
                         </button>
 
                         <div className="relative z-10 text-center">
+
                             {/* Icon Animation */}
                             <motion.div
                                 animate={isSaved ? { scale: [1, 1.1, 1] } : {
@@ -56,54 +80,52 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
                                     repeat: isSaved ? 0 : Infinity,
                                     ease: "easeInOut"
                                 }}
-                                className={`inline-flex p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] mb-6 sm:mb-10 border shadow-2xl ${isSaved ? 'bg-green-500/20 border-green-500/30' : 'bg-blue-500/10 border-white/10'}`}
+                                className="inline-flex p-5 sm:p-6 
+                                           rounded-2xl sm:rounded-[2rem] 
+                                           mb-8 sm:mb-10 
+                                           bg-white/10 
+                                           backdrop-blur-xl 
+                                           border border-white/20 
+                                           shadow-inner"
                             >
                                 {isSaved ? (
                                     <CheckCircle size={40} className="text-green-400 sm:w-14 sm:h-14" />
                                 ) : (
-                                    <Timer size={40} className="text-blue-400 sm:w-14 sm:h-14" />
+                                    <Timer size={40} className="text-blue-300 sm:w-14 sm:h-14" />
                                 )}
                             </motion.div>
 
-                            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-[1.1] tracking-tighter">
+                            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-6 leading-[1.1] tracking-tighter text-white">
                                 {isSaved ? (
-                                    <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                                    <span className="bg-gradient-to-r from-green-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
                                         You're on the List!
                                     </span>
                                 ) : (
-                                    <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent italic">
+                                    <span className="bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent italic">
                                         Stay Tuned.<br className="hidden sm:block" />Stay Ahead.
                                     </span>
                                 )}
                             </h2>
 
-                            <p className="text-gray-400 text-base sm:text-lg md:text-xl mb-8 sm:mb-12 max-w-sm mx-auto leading-relaxed">
+                            <p className="text-white/70 text-base sm:text-lg md:text-xl mb-10 max-w-sm mx-auto leading-relaxed">
                                 {isSaved
                                     ? "We've captured your interest! You'll be the first to know the moment registrations go live."
                                     : "Our team is crafting something legendary. Don't miss out on the launch of Dhruva 2026."}
                             </p>
 
-                            <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
-                                <div className="group bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] hover:bg-white/10 hover:border-blue-500/30 transition-all duration-500">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
-                                        <Sparkles className="text-blue-400" size={20} />
-                                    </div>
-                                    <span className="text-[8px] sm:text-[10px] text-gray-400 uppercase tracking-[0.2em] font-black block">Exclusive Access</span>
-                                </div>
-                                <div className="group bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] hover:bg-white/10 hover:border-purple-500/30 transition-all duration-500">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
-                                        <Bell className="text-purple-400" size={20} />
-                                    </div>
-                                    <span className="text-[8px] sm:text-[10px] text-gray-400 uppercase tracking-[0.2em] font-black block">Tier-1 Alerts</span>
-                                </div>
-                            </div>
-
+                            {/* Glass Button */}
                             <button
                                 onClick={onClose}
-                                className={`w-full py-5 rounded-[1.5rem] font-black text-lg transition-all shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden ${isSaved
-                                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 shadow-green-500/20'
-                                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/20'
-                                    }`}
+                                className="w-full py-5 rounded-[1.5rem] 
+                                           font-semibold text-lg text-white
+                                           bg-white/15 
+                                           backdrop-blur-xl 
+                                           border border-white/20 
+                                           hover:bg-white/25 
+                                           transition-all 
+                                           shadow-lg 
+                                           flex items-center justify-center gap-3 
+                                           group relative overflow-hidden"
                             >
                                 <motion.div
                                     className="absolute inset-0 bg-white/10"
@@ -111,8 +133,9 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
                                     whileHover={{ x: '100%' }}
                                     transition={{ duration: 0.6 }}
                                 />
+
                                 {isSaved ? (
-                                    <>Awesome</>
+                                    "Keep me Updated"
                                 ) : (
                                     <>
                                         <Bell size={22} className="group-hover:rotate-12 transition-transform" />
@@ -121,8 +144,8 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
                                 )}
                             </button>
 
-                            <div className="mt-10 pt-8 border-t border-white/5">
-                                <span className="text-[11px] text-gray-600 uppercase tracking-[0.4em] font-bold">
+                            <div className="mt-10 pt-8 border-t border-white/10">
+                                <span className="text-[11px] text-white/40 uppercase tracking-[0.4em] font-bold">
                                     Powered by KCE Events
                                 </span>
                             </div>

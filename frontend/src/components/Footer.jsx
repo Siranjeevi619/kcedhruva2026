@@ -55,7 +55,7 @@ const Footer = () => {
                                 <img
                                     src={getImageUrl(club.logo)}
                                     alt={club.name}
-                                    className="h-25 w-25 object-contain"
+                                    className="h-20 w-full object-contain"
                                 />
                             </div>
                         ))}
@@ -137,7 +137,7 @@ const Footer = () => {
                             {[
                                 { Icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/share/1ERFLsRYj7/' },
                                 { Icon: YoutubeIcon, label: 'Youtube', href: 'https://youtube.com/@wekceians?si=2UClrWxuRShi8Xoy' },
-                                { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/wekceians?igsh=dWc3MWE4bzVtcWF2' },
+                                { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/kce_dhruva?igsh=cDM5b2w2cjFpM3do' },
                                 { Icon: Linkedin, label: 'LinkedIn', href: 'ttps://www.linkedin.com/school/wekceians/' }
                             ].map((social, i) => (
                                 <a

@@ -260,7 +260,7 @@ const Home = () => {
                                             loop
                                             muted
                                             playsInline
-                                            className="w-full h-[100vh] object-cover"
+                                            className="w-full h-full     object-cover"
                                         />
                                     ) : (
                                         <img src={getImageUrl(config.home_hero_bg)} alt="Hero BG" className="w-full h-full object-cover" />
@@ -323,8 +323,11 @@ const Home = () => {
                                 <h3 className="text-3xl font-bold inter-light-text border-l-4 border-blue-500 pl-4">
                                     {viewMode === 'Categories' ? 'Explore Events' :
                                         viewMode === 'Departments' ? 'Select Department' :
-                                            viewMode === 'CategoryDashboard' ? `${selectedDept} Categories` :
-                                                `${selectedDept || selectedCategory || 'Upcoming'} Events`}
+                                            viewMode === 'CategoryDashboard' ?
+                                                (selectedCategory === 'Cultural' ? 'Cultural Categories' : `${(selectedDept || '').toUpperCase() === 'AIDS' ? 'AI & DS' : selectedDept} Categories`) :
+                                                (selectedSubCategory ?
+                                                    `${selectedSubCategory === 'OnStage' ? 'On Stage' : selectedSubCategory === 'OffStage' ? 'Off Stage' : selectedSubCategory} Events` :
+                                                    `${((selectedDept || '').toUpperCase() === 'AIDS' ? 'AI & DS' : selectedDept) || selectedCategory || 'Upcoming'} Events`)}
                                 </h3>
                             </div>
 

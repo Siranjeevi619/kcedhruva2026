@@ -249,7 +249,7 @@ const Passes = ({ embed = false }) => {
                                                     onClick={() => navigate('/select-events', { state: { pass } })}
                                                     className="w-full mt-auto py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-black bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all"
                                                 >
-                                                    Buy Pass <ArrowRight size={18} className="text-black" />
+                                                    Get My Invitation <ArrowRight size={18} className="text-black" />
                                                 </button>
 
                                             </motion.div>

@@ -48,6 +48,9 @@ const registrationSchema = new mongoose.Schema({
     ticketId: {
         type: String,
         unique: true,
+    },
+    qrCode: {
+        type: String, // Base64 string of the QR code
     }
 }, { timestamps: true });
 

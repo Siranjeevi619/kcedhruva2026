@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, Timer, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
     const [isSaved, setIsSaved] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isOpen && isPreRegistration) {
             setIsSaved(true);
         }
     }, [isOpen, isPreRegistration]);
+
+    const handleAction = () => {
+        onClose();
+        navigate('/');
+    };
 
     return (
         <AnimatePresence>
@@ -32,7 +39,7 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
                         exit={{ scale: 0.9, opacity: 0, y: 40 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         className="relative w-full max-w-[95%] sm:max-w-xl 
-                                   bg-white/10 
+                                   bg-[#050510]/10 
                                    backdrop-blur-2xl 
                                    border border-white/20 
                                    rounded-[2rem] sm:rounded-[3rem] 
@@ -115,7 +122,7 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
 
                             {/* Glass Button */}
                             <button
-                                onClick={onClose}
+                                onClick={handleAction}
                                 className="w-full py-5 rounded-[1.5rem] 
                                            font-semibold text-lg text-white
                                            bg-white/15 
@@ -146,7 +153,7 @@ const ComingSoonModal = ({ isOpen, onClose, isPreRegistration = false }) => {
 
                             <div className="mt-10 pt-8 border-t border-white/10">
                                 <span className="text-[11px] text-white/40 uppercase tracking-[0.4em] font-bold">
-                                    Powered by KCE Events
+                                    Powered by Dhruva Team, Karpagam College of Engineering
                                 </span>
                             </div>
                         </div>

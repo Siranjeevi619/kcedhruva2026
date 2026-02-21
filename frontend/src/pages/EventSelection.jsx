@@ -7,6 +7,8 @@ import { useGlobalConfig } from '../context/GlobalConfigContext';
 import { API_URL } from '../utils/config';
 import ComingSoonModal from '../components/ComingSoonModal';
 import SuccessModal from '../components/SuccessModal';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Mail, Phone, GraduationCap, Building2, MapPin, CreditCard, ChevronRight, Sparkles, Trophy } from 'lucide-react';
 
 import Doodles from '../components/Doodles';
 
@@ -26,11 +28,10 @@ const EventSelection = () => {
         college: '',
         district: '',
         state: '',
-
     });
     const [submitting, setSubmitting] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
-    const [successState, setSuccessState] = useState({ show: false, title: '', message: '' });
+    const [successState, setSuccessState] = useState({ show: false, title: '', message: '', ticketId: '' });
 
     // Sports Specific State
     const [sportsEvents, setSportsEvents] = useState([]);
@@ -112,7 +113,8 @@ const EventSelection = () => {
                 setSuccessState({
                     show: true,
                     title: 'Registration Successful!',
-                    message: "Welcome to Dhruva! Your registration has been confirmed. See you at the event!"
+                    message: "Welcome to Dhruva! Your registration has been confirmed. See you at the event!",
+                    ticketId: regData.ticketId
                 });
                 setSubmitting(false);
                 return;
@@ -136,7 +138,8 @@ const EventSelection = () => {
                         setSuccessState({
                             show: true,
                             title: 'Payment Successful!',
-                            message: "Your payment has been verified and registration is confirmed. Get ready for an epic experience!"
+                            message: "Your payment has been verified and registration is confirmed. Get ready for an epic experience!",
+                            ticketId: regData.ticketId
                         });
                     } catch (err) {
                         alert('Payment verification failed. Please contact support.');
@@ -147,7 +150,7 @@ const EventSelection = () => {
                     email: formData.email,
                     contact: formData.phone
                 },
-                theme: { color: '#3b82f6' }
+                theme: { color: '#8b5cf6' }
             };
 
             // Order creation logic (optional/if enabled)
@@ -173,116 +176,246 @@ const EventSelection = () => {
         }
     };
 
+    const getPassColorGradient = (color) => {
+        switch (color?.toLowerCase()) {
+            case 'orange': return 'from-orange-400 via-orange-500 to-red-500';
+            case 'yellow': return 'from-yellow-300 via-yellow-400 to-orange-400';
+            case 'red': return 'from-red-400 via-rose-500 to-red-600';
+            case 'green': return 'from-emerald-400 via-green-500 to-emerald-600';
+            case 'purple': return 'from-violet-400 via-purple-500 to-fuchsia-600';
+            case 'pink': return 'from-pink-400 via-rose-400 to-fuchsia-500';
+            case 'blue': return 'from-blue-400 via-cyan-500 to-blue-600';
+            default: return 'from-white via-white to-white/50';
+        }
+    };
+
     if (!pass) return null;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white font-inter flex flex-col relative overflow-x-hidden">
+        <div className="min-h-screen bg-[#050510] text-white font-inter flex flex-col relative overflow-x-hidden">
+            {/* Unique Colorful Background */}
+            <div className="fixed inset-0 z-0">
+                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-purple-600/30 rounded-full blur-[120px] animate-float" />
+                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-700" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_transparent_0%,_#050510_80%)]" />
+            </div>
+
             <Doodles />
             <Navbar />
 
-            <main className="flex-1 max-w-3xl mx-auto w-full px-4 pt-24 pb-12">
-                <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/30 rounded-2xl text-center">
-                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">{pass.name}</h1>
-                    <p className="text-gray-400 text-sm sm:text-base mb-4">{pass.description}</p>
-                    <div className="text-xl sm:text-2xl font-bold text-orange-400">
-                        {isSportsPass && !selectedSportEventId ? (
-                            <span className="text-xs sm:text-sm text-gray-400 font-normal">Select a sport to see price</span>
-                        ) : (
-                            `₹${dynamicPrice || pass.price}`
+            <main className="flex-1 relative z-10 max-w-4xl mx-auto w-full px-4 pt-28 pb-12">
+                {/* Hero Section with Glassmorphism */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-10 p-1 rounded-3xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 shadow-[0_0_50px_-12px_rgba(139,92,246,0.5)]"
+                >
+                    <div className="bg-black/80 backdrop-blur-xl rounded-[22px] p-6 sm:p-10 text-center relative overflow-hidden">
+                        {/* Decorative background circle */}
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-violet-600/20 rounded-full blur-3xl" />
+
+                        <h1 className={`text-3xl sm:text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r ${getPassColorGradient(pass.color)}`}>
+                            {pass.name}
+                        </h1>
+
+                        {pass.perks && Array.isArray(pass.perks) && (
+                            <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-2xl mx-auto">
+                                {pass.perks.filter(p => p).map((perk, i) => (
+                                    <span key={i} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-gray-400 flex items-center gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-violet-400" />
+                                        {perk}
+                                    </span>
+                                ))}
+                            </div>
                         )}
+
+                        <div className="inline-block p-1 rounded-2xl bg-white/5 border border-white/10">
+                            <div className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">
+                                {isSportsPass && !selectedSportEventId ? (
+                                    <span className="text-sm sm:text-base text-gray-500 font-bold uppercase tracking-widest">Select Sport for Pricing</span>
+                                ) : (
+                                    `₹${dynamicPrice || pass.price}`
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 md:p-8">
-                    <h2 className="text-lg sm:text-xl font-bold mb-6">Participant Details</h2>
-                    <form onSubmit={handleRegister} className="space-y-4">
+                {/* Form Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden relative"
+                >
+                    {/* Corner gradient hits */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 blur-3xl" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-cyan-500/10 blur-3xl" />
 
+                    <div className="flex items-center gap-4 mb-10 pb-4 border-b border-white/10">
+                        <div className="p-3 bg-violet-500/20 rounded-xl text-violet-400">
+                            <User size={24} />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-tight">Registration Details</h2>
+                            <p className="text-gray-500 text-sm">Please fill in your academic information</p>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleRegister} className="space-y-8">
                         {isSportsPass && (
-                            <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                                <label className="block text-sm font-bold text-blue-400 mb-2">Select Sports Event *</label>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="p-6 bg-gradient-to-br from-violet-600/10 to-blue-600/10 border border-violet-500/30 rounded-2xl relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <Trophy size={80} />
+                                </div>
+                                <label className="flex items-center gap-2 text-sm font-bold text-violet-400 mb-4 uppercase tracking-wider">
+                                    <Trophy size={18} /> Choose Your Sport
+                                </label>
                                 <select
                                     value={selectedSportEventId}
                                     onChange={handleSportSelect}
                                     required
-                                    className="w-full bg-black/40 border border-blue-500/30 rounded-lg py-3 px-4 focus:border-blue-500 outline-none text-white [&>option]:bg-black"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:border-violet-500 outline-none text-white transition-all appearance-none cursor-pointer [&>option]:bg-[#10101a]"
                                 >
-                                    <option value="">-- Choose Sport --</option>
+                                    <option value="">-- Click to select a sport --</option>
                                     {sportsEvents.map(event => (
                                         <option key={event._id} value={event._id}>
-                                            {event.title} ({event.gender || 'Open'}) - ₹{event.teamPrice}/{event.gender === 'Mixed' ? 'Team' : 'Person'}
+                                            {event.title} ({event.gender || 'Open'}) - ₹{event.teamPrice}/Team
                                         </option>
                                     ))}
                                 </select>
-                            </div>
+                            </motion.div>
                         )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input name="studentName" value={formData.studentName} onChange={handleFormChange} required placeholder="Full Name" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
-                            <input name="rollNumber" value={formData.rollNumber} onChange={handleFormChange} required placeholder="Roll Number" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Student Name</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="studentName" value={formData.studentName} onChange={handleFormChange} required placeholder="Enter full name" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Roll Number</label>
+                                <div className="relative group">
+                                    <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="rollNumber" value={formData.rollNumber} onChange={handleFormChange} required placeholder="College Roll ID" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <select
-                                name="department"
-                                value={formData.department}
-                                onChange={handleFormChange}
-                                required
-                                className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none text-gray-400 [&>option]:bg-black"
-                            >
-                                <option value="">Select Dept</option>
-
-                                {/* Core Engineering */}
-                                <option value="AIDS">AIDS</option>
-                                <option value="CIVIL">CIVIL</option>
-                                <option value="CSD-CST">CSD-CST</option>
-                                <option value="CSE">CSE</option>
-                                <option value="CSECS">CSE(CY)</option>
-                                <option value="ECE">ECE</option>
-                                <option value="EEE">EEE</option>
-                                <option value="ETE-VLSI">ETE-VLSI</option>
-                                <option value="MECH">MECH</option>
-                                <option value="IT">IT</option>
-                                <option value="CHEM">CHEM</option>
-                                <option value="BIOTECH">BIOTECH</option>
-
-                                {/* Core Sciences */}
-                                <option value="PHYSICS">Physics</option>
-                                <option value="CHEMISTRY">Chemistry</option>
-                                <option value="MATHEMATICS">Mathematics</option>
-                                <option value="BIOLOGY">Biology</option>
-
-                                {/* Commerce & Management */}
-                                <option value="BCom">B.Com - Commerce</option>
-                                <option value="BBA">BBA - Business Administration</option>
-                                <option value="MBA">MBA - Master of Business Administration</option>
-
-                            </select>
-
-                            <select name="year" value={formData.year} onChange={handleFormChange} required className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none text-gray-400 [&>option]:bg-black">
-                                <option value="">Select Year</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Department</label>
+                                <select
+                                    name="department"
+                                    value={formData.department}
+                                    onChange={handleFormChange}
+                                    required
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:border-violet-500 focus:bg-white/10 outline-none text-gray-300 transition-all [&>option]:bg-[#10101a]"
+                                >
+                                    <option value="">Select Dept</option>
+                                    {/* Core Engineering */}
+                                    <option value="AIDS">AIDS</option>
+                                    <option value="CIVIL">CIVIL</option>
+                                    <option value="CSD-CST">CSD-CST</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="CSECS">CSE(CY)</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="ETE-VLSI">ETE-VLSI</option>
+                                    <option value="MECH">MECH</option>
+                                    <option value="IT">IT</option>
+                                    <option value="CHEM">CHEM</option>
+                                    <option value="BIOTECH">BIOTECH</option>
+                                    {/* Core Sciences */}
+                                    <option value="PHYSICS">Physics</option>
+                                    <option value="CHEMISTRY">Chemistry</option>
+                                    <option value="MATHEMATICS">Mathematics</option>
+                                    <option value="BIOLOGY">Biology</option>
+                                    {/* Commerce & Management */}
+                                    <option value="BCom">B.Com - Commerce</option>
+                                    <option value="BBA">BBA - Business Administration</option>
+                                    <option value="MBA">MBA - Master of Business Administration</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Current Year</label>
+                                <select name="year" value={formData.year} onChange={handleFormChange} required className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:border-violet-500 focus:bg-white/10 outline-none text-gray-300 transition-all [&>option]:bg-[#10101a]">
+                                    <option value="">Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <input name="email" type="email" value={formData.email} onChange={handleFormChange} required placeholder="Email Address" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
-                        <input name="phone" value={formData.phone} onChange={handleFormChange} required placeholder="Phone Number" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
-                        <input name="college" value={formData.college} onChange={handleFormChange} required placeholder="College Name" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
-                        <input name="district" value={formData.district} onChange={handleFormChange} required placeholder="District" className="w-full bg-black/40 border border-white/10 rounded-lg py-3 px-4 focus:border-orange-500 outline-none" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Email ID</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="email" type="email" value={formData.email} onChange={handleFormChange} required placeholder="Email Address" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Phone Number</label>
+                                <div className="relative group">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="phone" value={formData.phone} onChange={handleFormChange} required placeholder="Contact Number" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
+                        </div>
 
-                        <div className="pt-6 border-t border-white/10 mt-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">College / Institution</label>
+                                <div className="relative group">
+                                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="college" value={formData.college} onChange={handleFormChange} required placeholder="Institution Name" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">District / City</label>
+                                <div className="relative group">
+                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                    <input name="district" value={formData.district} onChange={handleFormChange} required placeholder="District" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-10">
                             <button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-orange-500/20"
+                                disabled={submitting}
+                                className="w-full h-16 relative overflow-hidden group rounded-2xl transition-all"
                             >
-                                {submitting ? 'Processing...' : config.registration_open === 'false' ? 'Register' : `Pay ₹${pass.price} & Register`}
+                                <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 group-hover:scale-105 transition-transform duration-500" />
+                                <div className="relative flex items-center justify-center gap-3 text-lg font-black uppercase tracking-widest">
+                                    {submitting ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>Processing...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CreditCard size={22} />
+                                            <span>{config.registration_open === 'false' ? 'Register Interest' : `Checkout - ₹${dynamicPrice || pass.price}`}</span>
+                                            <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
+                                </div>
                             </button>
-                            <p className="text-gray-500 text-xs text-center mt-4">Safe & Secure Payment via Razorpay</p>
                         </div>
                     </form>
-                </div>
+                </motion.div>
             </main>
+
             <ComingSoonModal
                 isOpen={showComingSoon}
                 onClose={() => setShowComingSoon(false)}
@@ -293,6 +426,7 @@ const EventSelection = () => {
                 onClose={() => setSuccessState({ ...successState, show: false })}
                 title={successState.title}
                 message={successState.message}
+                ticketId={successState.ticketId}
             />
             <Footer />
         </div>
@@ -300,3 +434,4 @@ const EventSelection = () => {
 };
 
 export default EventSelection;
+

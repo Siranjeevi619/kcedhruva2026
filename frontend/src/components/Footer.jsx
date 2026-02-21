@@ -30,13 +30,13 @@ const Footer = () => {
             {sponsors.length > 0 && (
                 <section className="max-w-7xl mx-auto px-4 md:px-6 py-10">
                     <h3 className="text-3xl font-bold text-center mb-16 shadow-lg">Our Sponsors</h3>
-                    <div className="flex flex-wrap justify-center gap-12 items-center">
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-10 items-center">
                         {sponsors.map(s => (
                             <div key={s._id} className="group flex flex-col items-center">
                                 <img
                                     src={getImageUrl(s.logo)}
                                     alt={s.name}
-                                    className={`object-contain transition-all group-hover:grayscale-0 opacity-100 group-hover:opacity-100 h-24`}
+                                    className={`object-contain transition-all group-hover:grayscale-0 opacity-100 group-hover:opacity-100 h-16 md:h-24`}
                                 />
                                 <p className="text-sm text-gray-400 mt-2">{s.name}</p>
                             </div>
@@ -51,11 +51,11 @@ const Footer = () => {
                     <h3 className="text-3xl font-bold text-center mb-16 shadow-lg">Our Clubs</h3>
                     <Marquee gradient={false} speed={40}>
                         {clubs.map(club => (
-                            <div key={club._id} className="mx-8 w-40 flex items-center justify-center hover:grayscale-0 transition-all opacity-100 hover:opacity-100">
+                            <div key={club._id} className="mx-2 md:mx-4 w-28 md:w-40 flex items-center justify-center hover:grayscale-0 transition-all opacity-100 hover:opacity-100">
                                 <img
                                     src={getImageUrl(club.logo)}
                                     alt={club.name}
-                                    className="h-20 w-full object-contain"
+                                    className="h-16 md:h-20 w-full object-contain"
                                 />
                             </div>
                         ))}

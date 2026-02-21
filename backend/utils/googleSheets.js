@@ -23,7 +23,9 @@ const logToSheet = async (data) => {
             passName: data.passName,
             passId: data.passId,
             amount: data.amount,
-            paymentStatus: data.paymentStatus
+            paymentStatus: data.paymentStatus,
+            ticketId: data.ticketId,
+            qrCode: data.qrCode
         };
 
         await axios.post(scriptUrl, payload);

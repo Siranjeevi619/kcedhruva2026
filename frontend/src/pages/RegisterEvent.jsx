@@ -57,7 +57,7 @@ const RegisterEvent = () => {
             <Doodles />
             <Navbar />
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 md:py-20 font-sans">
+            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 md:pt-32 md:pb-20 font-sans">
                 {/* Back Button */}
                 <div className="mb-8">
                     <button

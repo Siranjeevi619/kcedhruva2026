@@ -38,10 +38,14 @@ const registerForEvent = async (req, res) => {
         else if (passName.includes('cultural')) prefix = 'C';
         else if (passName.includes('sports')) prefix = 'SP';
 
-        const randomNum = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
+        const randomNum = Math.floor(100000 + Math.random() * 900000); // 6 digit random number
         const ticketId = `${prefix}${randomNum}`;
 
-        // 4. Determine Amount (Dynamic for Sports)
+        // 4. Generate QR Code
+        const QRCode = require('qrcode');
+        const qrCodeData = await QRCode.toDataURL(ticketId);
+
+        // 5. Determine Amount (Dynamic for Sports)
         let amountToPay = pass.price;
         if (passName.includes('sports') && events.length > 0) {
             // For sports, use the specific event's team price
@@ -52,11 +56,11 @@ const registerForEvent = async (req, res) => {
             }
         }
 
-        // 5. Check Payment Status
+        // 6. Check Payment Status
         const enablePayment = process.env.ENABLE_PAYMENT === 'true';
         const initialStatus = enablePayment ? 'Pending' : 'Completed';
 
-        // 6. Create Registration
+        // 7. Create Registration
         const registration = new Registration({
             pass: passId,
             events: eventIds,
@@ -70,7 +74,8 @@ const registerForEvent = async (req, res) => {
             district,
             amount: amountToPay,
             paymentStatus: initialStatus,
-            ticketId: ticketId
+            ticketId: ticketId,
+            qrCode: qrCodeData
         });
 
         const savedRegistration = await registration.save();
@@ -89,14 +94,17 @@ const registerForEvent = async (req, res) => {
                 district,
                 passName: pass.name,
                 passId: passId,
-                amount: pass.price,
-                paymentStatus: 'Bypassed/Completed'
+                amount: amountToPay,
+                paymentStatus: 'Bypassed/Completed',
+                ticketId: ticketId,
+                qrCode: qrCodeData
             });
         }
 
         res.status(201).json({
             message: enablePayment ? 'Registration initiated' : 'Registration Completed',
             registrationId: savedRegistration._id,
+            ticketId: savedRegistration.ticketId,
             amount: pass.price,
             paymentStatus: initialStatus
         });
@@ -292,7 +300,9 @@ const preRegister = async (req, res) => {
             passName: pass ? pass.name : 'N/A',
             passId: passId,
             amount: pass ? pass.price : '0',
-            paymentStatus: 'Pre-Registered'
+            paymentStatus: 'Pre-Registered',
+            ticketId: registration.ticketId,
+            qrCode: registration.qrCode
         });
 
         res.status(201).json({ message: 'Interest registered successfully' });

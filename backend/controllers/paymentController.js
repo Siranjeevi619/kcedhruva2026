@@ -56,10 +56,10 @@ const verifyPayment = async (req, res) => {
                 registration.paymentId = razorpay_payment_id;
                 await registration.save();
 
-                // Send Confirmation Email
-                if (process.env.ENABLE_EMAIL_AUTOMATION === 'true') {
+                // Send Confirmation Email (Disabled - Handled via Google Sheets automation)
+                /* if (process.env.ENABLE_EMAIL_AUTOMATION === 'true') {
                     await sendRegistrationEmail(registration, registration.pass, registration.events);
-                }
+                } */
 
                 // Log to Google Sheet
                 const { logToSheet } = require('../utils/googleSheets');
@@ -74,8 +74,10 @@ const verifyPayment = async (req, res) => {
                     district: registration.district,
                     passName: registration.pass.name,
                     passId: registration.pass._id,
-                    amount: registration.pass.price,
-                    paymentStatus: 'Paid'
+                    amount: registration.amount,
+                    paymentStatus: 'Paid',
+                    ticketId: registration.ticketId,
+                    qrCode: registration.qrCode
                 });
 
                 // Trigger n8n Webhook for Automated Email/Reports

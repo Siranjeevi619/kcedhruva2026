@@ -11,6 +11,8 @@
 
     --animate-fadeInUp: fadeInUp 1s ease-out forwards;
     --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --animate-spin-slow: spin 8s linear infinite;
+    --animate-float: float 6s ease-in-out infinite;
 
     @keyframes fadeInUp {
         from {
@@ -21,6 +23,18 @@
         to {
             opacity: 1;
             transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-20px);
         }
     }
 }

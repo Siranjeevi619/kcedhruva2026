@@ -124,24 +124,24 @@ const sendRegistrationEmail = async (registration, pass, events) => {
                                 </table>
                             </div>
 
+                            <!-- QR Code Section -->
+                            ${registration.qrCode ? `
+                            <div style="text-align: center; margin-bottom: 20px; background: white; padding: 15px; border-radius: 12px; display: inline-block; width: 150px; margin-left: auto; margin-right: auto;">
+                                <img src="${registration.qrCode}" alt="Ticket QR Code" style="width: 150px; height: 150px; display: block;" />
+                                <div style="color: #000; font-size: 10px; font-weight: bold; margin-top: 5px;">SCAN AT ENTRANCE</div>
+                            </div>
+                            ` : ''}
+
                             <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.5; margin: 0;">
                                 ${pass.description}
                             </p>
                         </div>
-
-                        // <!-- Registered Events -->
-                        // <div style="margin-top: 30px;">
-                        //     <h3 style="color: ${theme.text}; border-bottom: 1px solid #333; padding-bottom: 10px;">Registered Events</h3>
-                        //     <ul style="color: #ccc; padding-left: 20px; line-height: 1.6;">
-                        //         ${eventListHtml}
-                        //     </ul>
-                        // </div>
                     </div>
 
                     <!-- Footer -->
                     <div style="text-align: center; padding: 20px; background-color: #111; border-top: 1px solid #333; color: #666; font-size: 12px;">
-                        <p>This is a system generated email. Please present this at the registration desk.</p>
-                        <p>&copy; 2025 Dhruva Organizing Team</p>
+                        <p>This is a system generated email. Please present this QR code at the registration desk.</p>
+                        <p>&copy; 2026 Dhruva Organizing Team</p>
                     </div>
                 </div>
             </div>

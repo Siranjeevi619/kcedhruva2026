@@ -1,93 +1,83 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, X, PartyPopper, ArrowRight, Home, Download } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { CheckCircle, X, Download, Share2 } from 'lucide-react';
 
-const SuccessModal = ({ isOpen, onClose, title = "Success!", message = "Your registration has been confirmed." }) => {
-    const navigate = useNavigate();
-
+const SuccessModal = ({ isOpen, onClose, title, message, ticketId }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 overflow-y-auto pt-20 pb-10">
+                <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 overflow-y-auto py-10">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-xl"
                     />
 
                     {/* Modal Content */}
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 40 }}
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 40 }}
-                        className="relative w-full max-w-[95%] sm:max-w-xl bg-[#0d0d0d] border border-green-500/20 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_0_80px_rgba(34,197,94,0.15)]"
+                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                        className="relative w-full max-w-lg bg-gradient-to-b from-[#1a1a2e] to-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl overflow-hidden"
                     >
-                        {/* Premium Glow Effects */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
-                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-600/20 rounded-full blur-[100px]" />
-                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]" />
+                        {/* Success Glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-green-500/20 rounded-full blur-[100px] pointer-events-none" />
 
-                        {/* Close Icon - Optional as we have buttons, but nice for UX */}
+                        {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-8 right-8 p-3 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group"
+                            className="absolute top-6 right-6 p-2 text-white/40 hover:text-white bg-white/5 rounded-full border border-white/10 transition-all z-20"
                         >
-                            <X size={20} className="group-hover:rotate-90 transition-transform" />
+                            <X size={20} />
                         </button>
 
                         <div className="relative z-10 text-center">
-                            {/* Icon Animation */}
+                            {/* Animated Check Icon */}
                             <motion.div
                                 initial={{ scale: 0 }}
-                                animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
-                                transition={{ type: "spring", damping: 12, stiffness: 200 }}
-                                className="inline-flex p-4 sm:p-6 bg-green-500/20 rounded-2xl sm:rounded-[2rem] mb-6 sm:mb-10 border border-green-500/30 shadow-2xl"
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", damping: 12, stiffness: 200, delay: 0.2 }}
+                                className="w-24 h-24 bg-green-500/20 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_-10px_rgba(34,197,94,0.5)]"
                             >
-                                <CheckCircle size={48} className="text-green-400 sm:w-16 sm:h-16" />
+                                <CheckCircle size={48} className="text-green-400" />
                             </motion.div>
 
-                            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 tracking-tighter leading-tight italic">
-                                <span className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">
-                                    {title}
-                                </span>
+                            <h2 className="text-3xl sm:text-4xl font-black mb-4 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                                {title || "Successful!"}
                             </h2>
-
-                            <p className="text-gray-300 text-base sm:text-lg md:text-xl mb-8 sm:mb-12 max-w-sm mx-auto leading-relaxed">
-                                {message}
+                            <p className="text-gray-400 text-lg mb-8 leading-relaxed">
+                                {message || "Your registration is confirmed. We've sent the details to your email."}
                             </p>
 
-                            <div className="flex flex-col gap-4">
-                                <button
-                                    onClick={() => {
-                                        onClose();
-                                        navigate('/');
-                                    }}
-                                    className="w-full py-4 sm:py-5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-black text-base sm:text-lg rounded-xl sm:rounded-[1.5rem] transition-all shadow-2xl shadow-green-500/30 flex items-center justify-center gap-3 group relative overflow-hidden"
-                                >
-                                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                                    <Home size={20} className="relative z-10 sm:w-5 sm:h-5" />
-                                    <span className="relative z-10">Return to Portal</span>
-                                    <ArrowRight size={20} className="relative z-10 group-hover:translate-x-2 transition-transform sm:w-5 sm:h-5" />
-                                </button>
+                            {ticketId && (
+                                <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-2xl">
+                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">Registration Ticket ID</span>
+                                    <span className="text-3xl font-black text-white tracking-widest">{ticketId}</span>
+                                </div>
+                            )}
 
+                            <div className="space-y-4">
                                 <button
                                     onClick={onClose}
-                                    className="w-full py-4 sm:py-5 bg-white/5 hover:bg-white/10 text-white font-bold text-sm sm:text-base rounded-xl sm:rounded-[1.5rem] transition-all border border-white/10 flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-900/20 flex items-center justify-center gap-2"
                                 >
-                                    Keep Exploring
+                                    Home Page
+                                </button>
+
+                                <button
+                                    className="w-full py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Download size={20} />
+                                    Download Ticket
                                 </button>
                             </div>
 
-                            <div className="mt-12 flex items-center justify-center gap-3">
-                                <div className="h-px w-8 bg-white/10" />
-                                <PartyPopper className="text-green-400 animate-pulse" size={24} />
-                                <span className="text-[11px] text-gray-500 uppercase tracking-[0.5em] font-black">Success</span>
-                                <div className="h-px w-8 bg-white/10" />
-                            </div>
+                            <p className="mt-8 text-gray-600 text-sm font-medium">
+                                Check your email for formal invitation card.
+                            </p>
                         </div>
                     </motion.div>
                 </div>

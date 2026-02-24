@@ -21,6 +21,12 @@ const RegisterEvent = () => {
             try {
                 const { data } = await axios.get(`${API_URL}/events/${eventId}`);
                 setEvent(data);
+
+                // If accessed via ID but has a slug, redirect to slug-based URL
+                if (eventId.match(/^[0-9a-fA-F]{24}$/) && data.slug) {
+                    navigate(`/register/${data.slug}`, { replace: true });
+                }
+
                 setLoading(false);
             } catch (error) {
                 console.error(error);

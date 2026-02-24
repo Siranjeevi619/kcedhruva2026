@@ -17,7 +17,17 @@ const getEvents = async (req, res) => {
 // @access  Public
 const getEventById = async (req, res) => {
     try {
-        const event = await Event.findById(req.params.id);
+        const { id } = req.params;
+        let event;
+
+        // Check if ID is a valid MongoDB ObjectId
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            event = await Event.findById(id);
+        } else {
+            // Otherwise search by slug
+            event = await Event.findOne({ slug: id });
+        }
+
         if (event) {
             res.json(event);
         } else {

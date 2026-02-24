@@ -78,25 +78,33 @@ const Home = () => {
         const typeParam = queryParams.get('type');
 
         if (deptParam) {
-            setViewMode('CategoryDashboard');
             setSelectedCategory('Technical'); // Root category for depts
             setSelectedDept(deptParam);
+            if (typeParam) {
+                setViewMode('Events');
+                setSelectedSubCategory(typeParam);
+            } else {
+                setViewMode('CategoryDashboard');
+                setSelectedSubCategory(null);
+            }
         } else if (catParam) {
+            setSelectedCategory(catParam);
             if (catParam === 'Technical') {
                 // If just 'Technical' is clicked from navbar, show Departments
                 setViewMode('Departments');
-                setSelectedCategory('Technical');
+                setSelectedDept(null);
             } else if (catParam === 'Cultural' && !typeParam) {
                 // If 'Cultural' is clicked without type, show subcategories (Dashboard)
                 setViewMode('CategoryDashboard');
-                setSelectedCategory('Cultural');
                 setSelectedDept(null);
+                setSelectedSubCategory(null);
             } else {
                 // For Cultural with type, Sports, or others
                 setViewMode('Events');
-                setSelectedCategory(catParam);
                 if (catParam === 'Cultural') {
                     setSelectedSubCategory(typeParam);
+                } else {
+                    setSelectedSubCategory(null);
                 }
             }
         } else {
@@ -104,6 +112,7 @@ const Home = () => {
             setViewMode('Categories');
             setSelectedCategory(null);
             setSelectedDept(null);
+            setSelectedSubCategory(null);
         }
     }, [location.search]);
 
@@ -186,48 +195,41 @@ const Home = () => {
     }, [viewMode, selectedCategory, selectedDept, selectedSubCategory]);
 
 
-    // Handlers
+    // Handlers (Update URL for deep linking and back-button support)
     const handleCategoryClick = (category) => {
         if (category === 'Technical') {
-            setViewMode('Departments');
-            setSelectedCategory('Technical');
+            navigate('/?cat=Technical');
         } else if (category === 'Cultural') {
-            setViewMode('CategoryDashboard');
-            setSelectedCategory('Cultural');
+            navigate('/?cat=Cultural');
         } else {
-            setViewMode('Events');
-            setSelectedCategory(category);
+            navigate(`/?cat=${category}`);
         }
     };
 
     const handleBack = () => {
         if (viewMode === 'Events' && selectedDept) {
-            setViewMode('CategoryDashboard');
-            setSelectedSubCategory(null);
+            navigate(`/?dept=${selectedDept}`);
         } else if (viewMode === 'Events' && selectedCategory === 'Cultural') {
-            setViewMode('CategoryDashboard');
-            setSelectedSubCategory(null);
+            navigate('/?cat=Cultural');
         } else if (viewMode === 'CategoryDashboard' && selectedCategory === 'Cultural') {
-            setViewMode('Categories');
-            setSelectedCategory(null);
+            navigate('/');
+        } else if (viewMode === 'CategoryDashboard' && selectedDept) {
+            navigate('/?cat=Technical');
+        } else if (viewMode === 'Departments') {
+            navigate('/');
         } else {
-            setViewMode('Categories');
-            setSelectedCategory(null);
-            setSelectedDept(null);
-            setSelectedSubCategory(null);
-            navigate('/'); // Clear query params
+            navigate('/');
         }
     };
 
     const handleDeptClick = (dept) => {
-        setViewMode('CategoryDashboard');
-        setSelectedDept(dept);
-        // navigate(`?dept=${dept}`, { replace: true });
+        navigate(`/?dept=${dept}`);
     };
 
     const handleSubCategoryClick = (subCat) => {
-        setViewMode('Events');
-        setSelectedSubCategory(subCat);
+        const params = new URLSearchParams(location.search);
+        params.set('type', subCat);
+        navigate(`/?${params.toString()}`);
     };
 
     // Departments list from constants

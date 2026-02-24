@@ -91,7 +91,12 @@ const ManageEvents = () => {
         }
 
         // Search Filter
-        return e.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const s = searchTerm.toLowerCase();
+        return (
+            e.title.toLowerCase().includes(s) ||
+            (e.venue && e.venue.toLowerCase().includes(s)) ||
+            (e.department && e.department.toLowerCase().includes(s))
+        );
     });
 
 
@@ -402,7 +407,7 @@ const ManageEvents = () => {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                         <input
                             type="text"
-                            placeholder="Search events..."
+                            placeholder="Search by name, venue or dept..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-blue-500 transition-colors"

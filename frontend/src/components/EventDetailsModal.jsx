@@ -294,7 +294,7 @@ const EventDetailsModal = ({ event, onClose, showRegister = false, isAdminView =
                             {/* Register Button */}
                             {showRegister && (
                                 <button
-                                    onClick={() => window.location.assign(`/register/${event._id}`)}
+                                    onClick={() => window.location.assign(`/register/${event.slug || event._id}`)}
                                     className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition-all shadow-xl shadow-blue-900/40 transform hover:scale-[1.02] active:scale-100"
                                 >
                                     Register Now

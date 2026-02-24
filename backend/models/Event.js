@@ -118,7 +118,23 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
         required: true,
+    },
+    slug: {
+        type: String,
+        unique: true,
     }
 }, { timestamps: true });
+
+// Generate slug from title before saving
+eventSchema.pre('save', async function () {
+    if (this.isModified('title') && !this.slug) {
+        this.slug = this.title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(/-+/g, '-') // Replace multiple - with single -
+            .trim();
+    }
+});
 
 module.exports = mongoose.model('Event', eventSchema);

@@ -23,6 +23,12 @@ const EventDetail = () => {
             try {
                 const { data } = await axios.get(`${API_URL}/events/${id}`);
                 setEvent(data);
+
+                // If accessed via ID but has a slug, redirect to slug-based URL
+                if (id.match(/^[0-9a-fA-F]{24}$/) && data.slug) {
+                    navigate(`/event/${data.slug}`, { replace: true });
+                }
+
                 setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch event details", error);
@@ -411,7 +417,7 @@ const EventDetail = () => {
                             {/* Register Button */}
                             <div className="pt-10 flex flex-col items-center">
                                 <button
-                                    onClick={() => window.location.assign(`/register/${event._id}`)}
+                                    onClick={() => window.location.assign(`/register/${event.slug}`)}
                                     className="w-full md:w-auto min-w-[300px] py-5 px-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xl font-black rounded-2xl transition-all shadow-2xl shadow-blue-900/50 transform hover:scale-105 active:scale-95 uppercase tracking-widest"
                                 >
                                     Register Now

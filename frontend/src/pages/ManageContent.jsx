@@ -147,7 +147,7 @@ const ManageContent = () => {
     };
 
     // --- GENERIC LIST HANDLER (Sponsors/Clubs) ---
-    const [itemForm, setItemForm] = useState({ name: '', logo: '', description: '' });
+    const [itemForm, setItemForm] = useState({ name: '', logo: '', description: '', tier: 'Silver' });
     const [editingItem, setEditingItem] = useState(null);
 
     const handleItemSubmit = async (e, type) => {
@@ -160,7 +160,7 @@ const ManageContent = () => {
             } else {
                 await axios.post(`${API_URL}/content/${type}s`, payload, getAuthConfig());
             }
-            setItemForm({ name: '', logo: '', description: '' });
+            setItemForm({ name: '', logo: '', description: '', tier: 'Silver' });
             setEditingItem(null);
             refreshConfig();
             fetchData();
@@ -718,6 +718,11 @@ const ManageContent = () => {
                                                 />
                                                 <div className="flex-1">
                                                     <h3 className="font-bold">{item.name}</h3>
+                                                    {activeTab === 'sponsors' && (
+                                                        <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">
+                                                            {item.tier || 'Silver'}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="flex gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                                     <button onClick={() => { setEditingItem(item); setItemForm(item); }} className="p-2 bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30 transition-colors"><Pencil size={14} /></button>
@@ -753,10 +758,27 @@ const ManageContent = () => {
                                                 />
                                             </div>
 
+                                            {activeTab === 'sponsors' && (
+                                                <div>
+                                                    <label className="block text-xs text-gray-400 mb-1">Sponsor Tier</label>
+                                                    <select
+                                                        value={itemForm.tier || 'Silver'}
+                                                        onChange={(e) => setItemForm({ ...itemForm, tier: e.target.value })}
+                                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-sm focus:border-blue-500 outline-none"
+                                                    >
+                                                        <option value="Title">Title Sponsor</option>
+                                                        <option value="Platinum">Platinum Sponsor</option>
+                                                        <option value="Gold">Gold Sponsor</option>
+                                                        <option value="Silver">Silver Sponsor</option>
+                                                        <option value="Associate">Associate Sponsor</option>
+                                                    </select>
+                                                </div>
+                                            )}
+
 
                                             <button type="submit" className="w-full bg-blue-600 py-2 rounded-lg font-bold">Save</button>
                                             {editingItem && (
-                                                <button type="button" onClick={() => { setEditingItem(null); setItemForm({ name: '', logo: '', description: '' }); }} className="w-full bg-gray-600 py-2 rounded-lg font-bold mt-2">Cancel</button>
+                                                <button type="button" onClick={() => { setEditingItem(null); setItemForm({ name: '', logo: '', description: '', tier: 'Silver' }); }} className="w-full bg-gray-600 py-2 rounded-lg font-bold mt-2">Cancel</button>
                                             )}
                                         </form>
                                     </div>

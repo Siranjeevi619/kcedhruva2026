@@ -30,17 +30,36 @@ const Footer = () => {
             {sponsors.length > 0 && (
                 <section className="max-w-7xl mx-auto px-4 md:px-6 py-10">
                     <h3 className="text-3xl font-bold text-center mb-16 shadow-lg">Our Sponsors</h3>
-                    <div className="flex flex-wrap justify-center gap-6 md:gap-10 items-center">
-                        {sponsors.map(s => (
-                            <div key={s._id} className="group flex flex-col items-center">
-                                <img
-                                    src={getImageUrl(s.logo)}
-                                    alt={s.name}
-                                    className={`object-contain transition-all group-hover:grayscale-0 opacity-100 group-hover:opacity-100 h-16 md:h-24`}
-                                />
-                                <p className="text-sm text-gray-400 mt-2">{s.name}</p>
-                            </div>
-                        ))}
+                    <div className="space-y-16">
+                        {["Title", "Platinum", "Gold", "Silver", "Associate"].map(tier => {
+                            const tieredSponsors = sponsors.filter(s => (s.tier === tier) || (tier === 'Silver' && !s.tier));
+                            if (tieredSponsors.length === 0) return null;
+
+                            return (
+                                <div key={tier} className="flex flex-col items-center">
+                                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-[0.3em] mb-8">
+                                        {tier} {tier === 'Title' ? 'Sponsor' : 'Sponsors'}
+                                    </h4>
+                                    <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center">
+                                        {tieredSponsors.map(s => (
+                                            <div key={s._id} className="group flex flex-col items-center">
+                                                <div className="relative">
+                                                    <img
+                                                        src={getImageUrl(s.logo)}
+                                                        alt={s.name}
+                                                        className="object-contain transition-all group-hover:scale-110 duration-500"
+                                                    />
+                                                </div>
+                                                <div className="text-center mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-wider">{s.name}</p>
+                                                    <p className="text-[8px] md:text-[10px] text-blue-400 font-medium">{tier} Partner</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </section>
             )}

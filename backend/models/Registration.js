@@ -33,6 +33,12 @@ const registrationSchema = new mongoose.Schema({
     year: {
         type: String, // 1st, 2nd, 3rd, 4th
     },
+    college: {
+        type: String,
+    },
+    district: {
+        type: String,
+    },
     paymentId: {
         type: String,
     },
@@ -51,6 +57,10 @@ const registrationSchema = new mongoose.Schema({
     },
     qrCode: {
         type: String, // Base64 string of the QR code
+    },
+    attended: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

@@ -14,7 +14,7 @@ const logToSheet = async (data) => {
         const payload = {
             email: data.email, // Added Email
             studentName: data.studentName,
-            rollNumber: data.rollNumber,
+            // rollNumber: data.rollNumber,
             year: data.year,
             department: data.department,
             phone: data.phone,
@@ -25,7 +25,8 @@ const logToSheet = async (data) => {
             amount: data.amount,
             paymentStatus: data.paymentStatus,
             ticketId: data.ticketId,
-            qrCode: data.qrCode
+            qrCode: data.qrCode,
+            reason: data.reason || ''
         };
 
         await axios.post(scriptUrl, payload);

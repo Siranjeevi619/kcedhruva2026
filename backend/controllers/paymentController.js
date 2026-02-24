@@ -101,7 +101,50 @@ const verifyPayment = async (req, res) => {
     }
 };
 
+// @desc    Handle Payment Failure
+// @route   POST /api/payment/failed
+// @access  Public
+const handlePaymentFailed = async (req, res) => {
+    try {
+        const { registrationId, reason } = req.body;
+        const registration = await Registration.findById(registrationId).populate('pass');
+
+        if (registration) {
+            registration.paymentStatus = 'Failed';
+            await registration.save();
+
+            // Log to Google Sheet
+            const { logToSheet } = require('../utils/googleSheets');
+            await logToSheet({
+                email: registration.email,
+                studentName: registration.studentName,
+                rollNumber: registration.rollNumber,
+                year: registration.year,
+                department: registration.department,
+                phone: registration.phone,
+                college: registration.college,
+                district: registration.district,
+                passName: registration.pass.name,
+                passId: registration.pass._id,
+                amount: registration.amount,
+                paymentStatus: 'Failed',
+                ticketId: registration.ticketId,
+                qrCode: registration.qrCode,
+                reason: reason || 'Payment cancelled or failed'
+            });
+
+            res.json({ message: 'Payment failure recorded' });
+        } else {
+            res.status(404).json({ message: 'Registration not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createOrder,
     verifyPayment,
+    handlePaymentFailed
 };

@@ -105,7 +105,7 @@ const registerForEvent = async (req, res) => {
             message: enablePayment ? 'Registration initiated' : 'Registration Completed',
             registrationId: savedRegistration._id,
             ticketId: savedRegistration.ticketId,
-            amount: pass.price,
+            amount: savedRegistration.amount,
             paymentStatus: initialStatus
         });
 
@@ -136,6 +136,7 @@ const exportRegistrations = async (req, res) => {
             Year: reg.year,
             Amount: reg.amount,
             Status: reg.paymentStatus,
+            Attended: reg.attended ? 'Yes' : 'No',
             PaymentID: reg.paymentId || 'N/A',
             Date: reg.createdAt.toISOString().split('T')[0]
         }));
@@ -208,7 +209,7 @@ const getEventRegistrations = async (req, res) => {
         const { eventId } = req.params;
         const registrations = await Registration.find({ events: eventId })
             .populate('pass', 'name')
-            .select('studentName rollNumber email phone department year college district pass amount paymentStatus createdAt');
+            .select('studentName rollNumber email phone department year college district pass amount paymentStatus attended createdAt');
 
         res.json(registrations);
     } catch (error) {
@@ -228,7 +229,7 @@ const exportEventRegistrations = async (req, res) => {
 
         const registrations = await Registration.find({ events: eventId })
             .populate('pass', 'name')
-            .select('studentName rollNumber email phone department year college district pass amount paymentStatus createdAt');
+            .select('studentName rollNumber email phone department year college district pass amount paymentStatus attended createdAt');
 
         const data = registrations.map(reg => ({
             Student: reg.studentName,
@@ -241,6 +242,7 @@ const exportEventRegistrations = async (req, res) => {
             District: reg.district,
             Pass: reg.pass?.name || 'N/A',
             Status: reg.paymentStatus,
+            Attended: reg.attended ? 'Yes' : 'No',
             RegisteredAt: reg.createdAt.toISOString().split('T')[0]
         }));
 
@@ -268,30 +270,13 @@ const preRegister = async (req, res) => {
         const Pass = require('../models/Pass');
         const pass = await Pass.findById(passId);
 
-        const registration = new Registration({
-            pass: passId,
-            events: eventIds,
-            studentName,
-            rollNumber,
-            email,
-            phone,
-            department,
-            year,
-            college,
-            district,
-            amount: pass ? pass.price : '0',
-            paymentStatus: 'Pre-Registered',
-            ticketId: `PRE${Math.floor(1000 + Math.random() * 9000)}`
-        });
-
-        await registration.save();
+        const ticketId = `PRE${Math.floor(1000 + Math.random() * 9000)}`;
 
         // Log to Google Sheet
         const { logToSheet } = require('../utils/googleSheets');
         await logToSheet({
             email,
             studentName,
-            rollNumber,
             year,
             department,
             phone,
@@ -301,11 +286,40 @@ const preRegister = async (req, res) => {
             passId: passId,
             amount: pass ? pass.price : '0',
             paymentStatus: 'Pre-Registered',
-            ticketId: registration.ticketId,
-            qrCode: registration.qrCode
+            ticketId: ticketId,
+            qrCode: '' // No QR code for pre-registrations
         });
 
         res.status(201).json({ message: 'Interest registered successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Verify and mark attendance via Ticket ID (QR Scan)
+// @route   GET /api/registrations/verify/:ticketId
+// @access  Private/Admin
+const verifyAttendance = async (req, res) => {
+    try {
+        const { ticketId } = req.params;
+        const registration = await Registration.findOne({ ticketId })
+            .populate('pass', 'name')
+            .populate('events', 'title department category');
+
+        if (!registration) {
+            return res.status(404).json({ message: 'Invalid Ticket ID' });
+        }
+
+        const wasAlreadyMarked = registration.attended;
+        registration.attended = true;
+        await registration.save();
+
+        res.json({
+            message: wasAlreadyMarked ? 'Already marked as attended' : 'Attendance marked successfully',
+            registration,
+            alreadyAttended: wasAlreadyMarked
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
@@ -319,5 +333,6 @@ module.exports = {
     exportRegistrations, // Global export
     getAllRegistrations, // New endpoint for dashboard
     getEventRegistrations,
-    exportEventRegistrations
+    exportEventRegistrations,
+    verifyAttendance
 };

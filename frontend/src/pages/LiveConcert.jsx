@@ -28,12 +28,31 @@ const LiveConcert = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-br from-blue-500 to-purple-500 text-white font-inter relative overflow-hidden">
+        <div className="min-h-screen bg-[#02020a] text-white font-inter relative overflow-x-hidden">
+            {/* Creative Cosmic Aurora Background */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                {/* Primary Aurora Swirls */}
+                <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[120%] opacity-30">
+                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_#7000ff_0%,_#ff00b3_25%,_#00d4ff_50%,_#7000ff_100%)] blur-[120px] animate-spin-slow" />
+                </div>
+
+                {/* Shifting Light Accents */}
+                <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[100px] animate-float" />
+                <div className="absolute bottom-[20%] left-[-5%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[100px] animate-pulse-slow" />
+
+                {/* Deep Radial Vignette */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,_rgba(112,0,255,0.05)_0%,_transparent_50%),radial-gradient(circle_at_90%_90%,_rgba(0,212,255,0.05)_0%,_transparent_50%)]" />
+                <div className="absolute inset-0 bg-[#02020a]/40" />
+
+                {/* Grainy "Atmosphere" Overlay */}
+                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+            </div>
+
             <Doodles />
             <Navbar />
 
             {/* Hero Section */}
-            <div className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+            {/* <div className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10" />
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1459749411177-d4a428947d6a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 animate-pulse-slow" />
 
@@ -45,10 +64,18 @@ const LiveConcert = () => {
                         Experience the Magic of Music
                     </p>
                 </div>
-            </div>
+            </div> */}
 
             {/* Events Section */}
             <div className="max-w-7xl mx-auto px-4 py-20">
+                <div className="flex flex-col items-center justify-center">
+                    <h1 className="text-5xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 mb-6 drop-shadow-2xl">
+                        LIVE IN CONCERT
+                    </h1>
+                    <p className="text-xl md:text-2xl text-gray-300 tracking-widest uppercase">
+                        Experience the Magic of Music
+                    </p>
+                </div>
                 {loading ? (
                     <Loader text="Loading concert details..." />
                 ) : events.length > 0 ? (
@@ -121,7 +148,9 @@ const LiveConcert = () => {
                 )}
             </div>
 
-            <Footer />
+            <div className="relative z-10 bg-[#000000]">
+                <Footer />
+            </div>
         </div>
     );
 };

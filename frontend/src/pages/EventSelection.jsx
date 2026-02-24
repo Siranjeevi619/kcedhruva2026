@@ -8,8 +8,7 @@ import { API_URL } from '../utils/config';
 import ComingSoonModal from '../components/ComingSoonModal';
 import SuccessModal from '../components/SuccessModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Phone, GraduationCap, Building2, MapPin, CreditCard, ChevronRight, Sparkles, Trophy } from 'lucide-react';
-
+import { User, Mail, Phone, GraduationCap, Building2, MapPin, CreditCard, ChevronRight, Sparkles, Trophy, Ticket } from 'lucide-react';
 import Doodles from '../components/Doodles';
 
 const EventSelection = () => {
@@ -24,11 +23,15 @@ const EventSelection = () => {
         email: '',
         phone: '',
         department: '',
+        customDepartment: '',
         year: '',
         college: '',
         district: '',
         state: '',
+        pass: pass?._id || '',
     });
+    const [passes, setPasses] = useState([]);
+    const [currentPass, setCurrentPass] = useState(pass);
     const [submitting, setSubmitting] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
     const [successState, setSuccessState] = useState({ show: false, title: '', message: '', ticketId: '' });
@@ -38,20 +41,30 @@ const EventSelection = () => {
     const [selectedSportEventId, setSelectedSportEventId] = useState('');
     const [dynamicPrice, setDynamicPrice] = useState(null);
 
-    const isSportsPass = pass?.name?.toLowerCase().includes('sports');
+    const isSportsPass = currentPass?.name?.toLowerCase().includes('sports');
 
     useEffect(() => {
-        if (!pass) {
+        const fetchData = async () => {
+            try {
+                const { data: passesData } = await axios.get(`${API_URL}/passes`);
+                setPasses(passesData.filter(p => p.isActive));
+
+                if (isSportsPass) {
+                    fetchSportsEvents();
+                } else {
+                    setDynamicPrice(currentPass?.price);
+                }
+            } catch (error) {
+                console.error("Failed to fetch data", error);
+            }
+        };
+
+        if (!currentPass) {
             navigate('/passes');
             return;
         }
-
-        if (isSportsPass) {
-            fetchSportsEvents();
-        } else {
-            setDynamicPrice(pass.price);
-        }
-    }, [pass, navigate]);
+        fetchData();
+    }, [currentPass, navigate, isSportsPass]);
 
     const fetchSportsEvents = async () => {
         try {
@@ -69,14 +82,29 @@ const EventSelection = () => {
         setSelectedSportEventId(eventId);
         const event = sportsEvents.find(ev => ev._id === eventId);
         if (event) {
-            setDynamicPrice(event.teamPrice || pass.price);
+            setDynamicPrice(event.teamPrice || currentPass?.price);
         } else {
-            setDynamicPrice(pass.price);
+            setDynamicPrice(currentPass?.price);
         }
     };
 
     const handleFormChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        if (name === 'pass') {
+            const selected = passes.find(p => p._id === value);
+            if (selected) {
+                setCurrentPass(selected);
+                setDynamicPrice(selected.price);
+                // Clear sports selection if switching away from sports pass
+                if (!selected.name.toLowerCase().includes('sports')) {
+                    setSelectedSportEventId('');
+                }
+                // Scroll to top to show updated pass details
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
     };
 
     const handleRegister = async (e) => {
@@ -85,10 +113,12 @@ const EventSelection = () => {
         if (config.registration_open === 'false') {
             try {
                 const payload = {
-                    passId: pass._id,
+                    passId: currentPass?._id,
                     eventIds: selectedSportEventId ? [selectedSportEventId] : [],
-                    ...formData
+                    ...formData,
+                    department: formData.department === 'Other' ? formData.customDepartment : formData.department
                 };
+                delete payload.customDepartment;
                 await axios.post(`${API_URL}/registrations/pre-register`, payload);
                 setShowComingSoon(true);
             } catch (err) {
@@ -101,10 +131,12 @@ const EventSelection = () => {
         }
         try {
             const payload = {
-                passId: pass._id,
+                passId: currentPass?._id,
                 eventIds: selectedSportEventId ? [selectedSportEventId] : [],
-                ...formData
+                ...formData,
+                department: formData.department === 'Other' ? formData.customDepartment : formData.department
             };
+            delete payload.customDepartment;
 
             const { data: regData } = await axios.post(`${API_URL}/registrations`, payload);
 
@@ -126,7 +158,7 @@ const EventSelection = () => {
                 amount: Math.round((parseFloat(regData.amount.toString().split('/')[0]) || 0) * 100),
                 currency: 'INR',
                 name: `${config.website_name || 'Dhruva'} ${config.event_year || '2026'}`,
-                description: `Payment for ${pass.name}`,
+                description: `Payment for ${currentPass?.name}`,
                 handler: async function (response) {
                     try {
                         await axios.post(`${API_URL}/payment/verify`, {
@@ -147,13 +179,29 @@ const EventSelection = () => {
                 },
                 prefill: {
                     name: formData.studentName,
+                    pass: formData.pass,
+                    department: formData.department,
+                    year: formData.year,
+                    college: formData.college,
+                    district: formData.district,
                     email: formData.email,
                     contact: formData.phone
                 },
-                theme: { color: '#8b5cf6' }
+                theme: { color: '#8b5cf6' },
+                modal: {
+                    ondismiss: async function () {
+                        try {
+                            await axios.post(`${API_URL}/payment/failed`, {
+                                registrationId: regData.registrationId,
+                                reason: 'Payment modal closed by user'
+                            });
+                        } catch (err) {
+                            console.error('Failed to log payment cancellation', err);
+                        }
+                    }
+                }
             };
 
-            // Order creation logic (optional/if enabled)
             try {
                 const { data: order } = await axios.post(`${API_URL}/payment/order`, {
                     amount: regData.amount,
@@ -167,6 +215,19 @@ const EventSelection = () => {
             }
 
             const rzp = new window.Razorpay(options);
+
+            // Add failure listener for specific payment errors
+            rzp.on('payment.failed', async function (response) {
+                try {
+                    await axios.post(`${API_URL}/payment/failed`, {
+                        registrationId: regData.registrationId,
+                        reason: response.error.description || 'Payment failed at gateway'
+                    });
+                } catch (err) {
+                    console.error('Failed to log payment failure', err);
+                }
+            });
+
             rzp.open();
             setSubmitting(false);
         } catch (error) {
@@ -193,11 +254,14 @@ const EventSelection = () => {
 
     return (
         <div className="min-h-screen bg-[#050510] text-white font-inter flex flex-col relative overflow-x-hidden">
-            {/* Unique Colorful Background */}
-            <div className="fixed inset-0 z-0">
-                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-purple-600/30 rounded-full blur-[120px] animate-float" />
-                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow delay-700" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_transparent_0%,_#050510_80%)]" />
+            {/* Premium Dynamic Background */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-600/20 rounded-full blur-[120px] animate-pulse-slow" />
+                <div className="absolute top-[20%] right-[-5%] w-[35%] h-[35%] bg-fuchsia-600/10 rounded-full blur-[120px] animate-float" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-cyan-600/10 rounded-full blur-[120px] animate-pulse-slow delay-1000" />
+                <div className="absolute bottom-[10%] right-[10%] w-[30%] h-[30%] bg-blue-600/20 rounded-full blur-[120px] animate-float delay-500" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#050510_90%)]" />
+                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" />
             </div>
 
             <Doodles />
@@ -214,13 +278,13 @@ const EventSelection = () => {
                         {/* Decorative background circle */}
                         <div className="absolute -top-10 -right-10 w-40 h-40 bg-violet-600/20 rounded-full blur-3xl" />
 
-                        <h1 className={`text-3xl sm:text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r ${getPassColorGradient(pass.color)}`}>
-                            {pass.name}
+                        <h1 className={`text-3xl sm:text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r ${getPassColorGradient(currentPass?.color)}`}>
+                            {currentPass?.name}
                         </h1>
 
-                        {pass.perks && Array.isArray(pass.perks) && (
+                        {currentPass?.perks && Array.isArray(currentPass.perks) && (
                             <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-2xl mx-auto">
-                                {pass.perks.filter(p => p).map((perk, i) => (
+                                {currentPass.perks.filter(p => p).map((perk, i) => (
                                     <span key={i} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-gray-400 flex items-center gap-2">
                                         <div className="w-1 h-1 rounded-full bg-violet-400" />
                                         {perk}
@@ -234,7 +298,7 @@ const EventSelection = () => {
                                 {isSportsPass && !selectedSportEventId ? (
                                     <span className="text-sm sm:text-base text-gray-500 font-bold uppercase tracking-widest">Select Sport for Pricing</span>
                                 ) : (
-                                    `₹${dynamicPrice || pass.price}`
+                                    `₹${dynamicPrice || currentPass?.price}`
                                 )}
                             </div>
                         </div>
@@ -281,7 +345,7 @@ const EventSelection = () => {
                                     required
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:border-violet-500 outline-none text-white transition-all appearance-none cursor-pointer [&>option]:bg-[#10101a]"
                                 >
-                                    <option value="">-- Click to select a sport --</option>
+                                    <option value="">Click to select a sport</option>
                                     {sportsEvents.map(event => (
                                         <option key={event._id} value={event._id}>
                                             {event.title} ({event.gender || 'Open'}) - ₹{event.teamPrice}/Team
@@ -291,7 +355,7 @@ const EventSelection = () => {
                             </motion.div>
                         )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Student Name</label>
                                 <div className="relative group">
@@ -299,13 +363,14 @@ const EventSelection = () => {
                                     <input name="studentName" value={formData.studentName} onChange={handleFormChange} required placeholder="Enter full name" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
                                 </div>
                             </div>
-                            <div className="space-y-2">
+                            {/* <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Roll Number</label>
                                 <div className="relative group">
                                     <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
                                     <input name="rollNumber" value={formData.rollNumber} onChange={handleFormChange} required placeholder="College Roll ID" className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600" />
                                 </div>
-                            </div>
+                            </div>*/}
+
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -341,8 +406,10 @@ const EventSelection = () => {
                                     <option value="BCom">B.Com - Commerce</option>
                                     <option value="BBA">BBA - Business Administration</option>
                                     <option value="MBA">MBA - Master of Business Administration</option>
+                                    <option value="Other">Other (Please Specify)</option>
                                 </select>
                             </div>
+
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Current Year</label>
                                 <select name="year" value={formData.year} onChange={handleFormChange} required className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:border-violet-500 focus:bg-white/10 outline-none text-gray-300 transition-all [&>option]:bg-[#10101a]">
@@ -351,9 +418,34 @@ const EventSelection = () => {
                                     <option value="2">2nd Year</option>
                                     <option value="3">3rd Year</option>
                                     <option value="4">4th Year</option>
+                                    <option value="5">5th Year</option>
                                 </select>
                             </div>
                         </div>
+
+                        <AnimatePresence>
+                            {formData.department === 'Other' && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="space-y-2"
+                                >
+                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Specify Department</label>
+                                    <div className="relative group">
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                        <input
+                                            name="customDepartment"
+                                            value={formData.customDepartment}
+                                            onChange={handleFormChange}
+                                            required
+                                            placeholder="Enter your department name"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none transition-all placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -388,7 +480,26 @@ const EventSelection = () => {
                                 </div>
                             </div>
                         </div>
-
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Selected Pass</label>
+                            <div className="relative group">
+                                <Ticket className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-violet-400 transition-colors" size={20} />
+                                <select
+                                    name="pass"
+                                    value={formData.pass}
+                                    onChange={handleFormChange}
+                                    required
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 focus:border-violet-500 focus:bg-white/10 outline-none text-gray-300 transition-all [&>option]:bg-[#10101a]"
+                                >
+                                    <option value="">Select Pass</option>
+                                    {passes.map((p) => (
+                                        <option key={p._id} value={p._id}>
+                                            {p.name} - ₹{p.price}/-
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
                         <div className="pt-10">
                             <button
                                 type="submit"
@@ -405,7 +516,7 @@ const EventSelection = () => {
                                     ) : (
                                         <>
                                             <CreditCard size={22} />
-                                            <span>{config.registration_open === 'false' ? 'Register Interest' : `Checkout - ₹${dynamicPrice || pass.price}`}</span>
+                                            <span>{config.registration_open === 'false' ? 'Register Interest' : `Checkout - ₹${dynamicPrice || currentPass?.price}`}</span>
                                             <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
                                         </>
                                     )}

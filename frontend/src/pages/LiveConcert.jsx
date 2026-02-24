@@ -28,7 +28,7 @@ const LiveConcert = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-black text-white font-inter relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-br from-blue-500 to-purple-500 text-white font-inter relative overflow-hidden">
             <Doodles />
             <Navbar />
 

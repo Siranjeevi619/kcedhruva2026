@@ -583,7 +583,7 @@ const ManageEvents = () => {
                                     )}
 
                                     <input type="date" name="date" value={formData.date} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors text-white" />
-                                    <input name="venue" value={formData.venue} onChange={handleChange} placeholder="Venue" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
+                                    <input name="venue" value={formData.venue} onChange={handleChange} placeholder="Venue" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
                                     <div className="grid grid-cols-2 gap-4">
                                         <input name="fromTime" value={formData.fromTime} onChange={handleChange} placeholder="From Time (e.g. 10:00 AM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" required />
                                         <input name="toTime" value={formData.toTime} onChange={handleChange} placeholder="To Time (e.g. 04:00 PM)" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:border-blue-500 outline-none transition-colors" />
